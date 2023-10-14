@@ -1,5 +1,8 @@
 import {useState, useEffect} from 'react'
-import {GET_GeographicalObjects, GeographicalObjectResult} from '../modules/GET_GeographicalObjects.ts'
+import {
+    GeographicalObjectResult,
+    GET_FILTRATION_GeographicalObjectsPaginations
+} from '../modules/GET_GeographicalObjects.ts'
 import GeographicalObjects from './GeographicalObjects.tsx';
 import "../styles/main_menu.css"
 import "../styles/search_button.css"
@@ -9,21 +12,38 @@ import FiltrationGeographicalObject from "./Filtration.tsx";
 function GeographicalObjectService() {
     // Мы создаём состояние geographical_object и функцию для его обновления с начальным значением
     // {count: 0, data: []}, представляющим пустой список географических объектов.
-    const [geographical_object, setGeographicalObject] = useState<GeographicalObjectResult>({count: 0, data: []});
+    const [geographical_object, setGeographicalObject] = useState<GeographicalObjectResult>({count: 0, next_url: '', previous_url: '', data: []});
+
+    // Для пагинации
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 5;
 
     // Мы определяем функцию fetchData, которая асинхронно загружает данные географических объектов
-    // с использованием GET_GeographicalObjects и обновляет состояние geographical_object.
-    const fetchData = async () => {
-        const data = await GET_GeographicalObjects();
-        // Вызываем функцию получения данных при загрузке
+    // с использованием GET_GeographicalObjectsPaginations и обновляет состояние geographical_object.
+    const fetchData = async (filterField: any, filterKeyword: any, page: number) => {
+        const data = await GET_FILTRATION_GeographicalObjectsPaginations(filterField, filterKeyword, page);
         setGeographicalObject(data);
     };
 
-    // Мы используем (ХУКИ) useEffect, чтобы выполнить загрузку данных при монтировании компонента.
+    // Обработчик для кнопки "Next" - увеличивает текущую страницу на 1
+    const handleNextPage = () => {
+        if (currentPage * itemsPerPage < geographical_object.count) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
+    // Обработчик для кнопки "Previous" - уменьшает текущую страницу на 1
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    // Мы используем useEffect, чтобы выполнить загрузку данных при монтировании компонента
+    // и при изменении текущей страницы.
     useEffect(() => {
-        // Выполним загрузку данных при монтировании компонента
-        fetchData();
-    }, []);
+        fetchData(filterData.filterField, filterData.filterKeyword, currentPage);
+    }, [currentPage]);
 
     // Мы определяем функцию handleDelete, которая будет вызываться при удалении географического объекта.
     function handleDelete(id: number) {
@@ -36,7 +56,7 @@ function GeographicalObjectService() {
             .then((success) => {
                 if (success) {
                     // Если удаление успешно, мы можем обновить данные, чтобы отразить изменения.
-                    fetchData(); // Добавьте эту строку для обновления данных
+                    // fetchData(); // Добавьте эту строку для обновления данных
                 } else {
                     // Если удаление не удалось, мы выводим сообщение об ошибке в консоль
                     console.error('Failed to delete geographical object');
@@ -48,6 +68,16 @@ function GeographicalObjectService() {
         console.log('After filtration: ', data)
         setGeographicalObject(data);
     }
+
+    const [filterData, setFilterData] = useState({
+        filterField: '',
+        filterKeyword: '',
+    });
+
+    // @ts-ignore
+    // const updateFilterData = (data: any) => {
+    //     setFilterData(data);
+    // };
 
     return (
         <>
@@ -65,7 +95,20 @@ function GeographicalObjectService() {
                     <GeographicalObjects key={object.id} data={object} handleDelete={handleDelete}/>
                 ))}
             </div>
-            <FiltrationGeographicalObject setGeographicalObjectData={setGeographicalObjectData}/>
+            <FiltrationGeographicalObject
+                setGeographicalObjectData={setGeographicalObjectData}
+                setFilterData={setFilterData}
+                filterData={filterData}
+                currentPage={currentPage}
+            />
+            <div className="pagination" style={{zIndex: '10'}}>
+                <button onClick={handlePreviousPage} disabled={currentPage === 1}>
+                    Previous
+                </button>
+                <button onClick={handleNextPage} disabled={currentPage * itemsPerPage >= geographical_object.count}>
+                    Next
+                </button>
+            </div>
         </>
     );
 };

@@ -1,10 +1,20 @@
 import {useState} from 'react'
-import {GET_FILTRATION_GeographicalObjects} from '../modules/GET_GeographicalObjects.ts'
+import {GET_FILTRATION_GeographicalObjectsPaginations} from '../modules/GET_GeographicalObjects.ts'
 import "../styles/search_button.css"
 // import {setGeographicalObjectData} from "../components/Main.tsx"
 import {GeographicalObjectResult} from "../modules/GET_GeographicalObjects.ts"
 
-function FiltrationGeographicalObject({setGeographicalObjectData}: { setGeographicalObjectData: (data: GeographicalObjectResult) => void }) {
+function FiltrationGeographicalObject({
+    setGeographicalObjectData,
+    setFilterData,
+    filterData,
+    currentPage,
+}: {
+    setGeographicalObjectData: (data: GeographicalObjectResult) => void;
+    setFilterData: (data: any) => void;
+    filterData: any;
+    currentPage: number;
+}) {
     // Для фильтрации услуг
     // Мы инициализируем состояние 'filterField' значением 'feature'
     const [filterField, setFilterField] = useState<string>('feature');
@@ -22,16 +32,19 @@ function FiltrationGeographicalObject({setGeographicalObjectData}: { setGeograph
     };
 
     const handleFilterSubmit = async (event: React.FormEvent) => {
-        // Мы предотвращаем стандартное действие формы (перезагрузку страницы)
         event.preventDefault();
         try {
-            // Мы выполняем асинхронный запрос для фильтрации географических объектов, используя текущие значения 'filterField' и 'filterKeyword'
-            const response = await GET_FILTRATION_GeographicalObjects(filterField, filterKeyword);
-            // Обновляем новые данные
+            filterData.filterField = filterField
+            filterData.filterKeyword = filterKeyword
+            const response = await GET_FILTRATION_GeographicalObjectsPaginations(
+                filterData.filterField,
+                filterData.filterKeyword,
+                currentPage
+            );
             setGeographicalObjectData(response);
-            // Мы обновляем состояние 'GeographicalObject' новыми данными
+            // Обновление данных фильтрации
+            setFilterData(filterData);
         } catch (error) {
-            // В случае ошибки, мы выводим сообщение об ошибке в консоль
             console.error('Error filtering geographical objects:', error);
         }
     };

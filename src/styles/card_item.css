@@ -2,7 +2,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap");
 
 .grid-container {
-    display: grid;
+    display: flex;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Это создаст гибкую сетку с колонками шириной 200px и автоматически адаптирующимися к размеру контейнера */
     gap: 20px; /* Расстояние между элементами сетки */
     justify-items: center;
