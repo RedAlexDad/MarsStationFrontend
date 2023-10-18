@@ -6,7 +6,6 @@ import {
 import GeographicalObjects from './GeographicalObjects.tsx';
 import "../styles/main_menu.css"
 import "../styles/search_button.css"
-import {PUT_GeographicalObject} from "../modules/PUT_GeographicalObject.ts";
 import FiltrationGeographicalObject from "./Filtration.tsx";
 
 function GeographicalObjectService() {
@@ -45,25 +44,6 @@ function GeographicalObjectService() {
         fetchData(filterData.filterField, filterData.filterKeyword, currentPage);
     }, [currentPage]);
 
-    // Мы определяем функцию handleDelete, которая будет вызываться при удалении географического объекта.
-    function handleDelete(id: number) {
-        // console.log('Попытка удаления географического объекта с ID:', id)
-        // Находим географический объект с соответствующим ID
-        const objectToDelete = geographical_object.data.find(object => object.id === id);
-        console.log('geographical_object geographical_object.data[id]:', objectToDelete)
-        // Мы вызываем PUT_GeographicalObject, чтобы удалить объект с указанным id.
-        PUT_GeographicalObject(id, objectToDelete)
-            .then((success) => {
-                if (success) {
-                    // Если удаление успешно, мы можем обновить данные, чтобы отразить изменения.
-                    // fetchData(); // Добавьте эту строку для обновления данных
-                } else {
-                    // Если удаление не удалось, мы выводим сообщение об ошибке в консоль
-                    console.error('Failed to delete geographical object');
-                }
-            });
-    }
-
     const setGeographicalObjectData = (data: any) => {
         console.log('After filtration: ', data)
         setGeographicalObject(data);
@@ -73,11 +53,6 @@ function GeographicalObjectService() {
         filterField: '',
         filterKeyword: '',
     });
-
-    // @ts-ignore
-    // const updateFilterData = (data: any) => {
-    //     setFilterData(data);
-    // };
 
     return (
         <>
@@ -92,7 +67,7 @@ function GeographicalObjectService() {
             <div className="grid-container">
                 {geographical_object.data.map((object) => (
                     // @ts-ignore
-                    <GeographicalObjects key={object.id} data={object} handleDelete={handleDelete}/>
+                    <GeographicalObjects key={object.id} data={object}/>
                 ))}
             </div>
             <FiltrationGeographicalObject

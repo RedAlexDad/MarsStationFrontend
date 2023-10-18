@@ -139,7 +139,7 @@ export const GET_FILTRATION_GeographicalObjectsPaginations = async (filterField:
         });
 
         // Формируем URL запроса с параметрами
-        const url = `http://127.0.0.1:8000/api/geographical_objects/?${params}&${filterField}=${filterKeyword}`;
+        const url = `http://127.0.0.1:8000/api/geographical_object/?${params}&${filterField}=${filterKeyword}`;
 
         // Отправляем GET-запрос на сервер
         const response = await fetch(url);
