@@ -14,7 +14,7 @@ interface GeographicalObject {
 
 const GeographicalObjects: React.FC<{ data: GeographicalObject; handleDelete: (id: number) => void }> = ({ data}) => {
     return (
-        <div className="container-item" key={data.id}>
+        <div className="container-item" key={data.id} style={{width: '10%', height: 'auto'}}>
             <div className="wrapper">
                 <img src={data.url_photo} style={{width: 'auto', height: '50%'}}/>
                 <p>{data.feature}</p>

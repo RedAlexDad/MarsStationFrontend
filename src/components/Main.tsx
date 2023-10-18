@@ -19,8 +19,8 @@ function GeographicalObjectService() {
 
     // Мы определяем функцию fetchData, которая асинхронно загружает данные географических объектов
     // с использованием GET_GeographicalObjectsPaginations и обновляет состояние geographical_object.
-    const fetchData = async (filterField: any, filterKeyword: any, page: number) => {
-        const data = await GET_FILTRATION_GeographicalObjectsPaginations(filterField, filterKeyword, page);
+    const fetchData = async (filterKeyword: any, page: number) => {
+        const data = await GET_FILTRATION_GeographicalObjectsPaginations(filterKeyword, page);
         setGeographicalObject(data);
     };
 
@@ -41,18 +41,16 @@ function GeographicalObjectService() {
     // Мы используем useEffect, чтобы выполнить загрузку данных при монтировании компонента
     // и при изменении текущей страницы.
     useEffect(() => {
-        fetchData(filterData.filterField, filterData.filterKeyword, currentPage);
+        fetchData(filterKeyword, currentPage);
     }, [currentPage]);
+
 
     const setGeographicalObjectData = (data: any) => {
         console.log('After filtration: ', data)
         setGeographicalObject(data);
     }
 
-    const [filterData, setFilterData] = useState({
-        filterField: '',
-        filterKeyword: '',
-    });
+    const [filterKeyword, setFilterData] = useState('');
 
     return (
         <>
@@ -73,7 +71,6 @@ function GeographicalObjectService() {
             <FiltrationGeographicalObject
                 setGeographicalObjectData={setGeographicalObjectData}
                 setFilterData={setFilterData}
-                filterData={filterData}
                 currentPage={currentPage}
             />
             <div className="pagination" style={{zIndex: '10'}}>

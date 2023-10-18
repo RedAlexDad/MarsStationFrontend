@@ -130,7 +130,7 @@ export const GET_GeographicalObjectsPaginations = async (page: number, perPage: 
 };
 
 
-export const GET_FILTRATION_GeographicalObjectsPaginations = async (filterField: string, filterKeyword: string, page: number): Promise<GeographicalObjectResult> => {
+export const GET_FILTRATION_GeographicalObjectsPaginations = async (filterKeyword: string, page: number): Promise<GeographicalObjectResult> => {
     try {
         // Определяем параметры запроса, включая номер страницы и количество объектов на странице
         const params = new URLSearchParams({
@@ -139,8 +139,12 @@ export const GET_FILTRATION_GeographicalObjectsPaginations = async (filterField:
         });
 
         // Формируем URL запроса с параметрами
-        const url = `http://127.0.0.1:8000/api/geographical_object/?${params}&${filterField}=${filterKeyword}`;
-
+        let url = '';
+        if(filterKeyword == null){
+            url = `http://127.0.0.1:8000/api/geographical_object/?${params}`;
+        } else{
+            url = `http://127.0.0.1:8000/api/geographical_object/?${params}&feature=${filterKeyword}`;
+        }
         // Отправляем GET-запрос на сервер
         const response = await fetch(url);
 
@@ -150,8 +154,7 @@ export const GET_FILTRATION_GeographicalObjectsPaginations = async (filterField:
 
         const database: GeographicalObject[] = await response.json();
         // Парсим ответ в формат JSON и сохраняем в переменной 'data'
-        console.log(database);
-        // Вам также, возможно, потребуется получить общее количество объектов и вернуть его
+
         // const count = parseInt(response.headers.get('X-Total-Count') || '0', 10);
         return {
             // @ts-ignore
