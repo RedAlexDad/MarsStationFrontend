@@ -1,3 +1,5 @@
+import defaultImage from '../assets/Default.png';
+
 // Мы создаём интерфейс GeographicalObject, который описывает структуру данных географического объекта
 export interface GeographicalObject {
     id: number; // Идентификатор объекта
@@ -6,7 +8,7 @@ export interface GeographicalObject {
     size: number | string; // Площадь объекта
     status: boolean; // Статус объекта
     describe: string; // Описание объекта
-    url_photo: string | null; // URL фотографии объекта или null, если фотографии нет
+    photo: string | null; // URL фотографии объекта или null, если фотографии нет
 }
 
 // Мы также создаём интерфейс GeographicalObjectResult для описания структуры результата запроса
@@ -19,12 +21,17 @@ export interface GeographicalObjectResult {
 export const GET_GeographicalObject = async (id: number): Promise<GeographicalObjectResult> => {
     try {
         // Мы отправляем GET-запрос на сервер, указывая id объекта в URL
-        const response = await fetch(`http://127.0.0.1:8000/api/geographical_object/${id}`);
+        const response = await fetch(`http://127.0.0.1:8000/api/geographical_object/${id}/`);
         // Если сервер возвращает успешный ответ (status 200), то мы разбираем JSON-данные и возвращаем результат
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
         const data: GeographicalObject = await response.json();
+        // Если photo равен null, заменяем его на URL фотографии по умолчанию
+        if (!data.photo) {
+            data.photo = defaultImage;
+        }
+
         // Мы возвращаем объект GeographicalObjectResult, указывая, что в результате только один объект
         return {
             count: 1, // Только один объект, если запрос успешен

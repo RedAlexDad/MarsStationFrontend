@@ -9,7 +9,7 @@ interface GeographicalObject {
     type: string;
     size: number;
     describe: string;
-    url_photo: string;
+    photo: string;
     status: boolean;
 }
 
@@ -42,7 +42,7 @@ const GeographicalObject = () => {
         <div className="background-image">
             <div className="container-item">
                 <div className="wrapper">
-                    <img src={geographicalObject.url_photo} style={{ width: '30%', height: 'auto' }} alt={geographicalObject.feature} />
+                    <img src={geographicalObject.photo} style={{ width: '30%', height: 'auto' }} alt={geographicalObject.feature} />
                     <h1>{geographicalObject.feature}</h1>
                     <p>Тип местности: {geographicalObject.type}</p>
                     <p>Площадь: {geographicalObject.size}</p>

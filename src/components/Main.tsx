@@ -7,11 +7,17 @@ import GeographicalObjects from './GeographicalObjects.tsx';
 import "../styles/main_menu.css"
 import "../styles/search_button.css"
 import FiltrationGeographicalObject from "./Filtration.tsx";
+import MyPagination from "./Pagination.tsx";
 
 function GeographicalObjectService() {
     // Мы создаём состояние geographical_object и функцию для его обновления с начальным значением
     // {count: 0, data: []}, представляющим пустой список географических объектов.
-    const [geographical_object, setGeographicalObject] = useState<GeographicalObjectResult>({count: 0, next_url: '', previous_url: '', data: []});
+    const [geographical_object, setGeographicalObject] = useState<GeographicalObjectResult>({
+        count: 0,
+        next_url: '',
+        previous_url: '',
+        data: []
+    });
 
     // Для пагинации
     const [currentPage, setCurrentPage] = useState(1);
@@ -73,14 +79,13 @@ function GeographicalObjectService() {
                 setFilterData={setFilterData}
                 currentPage={currentPage}
             />
-            <div className="pagination" style={{zIndex: '10'}}>
-                <button onClick={handlePreviousPage} disabled={currentPage === 1}>
-                    Previous
-                </button>
-                <button onClick={handleNextPage} disabled={currentPage * itemsPerPage >= geographical_object.count}>
-                    Next
-                </button>
-            </div>
+            <MyPagination
+                currentPage={currentPage}
+                handlePreviousPage={handlePreviousPage}
+                handleNextPage={handleNextPage}
+                itemsPerPage={itemsPerPage}
+                totalItems={geographical_object.count}
+            />
         </>
     );
 };

@@ -5,10 +5,10 @@ import "../styles/search_button.css"
 import {GeographicalObjectResult} from "../modules/GET_GeographicalObjects.ts"
 
 function FiltrationGeographicalObject({
-    setGeographicalObjectData,
-    setFilterData,
-    currentPage,
-}: {
+                                          setGeographicalObjectData,
+                                          setFilterData,
+                                          currentPage,
+                                      }: {
     setGeographicalObjectData: (data: GeographicalObjectResult) => void;
     setFilterData: (data: any) => void;
     currentPage: number;

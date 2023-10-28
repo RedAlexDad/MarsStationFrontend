@@ -8,7 +8,7 @@ interface GeographicalObject {
     type: string;
     size: number;
     describe: string;
-    url_photo: string;
+    photo: string;
     status: boolean;
 }
 
@@ -16,7 +16,7 @@ const GeographicalObjects: React.FC<{ data: GeographicalObject; handleDelete: (i
     return (
         <div className="container-item" key={data.id} style={{width: '10%', height: 'auto'}}>
             <div className="wrapper">
-                <img src={data.url_photo} style={{width: 'auto', height: '50%'}}/>
+                <img src={data.photo} style={{width: 'auto', height: '50%'}}/>
                 <p>{data.feature}</p>
             </div>
             <div className="button-wrapper">
