@@ -1605,7 +1605,7 @@ var require_react_development = __commonJS({
               typeString = typeof type;
             }
             {
-              error("React.createElement: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: %s.%s", typeString, info);
+              error("React.createElement: type is invalid -- expected a string (for built-in Components) or a class/function (for composite Components) but got: %s.%s", typeString, info);
             }
           }
           var element = createElement.apply(this, arguments);
