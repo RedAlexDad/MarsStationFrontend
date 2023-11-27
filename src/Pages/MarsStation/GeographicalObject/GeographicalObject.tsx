@@ -1,11 +1,11 @@
 import "./GeographicalObject.sass"
 import {Dispatch, useEffect, useState} from "react";
 import {Link, useParams} from "react-router-dom";
-import {DOMEN, GeographicalObjectsMock, requestTime} from "../../Consts";
-import {GeographicalObject} from "../../Types";
+import {DOMEN, GeographicalObjectsMock, requestTime} from "../../../Consts";
+import {GeographicalObject} from "../../../Types";
 import mockImage from "/src/assets/mock.png"
 
-const GeographicalObjectPage = ({selectedGeographicalObject, setSelectedGeographicalObject}: { selectedGeographicalObject: GeographicalObject | undefined, setSelectedGeographicalObject: Dispatch<GeographicalObject | undefined> }) => {
+const GeographicalObjectPageForMarsStation = ({selectedGeographicalObject, setSelectedGeographicalObject}: { selectedGeographicalObject: GeographicalObject | undefined, setSelectedGeographicalObject: Dispatch<GeographicalObject | undefined> }) => {
 
     const {id} = useParams<{ id: string }>();
     const [isMock, setIsMock] = useState<boolean>(false);
@@ -51,7 +51,7 @@ const GeographicalObjectPage = ({selectedGeographicalObject, setSelectedGeograph
 
     return (
         <div className="page-details-wrapper">
-            <Link className="return-link" to="/geographical_object">
+            <Link className="return-link" to={`/mars_station/${id}`}>
                 Назад
             </Link>
             <div className="left">
@@ -72,4 +72,4 @@ const GeographicalObjectPage = ({selectedGeographicalObject, setSelectedGeograph
     )
 }
 
-export default GeographicalObjectPage;
+export default GeographicalObjectPageForMarsStation;

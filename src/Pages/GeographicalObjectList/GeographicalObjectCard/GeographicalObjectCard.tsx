@@ -17,7 +17,7 @@ const GeographicalObjectCard = ({geographical_object, isMock}: { geographical_ob
                 </div>
                 <div className="content-bottom">
                     <Link to={`/geographical_object/${geographical_object.id}`}>
-                        Подробнее
+                        Посмотреть
                     </Link>
                 </div>
             </div>

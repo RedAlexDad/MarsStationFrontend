@@ -1,4 +1,4 @@
 export const variables = {
-	primary: "#4c75e6",
+	primary: "#ffffff",
 	green: "#568203"
 }
