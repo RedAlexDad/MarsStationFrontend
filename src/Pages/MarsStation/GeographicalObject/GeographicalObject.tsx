@@ -4,46 +4,40 @@ import {Link, useParams} from "react-router-dom";
 import {DOMEN, GeographicalObjectsMock, requestTime} from "../../../Consts";
 import {GeographicalObject} from "../../../Types";
 import mockImage from "/src/assets/mock.png"
+import axios from "axios";
 
 const GeographicalObjectPageForMarsStation = ({selectedGeographicalObject, setSelectedGeographicalObject}: { selectedGeographicalObject: GeographicalObject | undefined, setSelectedGeographicalObject: Dispatch<GeographicalObject | undefined> }) => {
 
-    const {id} = useParams<{ id: string }>();
+    const { id_geographical_object, id_mars_station } = useParams<{ id_geographical_object: string; id_mars_station: string }>();
     const [isMock, setIsMock] = useState<boolean>(false);
 
     useEffect(() => {
         fetchData()
     }, [])
 
-    if (id == undefined) {
+    if (id_geographical_object == undefined && id_mars_station == undefined) {
         return;
     }
 
     const fetchData = async () => {
-
-        try {
-            const response = await fetch(`${DOMEN}api/geographical_object/${id}/`, {
-                method: "GET",
-                signal: AbortSignal.timeout(requestTime)
+        const url = `${DOMEN}api/geographical_object/${id_geographical_object}/`;
+        await axios.get(url, {
+            timeout: requestTime,
+        })
+            .then(response => {
+                const geographical_object: GeographicalObject = response.data;
+                setSelectedGeographicalObject(geographical_object);
+                setIsMock(false);
+            })
+            .catch(error => {
+                console.error(error);
+                CreateMock();
             });
-
-            if (!response.ok) {
-                CreateMock()
-                return;
-            }
-
-            const geographical_object: GeographicalObject = await response.json()
-
-            setSelectedGeographicalObject(geographical_object)
-
-            setIsMock(false)
-        } catch {
-            CreateMock()
-        }
-
     };
 
     const CreateMock = () => {
-        setSelectedGeographicalObject(GeographicalObjectsMock.find((service: GeographicalObject) => service?.id == parseInt(id)))
+        // @ts-ignore
+        setSelectedGeographicalObject(GeographicalObjectsMock.find((service: GeographicalObject) => service?.id == parseInt(id_geographical_object)))
         setIsMock(true)
     }
 
@@ -51,7 +45,7 @@ const GeographicalObjectPageForMarsStation = ({selectedGeographicalObject, setSe
 
     return (
         <div className="page-details-wrapper">
-            <Link className="return-link" to={`/mars_station/${id}`}>
+            <Link className="return-link" to={`/mars_station/${id_mars_station}`}>
                 Назад
             </Link>
             <div className="left">
@@ -63,9 +57,9 @@ const GeographicalObjectPageForMarsStation = ({selectedGeographicalObject, setSe
                     <br/>
                     <span className="type">Тип местности: {selectedGeographicalObject?.type}г</span>
                     <br/>
-                    <span className="size">Площадь: {selectedGeographicalObject?.size} млн</span>
+                    <span className="size">Площадь: {selectedGeographicalObject?.size}</span>
                     <br/>
-                    <span className="describe"> {selectedGeographicalObject?.describe} км^2</span>
+                    <span className="describe"> {selectedGeographicalObject?.describe}</span>
                 </div>
             </div>
         </div>

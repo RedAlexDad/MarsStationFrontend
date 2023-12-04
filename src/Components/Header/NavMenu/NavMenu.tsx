@@ -5,7 +5,7 @@ const NavMenu = () => {
     return (
         <div className="menu-wrapper">
 
-            <Link to="/geographical_object" className="menu-item">
+            <Link to="/geographicalObject" className="menu-item">
                 <span>Географические объекты</span>
             </Link>
 

@@ -57,21 +57,21 @@ function App() {
                                     {/*Список географических объектов*/}
                                     <Route path="/geographical_object/" element={<GeographicalObjectListPage/>}/>
                                     {/*Информация о географическом объекте*/}
-                                    <Route path="/geographical_object/:id"
+                                    <Route path="/geographical_object/:id_geographical_object"
                                            element={<GeographicalObjectPage
                                                selectedGeographicalObject={selectedGeographicalObject}
                                                setSelectedGeographicalObject={setSelectedGeographicalObject}/>}/>
 
                                     {/*Заявки*/}
                                     <Route path="/mars_station/" element={<MarsStationList/>}/>
-                                    <Route path="/mars_station/:id/"
+                                    <Route path="/mars_station/:id_mars_station/"
                                            element={<MarsStationPage
                                                // @ts-ignore
                                                selectedMarsStation={selectedMarsStation}
                                                // @ts-ignore
                                                setSelectedMarsStation={setSelectedMarsStation}/>}/>
 
-                                    <Route path="/mars_station/:id/geographical_object/:id"
+                                    <Route path="/mars_station/:id_mars_station/geographical_object/:id_geographical_object"
                                            element={<GeographicalObjectPageForMarsStation
                                                selectedGeographicalObject={selectedGeographicalObject}
                                                setSelectedGeographicalObject={setSelectedGeographicalObject}/>}/>

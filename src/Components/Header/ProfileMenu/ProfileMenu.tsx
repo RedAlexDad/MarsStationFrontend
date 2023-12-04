@@ -7,57 +7,86 @@ import UserInfo from "./UserInfo/UserInfo";
 import {useAuth} from "../../../hooks/useAuth";
 import {useToken} from "../../../hooks/useToken";
 import {useDesktop} from "../../../hooks/useDesktop";
-import {Response} from "../../../Types";
 import {DOMEN} from "../../../Consts.ts";
+import {useDispatch, useSelector} from "react-redux";
+import {updateID_draft} from "../../../store/IdDraftMarsMtation.ts";
 
 const ProfileMenu = () => {
+    const dispatch = useDispatch();
 
     const {access_token} = useToken()
-
-    const {is_authenticated, username, setUser} = useAuth()
-
+    const {is_authenticated, username, setUser, setEmployee} = useAuth()
     const {isDesktopMedium} = useDesktop();
 
-    const fetchLesson = async () => {
-        try {
-            // console.log(access_token)
-            const response: Response = await axios(`${DOMEN}api/mars_station/`, {
-                method: "GET",
-                headers: {
-                    "Content-type": "application/json; charset=UTF-8",
-                    'authorization': access_token
-                },
+    const MarsStation = async () => {
+        const url = `${DOMEN}api/mars_station/`;
+        await axios.get(url, {
+            headers: {
+                "Content-type": "application/json; charset=UTF-8",
+                authorization: access_token,
+            },
+        })
+            // .then(response => {
+            //     console.log("Успешно!");
+            // })
+            .catch(error => {
+                console.error("Ошибка!\n", error);
+            });
+    };
+
+    const GetIDDraftMarsStation = async () => {
+        const url = `${DOMEN}api/geographical_object/`;
+        await axios.get(url, {
+            headers: {
+                "Content-type": "application/json; charset=UTF-8",
+                authorization: access_token,
+            },
+        })
+            .then(response => {
+                // console.log("Успешно!", response.data);
+                console.log("ID черновика: ", response.data.id_draft_service);
+                dispatch(updateID_draft(response.data.id_draft_service));
             })
-            console.log(response.data)
-        } catch (error) {
-            console.error(error);
-        }
-    }
+            .catch(error => {
+                console.error("Ошибка!\n", error);
+            });
+    };
 
     const auth = async () => {
-        try {
-            const response: Response = await axios(`${DOMEN}api/get_token/`, {
-                method: "POST",
-                headers: {
-                    "Content-type": "application/json; charset=UTF-8",
-                    'authorization': access_token
-                },
-            })
-            // console.log(response.data)
-            if (response.status == 200) {
-                const permissions = {
+        const url = `${DOMEN}api/get_token/`;
+        await axios.post(url, {}, {
+            headers: {
+                "Content-type": "application/json; charset=UTF-8",
+                authorization: access_token,
+            },
+        })
+            .then(response => {
+                const user = {
+                    id_user: response.data.user_data["id"],
                     is_authenticated: true,
-                    id: response.data.user_data["id"],
                     username: response.data.user_data["username"],
                     is_moderator: response.data.user_data["is_moderator"],
+                };
+                const employee = {
+                    id_employee: response.data.employee["id"],
+                    full_name: response.data.employee["name"],
+                    post: response.data.employee["post"],
+                    name_organization: response.data.employee["name_organization"],
+                    address: response.data.employee["address"],
                 }
-                setUser(permissions)
-                await fetchLesson()
-            }
-        } catch (error) {
-            console.log(error)
-        }
-    }
+                setUser(user);
+                setEmployee(employee)
+                GetIDDraftMarsStation();
+                MarsStation();
+            })
+            .catch(error => {
+                if (error.response.status == 401) {
+                    console.error("Не авторизирован");
+                } else {
+                    console.error("Ошибка!\n", error);
+                }
+            });
+    };
 
     useEffect(() => {
         if (!is_authenticated) {
@@ -72,24 +101,20 @@ const ProfileMenu = () => {
             <div className={"profile-menu-wrapper"}>
                 <div className={"menu-wrapper " + (isOpen ? "open" : "")}>
                     <Link to="/home" className="menu-item" style={{textDecoration: 'none'}}
-                        // @ts-ignore
-                          onClick={(e) => setIsOpen(false)}>
+                          onClick={() => setIsOpen(false)}>
                         <span className="item">Главная</span>
                     </Link>
                     <Link to="/geographical_object" className="menu-item" style={{textDecoration: 'none'}}
-                        // @ts-ignore
-                          onClick={(e) => setIsOpen(false)}>
+                          onClick={() => setIsOpen(false)}>
                         <span className="item">Географические объекты</span>
                     </Link>
                     <Link to="/mars_station" className="menu-item" style={{textDecoration: 'none'}}
-                        // @ts-ignore
-                          onClick={(e) => setIsOpen(false)}>
+                          onClick={() => setIsOpen(false)}>
                         <span className="item">Марсианские станции</span>
                     </Link>
                     {!isDesktopMedium &&
                         <Link to="/profile" className="menu-item" style={{textDecoration: 'none'}}
-                            // @ts-ignore
-                              onClick={(e) => setIsOpen(false)}>
+                              onClick={() => setIsOpen(false)}>
                             <span className="item">{username}</span>
                         </Link>
                     }
@@ -104,18 +129,15 @@ const ProfileMenu = () => {
         <div className={"profile-menu-wrapper"}>
             <div className={"menu-wrapper " + (isOpen ? "open" : "")}>
                 <Link to="/home" className="menu-item" style={{textDecoration: 'none'}}
-                    // @ts-ignore
-                      onClick={(e) => setIsOpen(false)}>
+                      onClick={() => setIsOpen(false)}>
                     <span className="item">Главная</span>
                 </Link>
                 <Link to="/geographical_object" className="menu-item" style={{textDecoration: 'none'}}
-                    // @ts-ignore
-                      onClick={(e) => setIsOpen(false)}>
+                      onClick={() => setIsOpen(false)}>
                     <span className="item">Географические объекты</span>
                 </Link>
                 <Link to="/auth" className="menu-item" style={{textDecoration: 'none'}}
-                    // @ts-ignore
-                      onClick={(e) => setIsOpen(false)}>
+                      onClick={() => setIsOpen(false)}>
                     <span className="item">Вход</span>
                 </Link>
             </div>

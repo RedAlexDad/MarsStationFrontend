@@ -1,7 +1,6 @@
 import "../Login.sass"
 import {FaLock} from "react-icons/fa6";
 import {GrLogin} from "react-icons/gr";
-import {Response} from "../../../Types";
 import {Link, useNavigate} from "react-router-dom";
 import axios from "axios";
 import {errorMessage, successMessage} from "../../../Toasts/Toasts";
@@ -14,35 +13,42 @@ import {DOMEN} from "../../../Consts.ts";
 const SignIn = () => {
 
     const navigate = useNavigate()
-
     const {setAccessToken} = useToken()
-    const {setUser} = useAuth()
+    const {setUser, setEmployee} = useAuth()
 
     // @ts-ignore
     const login = async (formData) => {
-        try {
-            const response: Response = await axios(`${DOMEN}api/authentication/`, {
-                method: "POST",
-                headers: {
-                    "Content-type": "application/json; charset=UTF-8"
-                },
-                data: formData as FormData
+        await axios(`${DOMEN}api/authentication/`, {
+            method: "POST",
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            },
+            data: formData as FormData
+        })
+            .then(response => {
+                setAccessToken(response.data['access_token'])
+                const user = {
+                    id_user: response.data.user["id"],
+                    is_authenticated: true,
+                    username: response.data.user["username"],
+                    is_moderator: response.data.user["is_moderator"],
+                }
+                const employee = {
+                    id_employee: response.data.employee["id"],
+                    full_name: response.data.employee["name"],
+                    post: response.data.employee["post"],
+                    name_organization: response.data.employee["name_organization"],
+                    address: response.data.employee["address"],
+                }
+                setUser(user)
+                setEmployee(employee)
+                navigate("/home");
+                successMessage(response.data.user["username"])
             })
-            setAccessToken(response.data['access_token'])
-            const permissions = {
-                is_authenticated: true,
-                id: response.data.user["id"],
-                username: response.data.user["username"],
-                is_moderator: response.data.user["is_moderator"],
-            }
-            setUser(permissions)
-            navigate("/home");
-            successMessage(response.data.user["username"])
-
-        } catch (error) {
-            console.log(error)
-            errorMessage()
-        }
+            .catch(error => {
+                console.error("Ошибка!\n", error);
+                errorMessage()
+            });
     }
 
     // @ts-ignore
@@ -51,7 +57,6 @@ const SignIn = () => {
         const formData = new FormData(e.target as HTMLFormElement)
         await login(formData)
     }
-
 
     return (
         <div className="auth-container">

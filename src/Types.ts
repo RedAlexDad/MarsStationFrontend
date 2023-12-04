@@ -1,5 +1,3 @@
-import {AxiosResponse} from "axios";
-
 // Услуга - географический объект
 export interface GeographicalObject {
     id: number;
@@ -42,17 +40,15 @@ export interface Option {
 
 // Аккаунт
 export interface User {
-    id: number,
+    id_user: number,
     username: string
 }
 
 // Сотрудник
 export interface Employee {
-    id: number,
+    id_employee: number,
     full_name: string,
     post: string
     name_organization: string
     address: string
 }
-
-export type Response = Promise<AxiosResponse> | any

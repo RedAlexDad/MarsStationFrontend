@@ -3,12 +3,9 @@ import {useEffect, useRef, useState} from "react";
 export function useModal() {
 
 	const modalRef = useRef(null);
-
 	const buttonRef = useRef(null);
-
 	const [isOpen, setIsOpen] = useState(false);
 
-	// @ts-ignore
 	const handleClickOutside = (event) => {
 		// @ts-ignore
 		if (modalRef.current && !modalRef.current.contains(event.target) && !buttonRef.current.contains(event.target)) {

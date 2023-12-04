@@ -2,80 +2,78 @@ import "./GeographicalObjectList.sass"
 import SearchBar from "./SearchBar/SearchBar";
 import {useEffect, useState} from "react";
 import GeographicalObjectCard from "./GeographicalObjectCard/GeographicalObjectCard";
-import {GeographicalObjectsMock, requestTime} from "../../Consts";
+import {GeographicalObjectsMock, requestTime, DOMEN} from "../../Consts";
 import {GeographicalObject} from "../../Types";
+import axios from "axios";
+import {useDispatch, useSelector} from "react-redux";
+import {updateGeographicalObject} from "../../store/GeographicalObject.ts";
+import {useToken} from "../../hooks/useToken.ts";
+import {updateID_draft} from "../../store/IdDraftMarsMtation.ts";
 
 const GeographicalObjectListPage = () => {
-
-    const [geographical_objects, setGeographicalObject] = useState<GeographicalObject[]>([]);
-
-    const [feature, setFeature] = useState<string>("");
-
+    const {access_token} = useToken()
+    const [GeographicalObject, setGeographicalObject] = useState<GeographicalObject[]>([]);
     const [isMock, setIsMock] = useState<boolean>(false);
 
+    const dispatch = useDispatch()
+    // @ts-ignore
+    const feature = useSelector((state: string) => state.search_feature.feature);
+
     const searchGeographicalObject = async () => {
-
-        try {
-
-            // Определяем параметры запроса, включая номер страницы и количество объектов на странице
-            const params = new URLSearchParams({
-                page: '1',
-                status: 'True',
-                feature: feature
-            });
-
-            const response = await fetch(`http://127.0.0.1:8000/api/geographical_object/?${params}`, {
-                method: "GET",
-                signal: AbortSignal.timeout(requestTime)
+        // Определяем параметры запроса, включая номер страницы и количество объектов на странице
+        const params = new URLSearchParams({
+            page: '1',
+            status: 'True',
+            feature: feature,
+        });
+        const url = `${DOMEN}api/geographical_object/?${params}`
+        await axios.get(url, {
+            headers: {
+                "Content-type": "application/json; charset=UTF-8",
+                authorization: access_token,
+            },
+            signal: new AbortController().signal,
+            timeout: requestTime,
+        })
+            .then(response => {
+                setGeographicalObject(response.data.results);
+                setIsMock(false);
+                // console.log("Успешно!", response.data);
+                dispatch(updateGeographicalObject([...response.data.results]));
+                dispatch(updateID_draft(response.data.id_draft_service));
             })
-
-            if (!response.ok){
+            .catch(error => {
+                console.error("Ошибка!\n", error);
                 createMock();
                 return;
-            }
-
-            const geographical_objects: GeographicalObject[] = await response.json()
-            // @ts-ignore
-            setGeographicalObject(geographical_objects.results.service)
-            setIsMock(false)
-
-        } catch (e) {
-            createMock()
-        }
-    }
+            });
+    };
 
     const createMock = () => {
-
         setIsMock(true);
         setGeographicalObject(GeographicalObjectsMock)
-
     }
 
     useEffect(() => {
         searchGeographicalObject()
     }, [feature])
 
-    const cards = geographical_objects.map(geographical_object  => (
-        <GeographicalObjectCard geographical_object={geographical_object} key={geographical_object.id} isMock={isMock}/>
+    const cards = GeographicalObject.map(geographical_object => (
+        <GeographicalObjectCard
+            geographical_object={geographical_object}
+            key={geographical_object.id}
+            isMock={isMock}
+        />
     ))
 
     return (
         <div className="cards-list-wrapper">
-
             <div className="top">
-
-                {/*<h2>Географические объекты</h2>*/}
-
-                <SearchBar feature={feature} setQuery={setFeature} />
-
+                <SearchBar feature={feature}/>
             </div>
-
             <div className="bottom">
-
-                { cards }
-
+                {cards}
             </div>
-
         </div>
     )
 }

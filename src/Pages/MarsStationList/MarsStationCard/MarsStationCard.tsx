@@ -1,11 +1,11 @@
 import "./MarsStationCard.sass"
 import {MarsStation} from "../../../Types";
 import {Link} from "react-router-dom";
-import {STATUS_MISSIONS, STATUS_TASKS} from "../../../Consts.ts";
+// import {STATUS_MISSIONS, STATUS_TASKS} from "../../../Consts.ts";
 
 const MarsStationCard = ({mars_station}: { mars_station: MarsStation}) => {
-        const status_task = STATUS_TASKS.find(status => status.id === mars_station.status_task)?.name;
-        const status_mission = STATUS_MISSIONS.find(status => status.id === mars_station.status_mission)?.name;
+        // const status_task = STATUS_TASKS.find(status => status.id === mars_station.status_task)?.name;
+        // const status_mission = STATUS_MISSIONS.find(status => status.id === mars_station.status_mission)?.name;
 
         return (
         <div className="card-wrapper">
@@ -15,8 +15,8 @@ const MarsStationCard = ({mars_station}: { mars_station: MarsStation}) => {
                 </div>
                 <div className={"group-info-wrapper"}>
                     <div className="group-info-details">
-                        <p>Тип статуса заявки: {status_task}</p>
-                        <p>Статус состоянии: {status_mission}</p>
+                        <p>Тип статуса заявки: {mars_station.status_task}</p>
+                        <p>Статус состоянии: {mars_station.status_mission}</p>
                         <p>Дата создания: {mars_station.date_create}</p>
                         <p>Дата формирования: {mars_station.date_form}</p>
                         <p>Дата закрытия: {mars_station.date_close}</p>

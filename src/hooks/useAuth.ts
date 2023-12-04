@@ -1,56 +1,75 @@
 import {useDispatch, useSelector} from 'react-redux';
-import {updateUser, cleanUser} from "../store/authSlice";
-import {Response} from "../Types";
+import {updateUser, cleanUser} from "../store/User.ts";
+import {cleanEmployee, updateEmployee} from "../store/Employee.ts";
 import axios from "axios";
 import {useToken} from "./useToken";
 import {DOMEN} from "../Consts.ts";
 
 export function useAuth() {
-	// @ts-ignore
-	const {is_authenticated, is_moderator, id, username} = useSelector(state => state.user);
+    const selectedUserData = useSelector((state) => state.user);
+    const selectedEmployeeData = useSelector((state) => state.employee);
 
-	const dispatch = useDispatch()
+    const {
+        id_user,
+        is_authenticated,
+        is_moderator,
+        username,
+    } = selectedUserData;
 
-	// @ts-ignore
-	const setUser = (value) => {
-		dispatch(updateUser(value))
-	}
+    const {
+        id_employee,
+        full_name,
+        post,
+        name_organization,
+        address,
+    } = selectedEmployeeData;
 
-	const sendRequest = async() => {
-		// @ts-ignore
-		const { token } = useToken()
+    const dispatch = useDispatch()
 
-		try {
+    const setUser = (user_value) => {
+        dispatch(updateUser(user_value));
+    }
+    const setEmployee = (employee_value) => {
+        dispatch(updateEmployee(employee_value));
+    };
 
-			const response: Response = await axios(`${DOMEN}/api/logout/`, {
-				method: "POST",
-				headers: {
-					'authorization': `${token}`
-				}
-			})
+    const sendRequest = async () => {
+        const {access_token} = useToken()
+        await axios(`${DOMEN}/api/logout/`, {
+            method: "POST",
+            headers: {
+                'authorization': `${access_token}`
+            }
+        })
+            .then(response => {
+                console.log(response.data)
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
 
-			if (response.status == 200)
-			{
-				console.log(response.data)
-			}
-
-		} catch (error) {
-
-		}
-	}
-
-	const logOut = async () => {
-		sendRequest()
-		dispatch(cleanUser())
-	}
+    const logOut = async () => {
+        sendRequest();
+        dispatch(cleanUser());
+        dispatch(cleanEmployee());
+    }
 
 
-	return {
-		is_authenticated,
-		is_moderator,
-		id,
-		username,
-		setUser,
-		logOut
-	};
+    return {
+        id_user,
+        is_authenticated,
+        is_moderator,
+        username,
+        id_employee,
+        full_name,
+        post,
+        name_organization,
+        address,
+        // Redux
+        setUser,
+        setEmployee,
+        // Other
+        logOut,
+    };
 }

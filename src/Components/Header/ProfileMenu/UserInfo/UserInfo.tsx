@@ -10,11 +10,9 @@ import {useModal} from "../../../../hooks/useModal";
 const UserInfo = () => {
 
 	const navigate = useNavigate()
-
-	const {username, is_moderator, logOut} = useAuth()
-
+	// @ts-ignore
+	const {id_user, id_employee, full_name, post, name_organization, address, is_moderator, logOut} = useAuth()
 	const {resetTokens} = useToken()
-
 	const {modalRef, buttonRef, isOpen, setIsOpen} = useModal()
 
 	const doLogOut = () => {
@@ -32,7 +30,12 @@ const UserInfo = () => {
 			</div>
 
 			<div className={"user-info-wrapper " + (isOpen ? "open" : "")} ref={modalRef}>
-				<span>Имя: {username}</span>
+				{/*<span>ID USER: {id_user}</span>*/}
+				{/*<span>ID EMPLOYEE: {id_employee}</span>*/}
+				<span>Имя: {full_name}</span>
+				<span>Должность: {post}</span>
+				<span>Название организации: {name_organization}</span>
+				{address && <span>Адрес: {address}</span>}
 				<span>Статус: {is_moderator ? "Модератор" : "Пользователь"}</span>
 
 				<button onClick={doLogOut}>
