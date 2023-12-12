@@ -10,6 +10,7 @@ const MarsStationCard = ({mars_station}: { mars_station: MarsStation}) => {
         return (
         <div className="card-wrapper">
             <div className="card-content">
+                <h3 className="title"> {mars_station.id} </h3>
                 <div className="content-top">
                     <h3 className="title"> {mars_station.type_status} </h3>
                 </div>

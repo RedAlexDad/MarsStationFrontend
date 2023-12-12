@@ -24,7 +24,7 @@ export interface MarsStation {
     date_create: string,
     date_form: string,
     date_close: string,
-    status_task: number,
+    status_task: string,
     status_mission: number,
     geographical_object: GeographicalObject[],
     employee: string,
