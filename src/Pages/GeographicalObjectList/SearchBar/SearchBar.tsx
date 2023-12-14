@@ -1,6 +1,6 @@
 import "./SearchBar.sass"
 import { useDispatch } from "react-redux";
-import { updateFeatureGeographicalObject } from "../../../store/SearchFeature.ts";
+import { updateFeatureGeographicalObject } from "../../../store/Search.ts";
 
 const SearchBar = ({ feature }: {feature:string}) => {
     const dispatch = useDispatch();

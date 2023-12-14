@@ -6,13 +6,14 @@ import mockImage from "/src/assets/mock.png"
 import {DOMEN} from "../../../Consts.ts";
 import {useAuth} from "../../../hooks/useAuth.ts";
 import {useToken} from "../../../hooks/useToken.ts";
-import {useEffect, useState} from "react";
-import { useDispatch } from "react-redux";
-import {updateID_draft} from "../../../store/IdDraftMarsMtation.ts";
+import {useDispatch} from "react-redux";
+import {updateID_draft} from "../../../store/MarsStation.ts";
+import {Dispatch, SetStateAction} from "react";
 
-const GeographicalObjectCard = ({geographical_object, isMock}: {
+const GeographicalObjectCard = ({geographical_object, isMock, setUpdateTriggerParent}: {
     geographical_object: GeographicalObject,
-    isMock: boolean
+    isMock: boolean,
+    setUpdateTriggerParent: Dispatch<SetStateAction<boolean>>;
 }) => {
     const dispatch = useDispatch();
 
@@ -20,15 +21,6 @@ const GeographicalObjectCard = ({geographical_object, isMock}: {
 
     const {is_moderator, is_authenticated} = useAuth()
     const {access_token} = useToken()
-    const [updateTrigger, setUpdateTrigger] = useState(false);
-
-    useEffect(() => {
-        if (updateTrigger) {
-            // Вызываем код или обновление, которое должно произойти после успешного удаления
-            // Например, здесь можно обновить список географических объектов или выполнить другие действия
-            setUpdateTrigger(false);
-        }
-    }, [updateTrigger]);
 
     const add_geographical_object_in_mars_station = () => {
         const url = `${DOMEN}api/geographical_object/${geographical_object.id}/create_service_in_task/`;
@@ -40,7 +32,7 @@ const GeographicalObjectCard = ({geographical_object, isMock}: {
             .then(response => {
                 console.log("Успешно! Отправлена услуга на заявку!", response.data);
                 dispatch(updateID_draft(response.data.id_draft));
-                setUpdateTrigger(true);
+                setUpdateTriggerParent(true);
             })
             .catch(error => {
                 console.error("Ошибка отправления!\n", error);
@@ -48,16 +40,15 @@ const GeographicalObjectCard = ({geographical_object, isMock}: {
     };
 
     const delete_geographical_object = () => {
-        const url = `${DOMEN}api/geographical_object/${geographical_object.id}/update/`;
+        const url = `${DOMEN}api/geographical_object/${geographical_object.id}/delete/`;
         const headers = {
             "Content-type": "application/json; charset=UTF-8",
             'authorization': access_token
         };
-        const data = {...geographical_object, status: false}
-        axios.put(url, data, {headers})
+        axios.delete(url, {headers})
             .then(response => {
                 console.log("Успешно! Услуга удалена!", response.data);
-                setUpdateTrigger(true);
+                setUpdateTriggerParent(true);
             })
             .catch(error => {
                 console.error("Ошибка удаления!\n", error);

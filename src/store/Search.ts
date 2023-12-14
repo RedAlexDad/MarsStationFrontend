@@ -2,11 +2,12 @@
 import {createSlice} from "@reduxjs/toolkit";
 
 const initialState = {
-    feature: ""
+    feature: "",
+    status_task: [] as string[],
 };
 
 const feature_geographical_object = createSlice({
-    name: "search_feature",
+    name: "search",
     initialState: initialState,
     reducers: {
         updateFeatureGeographicalObject: (state, action) => {
@@ -15,9 +16,20 @@ const feature_geographical_object = createSlice({
         cleanFeatureGeographicalObject: (state) => {
             state.feature = initialState.feature;
         },
+        updateStatusTask: (state, action) => {
+            state.status_task = action.payload;
+        },
+        cleanStatusTask: (state) => {
+            state.status_task = initialState.status_task;
+        },
     },
 });
 
-export const {updateFeatureGeographicalObject, cleanFeatureGeographicalObject} = feature_geographical_object.actions;
+export const {
+    updateFeatureGeographicalObject,
+    cleanFeatureGeographicalObject,
+    updateStatusTask,
+    cleanStatusTask
+} = feature_geographical_object.actions;
 
 export default feature_geographical_object.reducer;

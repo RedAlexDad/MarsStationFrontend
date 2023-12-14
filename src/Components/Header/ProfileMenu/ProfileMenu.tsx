@@ -8,8 +8,8 @@ import {useAuth} from "../../../hooks/useAuth";
 import {useToken} from "../../../hooks/useToken";
 import {useDesktop} from "../../../hooks/useDesktop";
 import {DOMEN} from "../../../Consts.ts";
-import {useDispatch, useSelector} from "react-redux";
-import {updateID_draft} from "../../../store/IdDraftMarsMtation.ts";
+import {useDispatch} from "react-redux";
+import {updateID_draft} from "../../../store/MarsStation.ts";
 
 const ProfileMenu = () => {
     const dispatch = useDispatch();

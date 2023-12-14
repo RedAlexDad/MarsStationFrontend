@@ -7,7 +7,8 @@ import {useToken} from "../../hooks/useToken.ts";
 import axios from "axios";
 import {useAuth} from "../../hooks/useAuth.ts";
 import {useDispatch} from "react-redux";
-import {clearID_draft} from "../../store/IdDraftMarsMtation.ts";
+import {clearID_draft} from "../../store/MarsStation.ts";
+import mockImage from "../../assets/mock.png";
 
 const MarsStationPage = ({selectedMarsStation, setSelectedMarsStation}: {
     selectedMarsStation: MarsStation | undefined,
@@ -22,6 +23,7 @@ const MarsStationPage = ({selectedMarsStation, setSelectedMarsStation}: {
     const {is_moderator} = useAuth()
     const {access_token} = useToken()
     const [updateTrigger, setUpdateTrigger] = useState(false);
+    const [isMock, setIsMock] = useState<boolean>(false);
 
     useEffect(() => {
         getMarsStation()
@@ -48,6 +50,8 @@ const MarsStationPage = ({selectedMarsStation, setSelectedMarsStation}: {
             .then(response => {
                 const mars_station: MarsStation = response.data;
                 setSelectedMarsStation(mars_station);
+                // TODO: Исправить MOCK объект каждой карточки
+                setIsMock(false);
                 console.log(mars_station)
             })
             .catch(error => {
@@ -55,16 +59,32 @@ const MarsStationPage = ({selectedMarsStation, setSelectedMarsStation}: {
             });
     };
 
-    const push_mars_station = (value: number) => {
+    const push_mars_station = () => {
         const url = `${DOMEN}api/mars_station/${id_mars_station}/update_by_user/`;
         const headers = {
             "Content-type": "application/json; charset=UTF-8",
             'authorization': access_token
         };
-        const data = {status_task: value}
-        axios.put(url, data, {headers})
+        axios.put(url, {},{headers})
             .then(response => {
                 console.log("Успешно! Заявка отправлена!", response.data);
+                setUpdateTrigger(true);
+                dispatch(clearID_draft());
+            })
+            .catch(error => {
+                console.error("Ошибка отправки!\n", error);
+            });
+    };
+
+    const delete_mars_station = () => {
+        const url = `${DOMEN}api/mars_station/${id_mars_station}/delete/`;
+        const headers = {
+            "Content-type": "application/json; charset=UTF-8",
+            'authorization': access_token
+        };
+        axios.delete(url, {headers})
+            .then(response => {
+                console.log("Успешно! Заявка удалена!", response.data);
                 setUpdateTrigger(true);
                 dispatch(clearID_draft());
             })
@@ -79,7 +99,7 @@ const MarsStationPage = ({selectedMarsStation, setSelectedMarsStation}: {
             "Content-type": "application/json; charset=UTF-8",
             'authorization': access_token
         };
-        const data = {status_task: value, status_mission: 2}
+        const data = {status_task: value}
         axios.put(url, data, {headers})
             .then(response => {
                 console.log("Успешно! Заявка отправлена!", response.data);
@@ -102,13 +122,13 @@ const MarsStationPage = ({selectedMarsStation, setSelectedMarsStation}: {
             {/*@ts-ignore*/}
             {!is_moderator && selectedMarsStation?.status_task === "Черновик" && (
                 <div className="button-agree">
-                    <button onClick={() => push_mars_station(2)}>Отправить</button>
+                    <button onClick={() => push_mars_station()}>Отправить</button>
                 </div>
             )}
             {/*@ts-ignore*/}
             {!is_moderator && selectedMarsStation?.status_task === "Черновик" && (
                 <div className="button-reject">
-                    <button onClick={() => push_mars_station(5)}>Удалить</button>
+                    <button onClick={() => delete_mars_station()}>Удалить</button>
                 </div>
             )}
             {/*@ts-ignore*/}
@@ -159,6 +179,9 @@ const MarsStationPage = ({selectedMarsStation, setSelectedMarsStation}: {
                             {/*@ts-ignore*/}
                             {selectedMarsStation?.geographical_object.map((geoObject, index) => (
                                 <div className="card-wrapper">
+                                    <div className="preview">
+                                        <img src={isMock ? mockImage : geoObject.photo} alt=""/>
+                                    </div>
                                     <div className="card-content">
                                         <div className="content-top">
                                             <h3 className="title"> {geoObject.feature} </h3>

@@ -17,7 +17,7 @@ const MarsStationCard = ({mars_station}: { mars_station: MarsStation}) => {
                 <div className={"group-info-wrapper"}>
                     <div className="group-info-details">
                         <p>Тип статуса заявки: {mars_station.status_task}</p>
-                        <p>Статус состоянии: {mars_station.status_mission}</p>
+                        <p>Статус миссии: {mars_station.status_mission}</p>
                         <p>Дата создания: {mars_station.date_create}</p>
                         <p>Дата формирования: {mars_station.date_form}</p>
                         <p>Дата закрытия: {mars_station.date_close}</p>

@@ -1,7 +1,7 @@
 import {GeographicalObject, Option, Transport} from "./Types";
 import defaultImage from "./assets/mock.png";
 
-export const requestTime = 5000
+export const requestTime = 1000
 export const DOMEN = "http://127.0.0.1:8000/"
 
 export const GeographicalObjectsMock: GeographicalObject[] = [
@@ -75,21 +75,6 @@ export const TransportMock: Transport[] = [
         photo: ""
     }
 ]
-
-export const MarsStationDraft = {
-    id: -1,
-    type_status: "",
-    date_create: "",
-    date_form: "",
-    date_close: "",
-    status_task: 1,
-    status_mission: NaN,
-    geographical_object: [],
-    employee: "",
-    moderator: "",
-    transport: []
-}
-
 export const STATUS_TASKS: Option[] = [
     {
         id: 1,
@@ -115,12 +100,16 @@ export const STATUS_TASKS: Option[] = [
 
 export const STATUS_MISSIONS: Option[] = [
     {
+        id: 0,
+        name: "Ошибка!"
+    },
+    {
         id: 1,
-        name: "Успех"
+        name: "В работе"
     },
     {
         id: 2,
-        name: "В работе"
+        name: "Успех"
     },
     {
         id: 3,

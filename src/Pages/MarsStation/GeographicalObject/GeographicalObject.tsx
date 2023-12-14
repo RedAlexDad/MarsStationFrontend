@@ -6,9 +6,15 @@ import {GeographicalObject} from "../../../Types";
 import mockImage from "/src/assets/mock.png"
 import axios from "axios";
 
-const GeographicalObjectPageForMarsStation = ({selectedGeographicalObject, setSelectedGeographicalObject}: { selectedGeographicalObject: GeographicalObject | undefined, setSelectedGeographicalObject: Dispatch<GeographicalObject | undefined> }) => {
+const GeographicalObjectPageForMarsStation = ({selectedGeographicalObject, setSelectedGeographicalObject}: {
+    selectedGeographicalObject: GeographicalObject | undefined,
+    setSelectedGeographicalObject: Dispatch<GeographicalObject | undefined>
+}) => {
 
-    const { id_geographical_object, id_mars_station } = useParams<{ id_geographical_object: string; id_mars_station: string }>();
+    const {id_geographical_object, id_mars_station} = useParams<{
+        id_geographical_object: string;
+        id_mars_station: string
+    }>();
     const [isMock, setIsMock] = useState<boolean>(false);
 
     useEffect(() => {
