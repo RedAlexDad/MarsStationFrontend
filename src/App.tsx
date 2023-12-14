@@ -57,7 +57,7 @@ function App() {
                                     {/*Список географических объектов*/}
                                     <Route path="/geographical_object/" element={<GeographicalObjectListPage/>}/>
                                     {/*Информация о географическом объекте*/}
-                                    <Route path="/geographical_object/:id_geographical_object"
+                                    <Route path="/geographical_object/:id_geographical_object/"
                                            element={<GeographicalObjectPage
                                                selectedGeographicalObject={selectedGeographicalObject}
                                                setSelectedGeographicalObject={setSelectedGeographicalObject}/>}/>
@@ -71,7 +71,7 @@ function App() {
                                                // @ts-ignore
                                                setSelectedMarsStation={setSelectedMarsStation}/>}/>
 
-                                    <Route path="/mars_station/:id_mars_station/geographical_object/:id_geographical_object"
+                                    <Route path="/mars_station/:id_mars_station/geographical_object/:id_geographical_object/"
                                            element={<GeographicalObjectPageForMarsStation
                                                selectedGeographicalObject={selectedGeographicalObject}
                                                setSelectedGeographicalObject={setSelectedGeographicalObject}/>}/>
