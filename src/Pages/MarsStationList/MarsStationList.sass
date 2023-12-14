@@ -1,64 +1,63 @@
 @import "src/Styles/Variables.sass"
 
 .cards-list-wrapper
-	width: 100%
-	//background: #fff
-	//box-shadow: 0 4px 30px -10px rgba(0, 0, 0, 0.2)
-	//border-radius: 15px
+  width: 100%
+  //background: #fff
+  //box-shadow: 0 4px 30px -10px rgba(0, 0, 0, 0.2)
+  //border-radius: 15px
 
-	.top
-		width: 100%
-		//border-bottom: 2px solid $primary
-		padding: 20px
-		display: flex
-		justify-content: space-between
-		align-items: center
-		justify-content: center
+  .top
+    width: 100%
+    //border-bottom: 2px solid $primary
+    padding: 20px
+    display: flex
+    justify-content: space-between
+    align-items: center
+    justify-content: center
 
-	.bottom
-		width: 100%
-		padding: 20px
-		display: grid
-		grid-template-columns: repeat(auto-fit, minmax(250px, 0.15fr))
-		grid-column-gap: 25px
-		grid-row-gap: 25px
-		justify-content: center
+  .bottom
+    width: 100%
+    padding: 20px
+    display: grid
+    grid-template-columns: repeat(auto-fit, minmax(250px, 0.15fr))
+    grid-column-gap: 25px
+    grid-row-gap: 25px
+    justify-content: center
 
-	.mars-station-table
-		position: relative
-		color: white
-		justify-content: center
+  .mars-station-table
+    position: relative
+    color: white
+    justify-content: center
 
+  .tables-container
+    display: flex
 
+    .table
+      margin-right: 5px /* Для отступа между таблицами */
+      background-color: transparent !important
+      border: none !important
+      //overflow: hidden /* Убрать бордер вокруг таблицы */
 
-	.pagination-container
-		display: flex
-		justify-content: center
-		align-items: center
-		margin-top: 10px
+      .ant-table
+        background-color: transparent !important /* Прозрачный фон таблицы */
+        border: none !important
+        overflow: hidden !important /* Убрать бордер вокруг таблицы */
 
-	.pagination-button
-		background-color: white
-		color: black
-		border: none
-		border-radius: 5px
-		padding: 10px
-		margin: 0 5px
-		cursor: pointer
-		outline: none
+    .ant-spin-container
+      background-color: transparent !important /* Прозрачный фон таблицы */
+      .ant-table-container
+        background-color: transparent !important
+        .ant-table-content
+          background-color: transparent !important
+          .ant-table-tbody
+            background-color: transparent !important
+            .ant-table-cell
+              background-color: transparent !important
+              border: none !important
+              overflow: hidden !important /* Убрать бордер вокруг таблицы */
 
-		&:hover
-			background-color: $primary
+    .ant-table-thead
+      th
+        background-color: $secondary !important /* Полупрозрачный фон заголовка */
+        color: white /* Белый цвет текста в заголовке */
 
-
-		&:disabled
-			background-color: white
-			color: black
-			cursor: not-allowed
-
-
-
-	.pagination-current-page
-		color: $primary
-		font-weight: bold
-		margin: 0 5px

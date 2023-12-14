@@ -1,5 +1,5 @@
 import "./MarsStationList.sass"
-import {useEffect, useMemo, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import MarsStationCard from "./MarsStationCard/MarsStationCard.tsx";
 import {DOMEN} from "../../Consts";
 import {MarsStation} from "../../Types";
@@ -13,6 +13,8 @@ import {FaAnglesLeft, FaAnglesRight} from "react-icons/fa6";
 import {FaAngleLeft, FaAngleRight} from "react-icons/fa";
 import SearchBar from "./SearchBar/SearchBar.tsx";
 import {RootState} from "@reduxjs/toolkit/query";
+import {Table, Space, Tag} from 'antd';
+import {Link} from 'react-router-dom';
 
 const MarsStationListPage = () => {
     const {access_token} = useToken()
@@ -63,7 +65,7 @@ const MarsStationListPage = () => {
                     })
                 );
                 setLoading(false);
-                // console.log(response.data)
+                // console.log(response.data.results)
             })
             .catch(error => {
                 console.error("Ошибка!\n", error);
@@ -114,38 +116,69 @@ const MarsStationListPage = () => {
         setParentUpdateTrigger(true);
     };
 
-    // @ts-ignore
-    const columns: Column<MarsStation>[] = useMemo(() => {
-        let statusColumns;
-        if (is_moderator) {
-            statusColumns = ['В работе', 'Отменена', 'Завершена'];
-        } else {
-            statusColumns = ['Черновик', 'В работе', 'Отменена', 'Завершена'];
+    // Объект для хранения данных по типам статусов
+    const transformedData = {
+        draft: [],       // Данные для статуса "Черновик"
+        inProgress: [],  // Данные для статуса "В работе"
+        completed: [],   // Данные для статуса "Завершена"
+        canceled: [],    // Данные для статуса "Отменена"
+    };
+
+    // Обработка и отбор данных по типам статусов
+    MarsStation.forEach((station: MarsStation) => {
+        console.log(`Processing MarsStation with status: ${station.status_task}`);
+        switch (station.status_task) {
+            case 'Черновик':
+                transformedData.draft.push(station);
+                break;
+            case 'В работе':
+                transformedData.inProgress.push(station);
+                break;
+            case 'Завершена':
+                transformedData.completed.push(station);
+                break;
+            case 'Отменена':
+                transformedData.canceled.push(station);
+                break;
         }
-        const result = statusColumns.map((status) => ({
-            Header: status,
-            accessor: status,
-            Cell: ({row}: { row: any }) => {
-                const cardsForStatus = MarsStation
-                    .filter((station: MarsStation) => station.status_task === status)
-                    .map((station: MarsStation) => <MarsStationCard mars_station={station} key={station.id}/>);
+    });
 
-                return cardsForStatus[row.index] || null;
-            },
-        }));
+    const draft = [
+        {
+            title: 'Черновик',
+            dataIndex: 'id',
+            key: 'draft',
+            render: (text, record) => <MarsStationCard mars_station={record} />,
+        },
+    ];
 
-        return result;
-    }, [MarsStation]);
+    const inProgress = [
+        {
+            title: 'В работе',
+            dataIndex: 'id',
+            key: 'inProgress',
+            render: (text, record) => <MarsStationCard mars_station={record} />,
+        },
+    ];
 
-    const tableInstance = useTable({columns, data: MarsStation});
+    const completed = [
+        {
+            title: 'Завершена',
+            dataIndex: 'id',
+            key: 'completed',
+            render: (text, record) => <MarsStationCard mars_station={record} />,
+        },
+    ];
 
-    const {
-        getTableProps,
-        getTableBodyProps,
-        headerGroups,
-        prepareRow,
-        rows,
-    } = tableInstance;
+    const canceled = [
+        {
+            title: 'Отменена',
+            dataIndex: 'id',
+            key: 'canceled',
+            render: (text, record) => <MarsStationCard mars_station={record} />,
+        },
+    ];
+
 
     return (
         <div className="cards-list-wrapper">
@@ -155,28 +188,38 @@ const MarsStationListPage = () => {
                     setUpdateTriggerParent={handleUpdateTrigger}
                 />
             </div>
-            <table {...getTableProps()} className="mars-station-table">
-                <thead>
-                <tr>
-                    {headerGroups.map((headerGroup) =>
-                        headerGroup.headers.map((column) =>
-                            <th {...column.getHeaderProps()}>{column.render("Header")}</th>)
-                    )}
-                </tr>
-                </thead>
-                <tbody {...getTableBodyProps()}>
-                {rows.map((row) => {
-                    prepareRow(row);
-                    return (
-                        <tr {...row.getRowProps()}>
-                            {row.cells.map((cell) => (
-                                <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
-                            ))}
-                        </tr>
-                    );
-                })}
-                </tbody>
-            </table>
+
+            <div className="tables-container">
+                <div className="table">
+                    <Table
+                        columns={draft}
+                        dataSource={[...transformedData.draft]}
+                        pagination={false}
+                    />
+                </div>
+                <div className="table">
+                    <Table
+                        columns={inProgress}
+                        dataSource={[...transformedData.inProgress]}
+                        pagination={false}
+                    />
+                </div>
+                <div className="table">
+                    <Table
+                        columns={completed}
+                        dataSource={[...transformedData.completed]}
+                        pagination={false}
+                    />
+                </div>
+                <div className="table">
+                    <Table
+                        columns={canceled}
+                        dataSource={[...transformedData.canceled]}
+                        pagination={false}
+                    />
+                </div>
+            </div>
+
             {count > 0 && totalPages > 1 && (
                 <div className="pagination-container">
                     <button className="pagination-button" onClick={() => initalPage()}

@@ -1,13 +1,9 @@
 import "./MarsStationCard.sass"
 import {MarsStation} from "../../../Types";
 import {Link} from "react-router-dom";
-// import {STATUS_MISSIONS, STATUS_TASKS} from "../../../Consts.ts";
 
-const MarsStationCard = ({mars_station}: { mars_station: MarsStation}) => {
-        // const status_task = STATUS_TASKS.find(status => status.id === mars_station.status_task)?.name;
-        // const status_mission = STATUS_MISSIONS.find(status => status.id === mars_station.status_mission)?.name;
-
-        return (
+const MarsStationCard = ({mars_station}: { mars_station: MarsStation }) => {
+    return (
         <div className="card-wrapper">
             <div className="card-content">
                 <h3 className="title"> {mars_station.id} </h3>
