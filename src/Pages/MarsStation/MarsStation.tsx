@@ -50,9 +50,8 @@ const MarsStationPage = ({selectedMarsStation, setSelectedMarsStation}: {
             .then(response => {
                 const mars_station: MarsStation = response.data;
                 setSelectedMarsStation(mars_station);
-                // TODO: Исправить MOCK объект каждой карточки
                 setIsMock(false);
-                console.log(mars_station)
+                // console.log(mars_station)
             })
             .catch(error => {
                 console.error("Ошибка!\n", error);
@@ -112,7 +111,7 @@ const MarsStationPage = ({selectedMarsStation, setSelectedMarsStation}: {
     };
 
     // Абсолютный путь для ссылки
-    const marsStationPath = `/mars_station/${id_mars_station}`;
+    const marsStationPath = `/mars_station/${id_mars_station}/`;
 
     return (
         <div className="page-details-wrapper">

@@ -1,15 +1,17 @@
-import "./SearchBar.sass"
+import "./SearchBarStatusTask.sass"
 import {useDispatch} from "react-redux";
-import {updateStatusTask} from "../../../store/Search.ts";
+import {updateStatusTask} from "../../../store/Search";
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Dispatch, SetStateAction} from "react";
+import { useAuth } from "../../../hooks/useAuth";
 
-const SearchBar = ({status_task, setUpdateTriggerParent}: {
+const SearchBarStatusTask = ({status_task, setUpdateTriggerParent}: {
     status_task: string[];
     setUpdateTriggerParent: Dispatch<SetStateAction<boolean>>;
 }) => {
+    const {is_moderator} = useAuth()
     const dispatch = useDispatch();
 
     const handleStatusSelect = (status: string) => {
@@ -30,10 +32,12 @@ const SearchBar = ({status_task, setUpdateTriggerParent}: {
         <div className="dropdown-wrapper">
             <DropdownButton id="dropdown-item-button" title="Статус задачи" className="dropdown-button">
                 <Dropdown.ItemText className="dropdown-item-text">Выберите статус(ы)</Dropdown.ItemText>
-                <Dropdown.Item as="button" active={status_task.includes('1')}
-                               onClick={() => handleStatusSelect('1')} className={`dropdown-item action`}>
-                    Черновик
-                </Dropdown.Item>
+                {!is_moderator &&
+                    <Dropdown.Item as="button" active={status_task.includes('1')}
+                                onClick={() => handleStatusSelect('1')} className={`dropdown-item action`}>
+                        Черновик
+                    </Dropdown.Item>
+                }
                 <Dropdown.Item as="button" active={status_task.includes('2')}
                                onClick={() => handleStatusSelect('2')}
                                className={`dropdown-item another-action`}>
@@ -54,4 +58,4 @@ const SearchBar = ({status_task, setUpdateTriggerParent}: {
     );
 };
 
-export default SearchBar;
+export default SearchBarStatusTask;

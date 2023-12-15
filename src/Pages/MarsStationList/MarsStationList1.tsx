@@ -11,7 +11,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {updateMarsStation, updatePagination} from "../../store/MarsStation.ts";
 import {FaAnglesLeft, FaAnglesRight} from "react-icons/fa6";
 import {FaAngleLeft, FaAngleRight} from "react-icons/fa";
-import SearchBar from "./SearchBar/SearchBar.tsx";
+import SearchBar from "./SearchBarStatusTask/SearchBarStatusTask.tsx";
 import {RootState} from "@reduxjs/toolkit/query";
 import {Table, Space, Tag} from 'antd';
 import {Link} from 'react-router-dom';

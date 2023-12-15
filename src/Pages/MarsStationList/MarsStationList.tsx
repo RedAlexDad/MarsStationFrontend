@@ -8,7 +8,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {updateMarsStation, updatePagination} from "../../store/MarsStation.ts";
 import {FaAnglesLeft, FaAnglesRight} from "react-icons/fa6";
 import {FaAngleLeft, FaAngleRight} from "react-icons/fa";
-import SearchBar from "./SearchBar/SearchBar.tsx";
+import SearchBar from "./SearchBarStatusTask/SearchBarStatusTask.tsx";
 import {RootState} from "@reduxjs/toolkit/query";
 import { Table, Tag } from 'antd';
 import moment from 'moment';
@@ -38,11 +38,12 @@ const MarsStationListPage = () => {
         }
         // Установим состояние загрузки в true перед запросом
         setLoading(true);
-
+        // let status_task: status_task.length > 0 ? status_task.filter(s => s !== '5').join(';') : (is_moderator ? '2; 3; 4' : '1; 2; 3; 4')
+        // console.log(test)
         const params = new URLSearchParams({
             page: currentPage.toString(),
             // status_task: is_moderator ? '2; 3; 4' : '1; 2; 3; 4',
-            status_task: status_task,
+            status_task: status_task.length > 0 ? status_task.filter(s => s !== '5').join(','): (is_moderator ? '2, 3, 4' : '1, 2, 3, 4'),
         });
         const url = `${DOMEN}api/mars_station/?${params}`;
         await axios.get(url, {
@@ -64,7 +65,7 @@ const MarsStationListPage = () => {
                     })
                 );
                 setLoading(false);
-                console.log(response.data.results)
+                // console.log(response.data.results)
             })
             .catch(error => {
                 console.error("Ошибка!\n", error);
@@ -125,12 +126,13 @@ const MarsStationListPage = () => {
             title: 'Тип статуса',
             dataIndex: 'type_status',
             key: 'type_status',
+            render: (type_status) => (type_status ? type_status : '-'),
         },
         {
             title: 'Дата создания',
             dataIndex: 'date_create',
             key: 'date_create',
-            render: (text) => (text ? moment(text).format('YYYY-MM-DD') : '-'), // Форматирование даты
+            render: (text) => (text ? moment(text).format('YYYY-MM-DD') : '-'),
         },
         {
             title: 'Дата формирования',
@@ -145,35 +147,10 @@ const MarsStationListPage = () => {
             render: (text) => (text ? moment(text).format('YYYY-MM-DD') : '-'),
         },
         {
-            title: 'Сотрудник',
-            dataIndex: 'employee',
-            key: 'employee',
-            render: (employee) => (employee ? employee.full_name : '-'),
-        },
-        {
             title: 'Модератор',
             dataIndex: 'moderator',
             key: 'moderator',
-            render: (moderator) => (moderator ? moderator.full_name : '-'),
-        },
-        {
-            title: 'Транспорт',
-            dataIndex: 'transport',
-            key: 'transport',
-            render: (transport) => (transport ? transport.name : '-'),
-        },
-        {
-            title: 'Местоположение',
-            dataIndex: 'location',
-            key: 'location',
-            render: (location) => (location ? location.map((loc) => loc.id_geographical_object) : '-'),
-        },
-        {
-            title: 'Географический объект',
-            dataIndex: 'geographical_object',
-            key: 'geographical_object',
-            render: (geographicalObject) =>
-                geographicalObject ? geographicalObject.map((geo) => geo.feature) : '-',
+            render: (moderator) => (moderator.full_name ? moderator.full_name : '-'),
         },
         {
             title: 'Статус задачи',
