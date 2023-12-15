@@ -8,11 +8,16 @@ import {useAuth} from "../../../hooks/useAuth";
 import {useToken} from "../../../hooks/useToken";
 import {useDesktop} from "../../../hooks/useDesktop";
 import {DOMEN} from "../../../Consts.ts";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {updateID_draft} from "../../../store/MarsStation.ts";
+import CustomizedBadges from "../Customization/Customization.tsx";
+import { updateMarsStationDraft } from "../../../store/MarsStationDraft.ts";
 
 const ProfileMenu = () => {
     const dispatch = useDispatch();
+    const id_draft = useSelector((state: RootState) => state.mars_station.id_draft);
+    console.log("ID черновика: ", id_draft);
+    
 
     const {access_token} = useToken()
     const {is_authenticated, username, setUser, setEmployee} = useAuth()
@@ -26,13 +31,35 @@ const ProfileMenu = () => {
                 authorization: access_token,
             },
         })
-            // .then(response => {
-            //     console.log("Успешно!");
-            // })
+            .then(response => {
+                // console.log("Успешно!");
+                // console.log(response.data);
+            })
             .catch(error => {
                 console.error("Ошибка!\n", error);
             });
     };
+
+    // const MarsStationDraft = async () => {
+    //     const url = `${DOMEN}api/mars_station/${id_draft}/`;
+    //     await axios.get(url, {
+    //         headers: {
+    //             "Content-type": "application/json; charset=UTF-8",
+    //             authorization: access_token,
+    //         },
+    //     })
+    //         .then(response => {
+    //             // console.log("Успешно!");
+    //             console.log(response.data);
+    //             dispatch(updateMarsStationDraft(response.data));
+    //         })
+    //         .catch(error => {
+    //             console.error("Ошибка!\n", error);
+    //         });
+    // };
+
+    // // Получение значение черновой заявки
+    // if(id_draft != -1 && id_draft != null) {MarsStationDraft()}
 
     const GetIDDraftMarsStation = async () => {
         const url = `${DOMEN}api/geographical_object/`;
@@ -44,7 +71,7 @@ const ProfileMenu = () => {
         })
             .then(response => {
                 // console.log("Успешно!", response.data);
-                console.log("ID черновика: ", response.data.id_draft_service);
+                // console.log("ID черновика: ", response.data.id_draft_service);
                 dispatch(updateID_draft(response.data.id_draft_service));
             })
             .catch(error => {
@@ -112,6 +139,7 @@ const ProfileMenu = () => {
                           onClick={() => setIsOpen(false)}>
                         <span className="item">Марсианские станции</span>
                     </Link>
+                    <CustomizedBadges/>
                     {!isDesktopMedium &&
                         <Link to="/profile" className="menu-item" style={{textDecoration: 'none'}}
                               onClick={() => setIsOpen(false)}>

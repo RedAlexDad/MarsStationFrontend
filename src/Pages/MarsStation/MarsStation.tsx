@@ -8,6 +8,7 @@ import axios from "axios";
 import {useAuth} from "../../hooks/useAuth.ts";
 import {useDispatch} from "react-redux";
 import {clearID_draft} from "../../store/MarsStation.ts";
+import {cleanDraft} from "../../store/MarsStationDraft.ts";
 import mockImage from "../../assets/mock.png";
 
 const MarsStationPage = ({selectedMarsStation, setSelectedMarsStation}: {
@@ -69,6 +70,7 @@ const MarsStationPage = ({selectedMarsStation, setSelectedMarsStation}: {
                 console.log("Успешно! Заявка отправлена!", response.data);
                 setUpdateTrigger(true);
                 dispatch(clearID_draft());
+                dispatch(cleanDraft());
             })
             .catch(error => {
                 console.error("Ошибка отправки!\n", error);
@@ -86,6 +88,7 @@ const MarsStationPage = ({selectedMarsStation, setSelectedMarsStation}: {
                 console.log("Успешно! Заявка удалена!", response.data);
                 setUpdateTrigger(true);
                 dispatch(clearID_draft());
+                dispatch(cleanDraft());
             })
             .catch(error => {
                 console.error("Ошибка отправки!\n", error);

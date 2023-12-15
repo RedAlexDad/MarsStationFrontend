@@ -4,6 +4,7 @@ import employeeReducer from "./Employee.ts";
 import geographical_objectReducer from "./GeographicalObject.ts";
 import search_feature from "./Search.ts";
 import mars_station from "./MarsStation.ts";
+import mars_station_draft from "./MarsStationDraft.ts";
 
 export default configureStore({
 	reducer: {
@@ -12,5 +13,6 @@ export default configureStore({
 		geographical_object: geographical_objectReducer,
 		search: search_feature,
 		mars_station: mars_station,
+		mars_station_draft: mars_station_draft,
 	},
 });
