@@ -42,8 +42,8 @@ interface MarsStation {
         feature: string;
         type: string;
         size: number;
-        describe: string| null;
-        photo: string| null;
+        describe: string;
+        photo: string;
         status: boolean;
     }[];
 };
@@ -75,7 +75,12 @@ const MarsStationDraft = createSlice({
                 employee: { ...state.employee, ...action.payload.employee },
                 moderator: { ...state.moderator, ...action.payload.moderator },
                 transport: { ...state.transport, ...action.payload.transport },
-                // и так далее для других вложенных объектов
+            };
+        },
+        updateMarsStationDraftGeographical: (state, action) => {
+            return {
+                ...state,
+                geographical_object: action.payload
             };
         },
         cleanDraft: () => initialState,
@@ -84,6 +89,7 @@ const MarsStationDraft = createSlice({
 
 export const {
     updateMarsStationDraft,
+    updateMarsStationDraftGeographical,
     cleanDraft,
 } = MarsStationDraft.actions;
 

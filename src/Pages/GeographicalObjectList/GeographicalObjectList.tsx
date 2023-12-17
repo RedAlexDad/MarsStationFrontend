@@ -7,10 +7,9 @@ import axios from "axios";
 import {useDispatch, useSelector} from "react-redux";
 import {updateGeographicalObject, updatePagination} from "../../store/GeographicalObject.ts";
 import {useToken} from "../../hooks/useToken.ts";
-import {updateID_draft} from "../../store/MarsStation.ts";
 import {FaAngleLeft, FaAngleRight} from "react-icons/fa";
 import {FaAnglesLeft, FaAnglesRight} from "react-icons/fa6";
-import {RootState} from "@reduxjs/toolkit/query";
+import {RootState} from "../../store/store.ts";
 
 const GeographicalObjectListPage = () => {
     const {access_token} = useToken()
@@ -61,7 +60,6 @@ const GeographicalObjectListPage = () => {
                 setIsMock(false);
                 // console.log("Успешно!", response.data);
                 dispatch(updateGeographicalObject([...response.data.results]));
-                dispatch(updateID_draft(response.data.id_draft_service));
                 // Обновление данных пагинации
                 dispatch(
                     updatePagination({

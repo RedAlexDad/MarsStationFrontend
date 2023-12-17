@@ -2,12 +2,12 @@ import "./MarsStation.sass"
 import {Dispatch, useEffect, useState} from "react";
 import {Link, useParams} from "react-router-dom";
 import {DOMEN, requestTime} from "../../Consts";
-import {MarsStation} from "../../Types";
+import {GeographicalObject, MarsStation} from "../../Types";
 import {useToken} from "../../hooks/useToken.ts";
 import axios from "axios";
 import {useAuth} from "../../hooks/useAuth.ts";
 import {useDispatch} from "react-redux";
-import {clearID_draft} from "../../store/MarsStation.ts";
+import {clearID_draft} from "../../store/GeographicalObject.ts";
 import {cleanDraft} from "../../store/MarsStationDraft.ts";
 import mockImage from "../../assets/mock.png";
 
@@ -121,25 +121,21 @@ const MarsStationPage = ({selectedMarsStation, setSelectedMarsStation}: {
             <Link className="return-link" to="/mars_station">
                 Назад
             </Link>
-            {/*@ts-ignore*/}
             {!is_moderator && selectedMarsStation?.status_task === "Черновик" && (
                 <div className="button-agree">
                     <button onClick={() => push_mars_station()}>Отправить</button>
                 </div>
             )}
-            {/*@ts-ignore*/}
             {!is_moderator && selectedMarsStation?.status_task === "Черновик" && (
                 <div className="button-reject">
                     <button onClick={() => delete_mars_station()}>Удалить</button>
                 </div>
             )}
-            {/*@ts-ignore*/}
             {is_moderator && selectedMarsStation?.status_task === "В работе" && (
                 <div className="button-accept">
                     <button onClick={() => check_mars_station(3)}>Принять и завершить</button>
                 </div>
             )}
-            {/*@ts-ignore*/}
             {is_moderator && selectedMarsStation?.status_task === "В работе" && (
                 <div className="button-reject">
                     <button onClick={() => check_mars_station(4)}>Отменить</button>
@@ -157,29 +153,23 @@ const MarsStationPage = ({selectedMarsStation, setSelectedMarsStation}: {
                     <span className="size">Дата закрытия заявки: {selectedMarsStation?.date_close} </span>
                     <br/>
                     <h2> Модератор</h2>
-                    {/*@ts-ignore*/}
-                    <span className="size">ФИО модератра: {selectedMarsStation?.moderator.full_name} </span>
-                    {/*@ts-ignore*/}
-                    <span className="size">Должность: {selectedMarsStation?.moderator.post} </span>
-                    {/*@ts-ignore*/}
-                    <span className="size">Название организации: {selectedMarsStation?.moderator.name_organization} </span>
-                    {/*@ts-ignore*/}
-                    <span className="size">Адрес: {selectedMarsStation?.moderator.address} </span>
+                    <span className="size">
+                      ФИО модератора: {(selectedMarsStation?.moderator as { full_name?: string })?.full_name || 'Нет данных'}
+                    </span>
+                    <span className="size">Должность: {(selectedMarsStation?.moderator as { post?: string })?.post || 'Нет данных'}</span>
+                    <span className="size">Название организации: {(selectedMarsStation?.moderator as { name_organization?: string })?.name_organization || 'Нет данных'}</span>
+                    <span className="size">Адрес: {(selectedMarsStation?.moderator as { address?: string })?.address || 'Нет данных'}</span>
                     <br/>
                     <h2> Транспорт</h2>
-                    {/*ФОТО ТУТ ПОТОМ ПРИЛОЖИТЬ*/}
-                    {/*@ts-ignore*/}
-                    <span className="describe"> Название: {selectedMarsStation?.transport.name} </span>
-                    {/*@ts-ignore*/}
-                    <span className="describe"> Тип: {selectedMarsStation?.transport.type} </span>
-                    {/*@ts-ignore*/}
-                    <span className="describe"> Описание: {selectedMarsStation?.transport.describe} </span>
+                    {/*TODO: ФОТО ТУТ ПОТОМ ПРИЛОЖИТЬ*/}
+                    <span className="describe">Название: {(selectedMarsStation?.transport as { name?: string })?.name || 'Нет данных'}</span>
+                    <span className="describe">Тип: {(selectedMarsStation?.transport as { type?: string })?.type || 'Нет данных'}</span>
+                    <span className="describe">Описание: {(selectedMarsStation?.transport as { describe?: string })?.describe || 'Нет данных'}</span>
                     <br/>
                     <h2> Географические объекты</h2>
                     <div className="cards-list-wrapper">
                         <div className="bottom">
-                            {/*@ts-ignore*/}
-                            {selectedMarsStation?.geographical_object.map((geoObject, index) => (
+                            {selectedMarsStation?.geographical_object.map((geoObject: GeographicalObject) => (
                                 <div className="card-wrapper">
                                     <div className="preview">
                                         <img src={isMock ? mockImage : geoObject.photo} alt=""/>

@@ -6,7 +6,7 @@ import search_feature from "./Search.ts";
 import mars_station from "./MarsStation.ts";
 import mars_station_draft from "./MarsStationDraft.ts";
 
-export default configureStore({
+export const store = configureStore({
 	reducer: {
 		user: userReducer,
 		employee: employeeReducer,
@@ -16,3 +16,6 @@ export default configureStore({
 		mars_station_draft: mars_station_draft,
 	},
 });
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;

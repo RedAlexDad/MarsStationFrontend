@@ -9,7 +9,7 @@ import GeographicalObjectListPage from "./Pages/GeographicalObjectList/Geographi
 import ProfilePage from "./Pages/Profile/ProfilePage";
 import HomePage from "./Pages/Home/Home";
 
-import store from "./store/store"
+import {store} from "./store/store.ts"
 import SignIn from "./Pages/Login/SignIn/SignIn";
 import SignUp from "./Pages/Login/SignUp/SignUp";
 import {Provider} from "react-redux"

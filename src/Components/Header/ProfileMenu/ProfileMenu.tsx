@@ -1,5 +1,5 @@
 import "./ProfileMenu.sass"
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import Hamburger from "../Hamburger/Hamburger";
 import {Link} from "react-router-dom";
 import axios from "axios";
@@ -9,57 +9,37 @@ import {useToken} from "../../../hooks/useToken";
 import {useDesktop} from "../../../hooks/useDesktop";
 import {DOMEN} from "../../../Consts.ts";
 import {useDispatch, useSelector} from "react-redux";
-import {updateID_draft} from "../../../store/MarsStation.ts";
+import {updateID_draft} from "../../../store/GeographicalObject.ts";
 import CustomizedBadges from "../Customization/Customization.tsx";
-import { updateMarsStationDraft } from "../../../store/MarsStationDraft.ts";
+import GeographicalObjectModal from "../Customization/Modal/Modal.tsx";
+import {RootState} from "../../../store/store.ts";
+import {updateMarsStationDraft} from "../../../store/MarsStationDraft.ts";
+// import { updateMarsStationDraft } from "../../../store/MarsStationDraft.ts";
 
 const ProfileMenu = () => {
     const dispatch = useDispatch();
-    const id_draft = useSelector((state: RootState) => state.mars_station.id_draft);
-    console.log("ID черновика: ", id_draft);
-    
+    const id_draft = useSelector((state: RootState) => state.geographical_object.id_draft);
 
     const {access_token} = useToken()
     const {is_authenticated, username, setUser, setEmployee} = useAuth()
     const {isDesktopMedium} = useDesktop();
 
-    const MarsStation = async () => {
-        const url = `${DOMEN}api/mars_station/`;
-        await axios.get(url, {
-            headers: {
-                "Content-type": "application/json; charset=UTF-8",
-                authorization: access_token,
-            },
-        })
-            .then(response => {
-                // console.log("Успешно!");
-                // console.log(response.data);
-            })
-            .catch(error => {
+    const marsStationDraft = async () => {
+        if (id_draft !== -1) {
+            try {
+                const url = `${DOMEN}api/mars_station/${id_draft}/`;
+                const response = await axios.get(url, {
+                    headers: {
+                        "Content-type": "application/json; charset=UTF-8",
+                        authorization: access_token,
+                    },
+                });
+                dispatch(updateMarsStationDraft(response.data));
+            } catch (error) {
                 console.error("Ошибка!\n", error);
-            });
+            }
+        }
     };
-
-    // const MarsStationDraft = async () => {
-    //     const url = `${DOMEN}api/mars_station/${id_draft}/`;
-    //     await axios.get(url, {
-    //         headers: {
-    //             "Content-type": "application/json; charset=UTF-8",
-    //             authorization: access_token,
-    //         },
-    //     })
-    //         .then(response => {
-    //             // console.log("Успешно!");
-    //             console.log(response.data);
-    //             dispatch(updateMarsStationDraft(response.data));
-    //         })
-    //         .catch(error => {
-    //             console.error("Ошибка!\n", error);
-    //         });
-    // };
-
-    // // Получение значение черновой заявки
-    // if(id_draft != -1 && id_draft != null) {MarsStationDraft()}
 
     const GetIDDraftMarsStation = async () => {
         const url = `${DOMEN}api/geographical_object/`;
@@ -76,9 +56,8 @@ const ProfileMenu = () => {
             })
             .catch(error => {
                 console.error("Ошибка!\n", error);
-            });
+            })
     };
-
     const auth = async () => {
         const url = `${DOMEN}api/get_token/`;
         await axios.post(url, {}, {
@@ -102,9 +81,9 @@ const ProfileMenu = () => {
                     address: response.data.employee["address"],
                 }
                 setUser(user);
-                setEmployee(employee)
+                setEmployee(employee);
                 GetIDDraftMarsStation();
-                MarsStation();
+                marsStationDraft();
             })
             .catch(error => {
                 if (error.response.status == 401) {
@@ -117,9 +96,13 @@ const ProfileMenu = () => {
 
     useEffect(() => {
         if (!is_authenticated) {
-            auth()
+            auth();
         }
-    }, []);
+    }, [is_authenticated]);
+
+    useEffect(() => {
+        marsStationDraft();
+    }, [id_draft]);
 
     const [isOpen, setIsOpen] = useState<boolean>(false)
 
@@ -140,6 +123,7 @@ const ProfileMenu = () => {
                         <span className="item">Марсианские станции</span>
                     </Link>
                     <CustomizedBadges/>
+                    {/*<GeographicalObjectModal/>*/}
                     {!isDesktopMedium &&
                         <Link to="/profile" className="menu-item" style={{textDecoration: 'none'}}
                               onClick={() => setIsOpen(false)}>
