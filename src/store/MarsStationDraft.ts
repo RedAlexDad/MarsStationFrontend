@@ -46,7 +46,7 @@ interface MarsStation {
         photo: string;
         status: boolean;
     }[];
-};
+}
 
 
 const initialState: MarsStation = {
@@ -57,9 +57,29 @@ const initialState: MarsStation = {
     date_close: "",
     status_task: "",
     status_mission: "",
-    employee: {},
-    moderator: {},
-    transport: {},
+    employee: {
+        id: -1,
+        full_name: "",
+        post: "",
+        name_organization: "",
+        address: "",
+        id_user: -1,
+    },
+    moderator: {
+        id: -1,
+        full_name: "",
+        post: "",
+        name_organization: "",
+        address: "",
+        id_user: -1,
+    },
+    transport: {
+        id: -1,
+        name: "",
+        type: "",
+        describe: "",
+        photo: "",
+    },
     location: [],
     geographical_object: [],
 };
@@ -77,10 +97,11 @@ const MarsStationDraft = createSlice({
                 transport: { ...state.transport, ...action.payload.transport },
             };
         },
-        updateMarsStationDraftGeographical: (state, action) => {
+        updateMarsStationDraftData: (state, action) => {
             return {
                 ...state,
-                geographical_object: action.payload
+                geographical_object: action.payload.geographical_object,
+                location: action.payload.location
             };
         },
         cleanDraft: () => initialState,
@@ -89,7 +110,7 @@ const MarsStationDraft = createSlice({
 
 export const {
     updateMarsStationDraft,
-    updateMarsStationDraftGeographical,
+    updateMarsStationDraftData,
     cleanDraft,
 } = MarsStationDraft.actions;
 

@@ -7,9 +7,8 @@ import axios from "axios";
 import {useDispatch, useSelector} from "react-redux";
 import {updateGeographicalObject, updatePagination} from "../../store/GeographicalObject.ts";
 import {useToken} from "../../hooks/useToken.ts";
-import {FaAngleLeft, FaAngleRight} from "react-icons/fa";
-import {FaAnglesLeft, FaAnglesRight} from "react-icons/fa6";
 import {RootState} from "../../store/store.ts";
+import Pagination from "../../Components/Header/Pagination/Pagination.tsx";
 
 const GeographicalObjectListPage = () => {
     const {access_token} = useToken()
@@ -83,32 +82,9 @@ const GeographicalObjectListPage = () => {
         dispatch(updateGeographicalObject(GeographicalObjectsMock));
     }
 
-    const lastPage = () => {
-        if (currentPage < totalPages) {
-            dispatch(updatePagination({currentPage: totalPages, totalPages, count}));
-            searchGeographicalObject(totalPages);
-        }
-    };
-
-    const nextPage = () => {
-        if (currentPage < totalPages) {
-            dispatch(updatePagination({currentPage: currentPage + 1, totalPages, count}));
-            searchGeographicalObject(currentPage + 1);
-        }
-    };
-
-    const previousPage = () => {
-        if (currentPage > 1) {
-            dispatch(updatePagination({currentPage: currentPage - 1, totalPages, count}));
-            searchGeographicalObject(currentPage - 1);
-        }
-    };
-
-    const initalPage = () => {
-        if (currentPage > 1) {
-            dispatch(updatePagination({currentPage: 1, totalPages, count}));
-            searchGeographicalObject(1);
-        }
+    const handlePageChange = (newPage: any) => {
+        dispatch(updatePagination({ currentPage: newPage, totalPages, count }));
+        searchGeographicalObject(newPage);
     };
 
     useEffect(() => {
@@ -131,6 +107,7 @@ const GeographicalObjectListPage = () => {
         />
     ))
 
+    // TODO: Изменить вид поиска
     return (
         <div className="cards-list-wrapper">
             <div className="top">
@@ -143,29 +120,12 @@ const GeographicalObjectListPage = () => {
             </div>
 
             {count > 0 && totalPages > 1 && (
-                <div className="pagination-container">
-                    <button className="pagination-button" onClick={() => initalPage()}
-                            disabled={currentPage === 1 || loading}>
-                        <FaAnglesLeft/>
-                    </button>
-
-                    <button className="pagination-button" onClick={() => previousPage()}
-                            disabled={currentPage === 1 || loading}>
-                        <FaAngleLeft/>
-                    </button>
-
-                    <span className="pagination-current-page">{currentPage}</span>
-
-                    <button className="pagination-button" onClick={() => nextPage()}
-                            disabled={currentPage === totalPages || loading}>
-                        <FaAngleRight/>
-                    </button>
-
-                    <button className="pagination-button" onClick={() => lastPage()}
-                            disabled={currentPage === totalPages || loading}>
-                        <FaAnglesRight/>
-                    </button>
-                </div>
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    loading={loading}
+                    onPageChange={handlePageChange}
+                />
             )}
         </div>
     )

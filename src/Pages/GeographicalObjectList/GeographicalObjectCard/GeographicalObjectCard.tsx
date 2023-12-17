@@ -6,11 +6,11 @@ import mockImage from "/src/assets/mock.png";
 import {DOMEN} from "../../../Consts.ts";
 import {useAuth} from "../../../hooks/useAuth.ts";
 import {useToken} from "../../../hooks/useToken.ts";
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 import {updateID_draft} from "../../../store/GeographicalObject.ts";
-import {updateMarsStationDraft, updateMarsStationDraftGeographical} from "../../../store/MarsStationDraft.ts";
-import {RootState} from "../../../store/store.ts";
-import {Dispatch, SetStateAction, useCallback, useEffect} from "react";
+import {updateMarsStationDraftData} from "../../../store/MarsStationDraft.ts";
+import {Dispatch, SetStateAction, useCallback} from "react";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const GeographicalObjectCard = ({geographical_object, isMock, setUpdateTriggerParent}: {
     geographical_object: GeographicalObject;
@@ -18,7 +18,6 @@ const GeographicalObjectCard = ({geographical_object, isMock, setUpdateTriggerPa
     setUpdateTriggerParent: Dispatch<SetStateAction<boolean>>;
 }) => {
     const dispatch = useDispatch();
-    const id_draft: number = useSelector((state: RootState) => state.geographical_object.id_draft);
     const {is_moderator, is_authenticated} = useAuth();
     const {access_token} = useToken();
 
@@ -33,7 +32,10 @@ const GeographicalObjectCard = ({geographical_object, isMock, setUpdateTriggerPa
             const response = await axios.post(url, {}, { headers });
             console.log("Успешно! Отправлена услуга на заявку!", response.data);
             dispatch(updateID_draft(response.data.id_draft));
-            dispatch(updateMarsStationDraftGeographical(response.data.geographical_object || []));
+            dispatch(updateMarsStationDraftData({
+                geographical_object: response.data.geographical_object || [],
+                location: response.data.location || [],
+            }));
         } catch (error) {
             console.error("Ошибка отправления!\n", error);
         }
@@ -55,31 +57,6 @@ const GeographicalObjectCard = ({geographical_object, isMock, setUpdateTriggerPa
         }
     }, [access_token, geographical_object.id, setUpdateTriggerParent]);
 
-
-    // const marsStationDraft = useCallback(async () => {
-    //     if (id_draft !== -1) {
-    //         try {
-    //             const url = `${DOMEN}api/mars_station/${id_draft}/`;
-    //             const response = await axios.get(url, {
-    //                 headers: {
-    //                     "Content-type": "application/json; charset=UTF-8",
-    //                     authorization: access_token,
-    //                 },
-    //             });
-    //             dispatch(updateMarsStationDraft(response.data));
-    //             // console.log(response.data.geographical_object)
-    //             // dispatch(updateMarsStationDraftGeographical(response.data));
-    //         } catch (error) {
-    //             console.error("Ошибка!\n", error);
-    //         }
-    //     }
-    // }, [dispatch, id_draft, access_token]);
-
-    // Получение значение черновой заявки
-    // useEffect(() => {
-    //     marsStationDraft();
-    // }, [id_draft, marsStationDraft]);
-
     // TODO: Выбрать подходущую кнопку с MUI, учти, что они должны быть разными
     return (
         <div className="card-wrapper">
@@ -100,12 +77,16 @@ const GeographicalObjectCard = ({geographical_object, isMock, setUpdateTriggerPa
                 </div>
                 {!is_moderator && is_authenticated && (
                     <div className="content-bottom">
-                        <button onClick={addGeographicalObjectInMarsStation}>Выбрать</button>
+                        <button onClick={addGeographicalObjectInMarsStation}>
+                            Добавить
+                        </button>
                     </div>
                 )}
                 {is_moderator && (
                     <div className="content-bottom">
-                        <button onClick={deleteGeographicalObject}>Удалить</button>
+                        <button onClick={deleteGeographicalObject}>
+                            <DeleteIcon />
+                        </button>
                     </div>
                 )}
             </div>

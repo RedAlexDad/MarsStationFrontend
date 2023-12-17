@@ -1,5 +1,5 @@
 import "./ProfileMenu.sass"
-import {useCallback, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import Hamburger from "../Hamburger/Hamburger";
 import {Link} from "react-router-dom";
 import axios from "axios";
@@ -10,11 +10,9 @@ import {useDesktop} from "../../../hooks/useDesktop";
 import {DOMEN} from "../../../Consts.ts";
 import {useDispatch, useSelector} from "react-redux";
 import {updateID_draft} from "../../../store/GeographicalObject.ts";
-import CustomizedBadges from "../Customization/Customization.tsx";
-import GeographicalObjectModal from "../Customization/Modal/Modal.tsx";
+import BasketBadges from "../Basket/Basket.tsx";
 import {RootState} from "../../../store/store.ts";
 import {updateMarsStationDraft} from "../../../store/MarsStationDraft.ts";
-// import { updateMarsStationDraft } from "../../../store/MarsStationDraft.ts";
 
 const ProfileMenu = () => {
     const dispatch = useDispatch();
@@ -26,18 +24,20 @@ const ProfileMenu = () => {
 
     const marsStationDraft = async () => {
         if (id_draft !== -1) {
-            try {
-                const url = `${DOMEN}api/mars_station/${id_draft}/`;
-                const response = await axios.get(url, {
-                    headers: {
-                        "Content-type": "application/json; charset=UTF-8",
-                        authorization: access_token,
-                    },
-                });
-                dispatch(updateMarsStationDraft(response.data));
-            } catch (error) {
-                console.error("Ошибка!\n", error);
-            }
+            const url = `${DOMEN}api/mars_station/${id_draft}/`;
+            await axios.get(url, {
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8",
+                    authorization: access_token,
+                },
+            })
+                .then(response => {
+                    // console.log("Успешно!", response.data);
+                    dispatch(updateMarsStationDraft(response.data));
+                })
+                .catch(error => {
+                    console.error("Ошибка!\n", error);
+                })
         }
     };
 
@@ -122,7 +122,7 @@ const ProfileMenu = () => {
                           onClick={() => setIsOpen(false)}>
                         <span className="item">Марсианские станции</span>
                     </Link>
-                    <CustomizedBadges/>
+                    <BasketBadges/>
                     {/*<GeographicalObjectModal/>*/}
                     {!isDesktopMedium &&
                         <Link to="/profile" className="menu-item" style={{textDecoration: 'none'}}

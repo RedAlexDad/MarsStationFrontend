@@ -47,9 +47,6 @@ const GeographicalObject = createSlice({
         updatePagination: (state, action) => {
             state.pagination = action.payload;
         },
-        cleanGeographicalObject: () => {
-            return initialState;
-        },
         updateID_draft: (state, action) => {
             state.id_draft = action.payload === null ? -1 : action.payload;
         },
@@ -62,7 +59,6 @@ const GeographicalObject = createSlice({
 export const {
     updateGeographicalObject,
     updatePagination,
-    cleanGeographicalObject,
     updateID_draft,
     clearID_draft
 } = GeographicalObject.actions;

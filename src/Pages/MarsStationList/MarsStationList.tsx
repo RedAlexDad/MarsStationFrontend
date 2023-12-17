@@ -14,6 +14,7 @@ import { Table, Tag } from 'antd';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
 import MaterialUIPickers from "./SearchDateForm/SearchDateForm.tsx";
+import Pagination from "../../Components/Header/Pagination/Pagination.tsx";
 
 const MarsStationListPage = () => {
     const {access_token} = useToken()
@@ -73,32 +74,9 @@ const MarsStationListPage = () => {
             });
     };
 
-    const lastPage = () => {
-        if (currentPage < totalPages) {
-            dispatch(updatePagination({currentPage: totalPages, totalPages, count}));
-            searchMarsStation(totalPages);
-        }
-    };
-
-    const nextPage = () => {
-        if (currentPage < totalPages) {
-            dispatch(updatePagination({currentPage: currentPage + 1, totalPages, count}));
-            searchMarsStation(currentPage + 1);
-        }
-    };
-
-    const previousPage = () => {
-        if (currentPage > 1) {
-            dispatch(updatePagination({currentPage: currentPage - 1, totalPages, count}));
-            searchMarsStation(currentPage - 1);
-        }
-    };
-
-    const initalPage = () => {
-        if (currentPage > 1) {
-            dispatch(updatePagination({currentPage: 1, totalPages, count}));
-            searchMarsStation(1);
-        }
+    const handlePageChange = (newPage: any) => {
+        dispatch(updatePagination({ currentPage: newPage, totalPages, count }));
+        searchMarsStation(newPage);
     };
 
     useEffect(() => {
@@ -199,29 +177,12 @@ const MarsStationListPage = () => {
             />
 
             {count > 0 && totalPages > 1 && (
-                <div className="pagination-container">
-                    <button className="pagination-button" onClick={() => initalPage()}
-                            disabled={currentPage === 1 || loading}>
-                        <FaAnglesLeft/>
-                    </button>
-
-                    <button className="pagination-button" onClick={() => previousPage()}
-                            disabled={currentPage === 1 || loading}>
-                        <FaAngleLeft/>
-                    </button>
-
-                    <span className="pagination-current-page">{currentPage}</span>
-
-                    <button className="pagination-button" onClick={() => nextPage()}
-                            disabled={currentPage === totalPages || loading}>
-                        <FaAngleRight/>
-                    </button>
-
-                    <button className="pagination-button" onClick={() => lastPage()}
-                            disabled={currentPage === totalPages || loading}>
-                        <FaAnglesRight/>
-                    </button>
-                </div>
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    loading={loading}
+                    onPageChange={handlePageChange}
+                />
             )}
         </div>
     );
