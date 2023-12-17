@@ -11,7 +11,7 @@ const UserInfo = () => {
 
 	const navigate = useNavigate()
 	// @ts-ignore
-	const {id_user, id_employee, full_name, post, name_organization, address, is_moderator, logOut} = useAuth()
+	const {full_name, post, name_organization, address, is_moderator, logOut} = useAuth()
 	const {resetTokens} = useToken()
 	const {modalRef, buttonRef, isOpen, setIsOpen} = useModal()
 
@@ -23,15 +23,12 @@ const UserInfo = () => {
 	}
 
 	return (
-		<div>
-			<div ref={buttonRef}>
-				{/*@ts-ignore*/}
-				<img src={user_avatar} className="user-avatar" onClick={(e) => setIsOpen(!isOpen)} />
+		<div className="uesr-info">
+			<div className="user-ifno-wrapper-close" ref={buttonRef}>
+				<img src={user_avatar} className="user-avatar" onClick={() => setIsOpen(!isOpen)} />
 			</div>
 
 			<div className={"user-info-wrapper " + (isOpen ? "open" : "")} ref={modalRef}>
-				{/*<span>ID USER: {id_user}</span>*/}
-				{/*<span>ID EMPLOYEE: {id_employee}</span>*/}
 				<span>Имя: {full_name}</span>
 				<span>Должность: {post}</span>
 				<span>Название организации: {name_organization}</span>
@@ -43,7 +40,6 @@ const UserInfo = () => {
 					<ImExit />
 				</button>
 			</div>
-
 		</div>
 	)
 }

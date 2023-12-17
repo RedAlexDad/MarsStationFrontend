@@ -5,48 +5,49 @@ import {useToken} from "../../hooks/useToken.ts";
 import axios from "axios";
 import {useAuth} from "../../hooks/useAuth.ts";
 import {useDispatch, useSelector} from "react-redux";
-import {updateMarsStation, updatePagination} from "../../store/MarsStation.ts";
-import {FaAnglesLeft, FaAnglesRight} from "react-icons/fa6";
-import {FaAngleLeft, FaAngleRight} from "react-icons/fa";
+import {updateMarsStation} from "../../store/MarsStation.ts";
 import SearchBar from "./SearchBarStatusTask/SearchBarStatusTask.tsx";
 import {RootState} from "../../store/store.ts";
-import { Table, Tag } from 'antd';
 import moment from 'moment';
-import { useNavigate } from 'react-router-dom';
-import MaterialUIPickers from "./SearchDateForm/SearchDateForm.tsx";
-import Pagination from "../../Components/Header/Pagination/Pagination.tsx";
+import {useNavigate} from 'react-router-dom';
+import SearchDateForm from "./SearchDateForm/SearchDateForm.tsx";
+import {DataGrid} from '@mui/x-data-grid';
+import {Button} from "@mui/material";
 
 const MarsStationListPage = () => {
     const {access_token} = useToken()
     const {is_moderator} = useAuth()
     const navigate = useNavigate();
     const dispatch = useDispatch()
+    // Данные
     const MarsStation = useSelector((state: RootState) => state.mars_station.data);
+
+    // Фильтрация
     const status_task = useSelector((state: RootState) => state.search.status_task);
-    // Для пагинации
-    const pagination = useSelector((state: RootState) => state.mars_station.pagination);
-    const currentPage = pagination?.currentPage;
-    const totalPages = pagination?.totalPages;
-    const count = pagination?.count;
+    const date = useSelector((state: RootState) => state.search.date);
+    const date_before = date.date_before;
+    const date_after = date.date_after;
+
     // Загрузочный экран
     const [loading, setLoading] = useState<boolean>(false);
+
     // Cостояние для обновления в основном компоненте (при нажатии)
     const [parentUpdateTrigger, setParentUpdateTrigger] = useState(false);
 
-    const searchMarsStation = async (currentPage: number) => {
+    const searchMarsStation = async () => {
         // Если уже идет загрузка, не допускайте дополнительных запросов
         if (loading) {
             return <p>Loading...</p>;
         }
         // Установим состояние загрузки в true перед запросом
         setLoading(true);
-        // let status_task: status_task.length > 0 ? status_task.filter(s => s !== '5').join(';') : (is_moderator ? '2; 3; 4' : '1; 2; 3; 4')
-        // console.log(test)
         const params = new URLSearchParams({
-            page: currentPage.toString(),
-            // status_task: is_moderator ? '2; 3; 4' : '1; 2; 3; 4',
-            status_task: status_task.length > 0 ? status_task.filter(s => s !== '5').join(','): (is_moderator ? '2, 3, 4' : '1, 2, 3, 4'),
+            status_task: status_task.length > 0 ? status_task.filter(s => s !== '5').join(',') : (is_moderator ? '2, 3, 4' : '1, 2, 3, 4'),
+            date_form_before: date.date_before,
+            date_form_after: date.date_after,
         });
+        console.log(date.date_before)
+        console.log(date.date_after)
         const url = `${DOMEN}api/mars_station/?${params}`;
         await axios.get(url, {
             headers: {
@@ -58,14 +59,6 @@ const MarsStationListPage = () => {
         })
             .then(response => {
                 dispatch(updateMarsStation([...response.data.results]));
-                // Обновление данных пагинации
-                dispatch(
-                    updatePagination({
-                        currentPage: currentPage,
-                        totalPages: Math.ceil(response.data.count / 10),
-                        count: response.data.count,
-                    })
-                );
                 setLoading(false);
                 // console.log(response.data.results)
             })
@@ -74,21 +67,12 @@ const MarsStationListPage = () => {
             });
     };
 
-    const handlePageChange = (newPage: any) => {
-        dispatch(updatePagination({ currentPage: newPage, totalPages, count }));
-        searchMarsStation(newPage);
-    };
-
     useEffect(() => {
-        searchMarsStation(currentPage);
+        searchMarsStation();
         if (parentUpdateTrigger) {
             setParentUpdateTrigger(false);
         }
-    }, [currentPage, parentUpdateTrigger]);
-
-    useEffect(() => {
-        setLoading(false);
-    }, [currentPage, totalPages, count]);
+    }, [date_before, date_after, parentUpdateTrigger]);
 
     // Функция для передачи в дочерний компонент
     const handleUpdateTrigger = () => {
@@ -96,68 +80,63 @@ const MarsStationListPage = () => {
     };
 
     const columns = [
+        {field: 'id', headerName: 'ID', width: 70, headerClassName: 'bold-header'},
+        {field: 'type_status', headerName: 'Тип статуса', width: 200, headerClassName: 'bold-header'},
         {
-            title: 'ID',
-            dataIndex: 'id',
-            key: 'id',
+            field: 'date_create',
+            headerName: 'Дата создания',
+            width: 150,
+            renderCell: (params: any) => moment(params.value).format('YYYY-MM-DD'),
         },
         {
-            title: 'Тип статуса',
-            dataIndex: 'type_status',
-            key: 'type_status',
-            render: (type_status: any) => (type_status ? type_status : '-'),
+            field: 'date_form',
+            headerName: 'Дата формирования',
+            width: 150,
+            renderCell: (params: any) => moment(params.value).format('YYYY-MM-DD'),
         },
         {
-            title: 'Дата создания',
-            dataIndex: 'date_create',
-            key: 'date_create',
-            render: (text: string) => (text ? moment(text).format('YYYY-MM-DD') : '-'),
+            field: 'date_close',
+            headerName: 'Дата закрытия',
+            width: 150,
+            renderCell: (params: any) => moment(params.value).format('YYYY-MM-DD'),
         },
+        is_moderator
+            ? {
+                field: 'employee',
+                headerName: 'Пользователь',
+                width: 250,
+                renderCell: (params: any) => params.value.full_name,
+            }
+            : {
+                field: 'moderator',
+                headerName: 'Модератор',
+                width: 250,
+                renderCell: (params: any) => params.value.full_name,
+            },
         {
-            title: 'Дата формирования',
-            dataIndex: 'date_form',
-            key: 'date_form',
-            render: (text: string) => (text ? moment(text).format('YYYY-MM-DD') : '-'),
-        },
-        {
-            title: 'Дата закрытия',
-            dataIndex: 'date_close',
-            key: 'date_close',
-            render: (text: string) => (text ? moment(text).format('YYYY-MM-DD') : '-'),
-        },
-        {
-            title: 'Модератор',
-            dataIndex: 'moderator',
-            key: 'moderator',
-            render: (moderator: string) => (moderator.full_name ? moderator.full_name : '-'),
-        },
-        {
-            title: 'Статус задачи',
-            dataIndex: 'status_task',
-            key: 'status_task',
-            render: (text: string) => {
-                const statusColors = {
-                    'Черновик': 'blue',
-                    'В работе': 'orange',
-                    'Завершена': 'green',
-                    'Отменена': 'red',
+            field: 'status_task',
+            headerName: 'Статус заявки',
+            width: 150,
+            renderCell: (params: any) => {
+                const statusColors: any = {
+                    'Черновик': 'secondary',
+                    'В работе': 'warning',
+                    'Завершена': 'success',
+                    'Отменена': 'error',
                 };
-                const color = statusColors[text] || 'gray';
-                return <Tag color={color}>{text}</Tag>;
+                const color = statusColors[params.value];
+
+                // return <Tag color={color}>{params.value}</Tag>;
+                return <Button variant="outlined" color={color}>{params.value}</Button>;
             },
         },
     ];
 
-    const handleRowClick = (record: any) => {
-        // Здесь record представляет собой данные строки
-        // Вы можете использовать record.id или другой ключ, чтобы получить ID
-        const id = record.id;
-        console.log(id)
-        // Выполнить переход к другому компоненту, используя ID
+    const handleRowClick = (params: any) => {
+        const id = params.row.id;
         navigate(`/mars_station/${id}/`);
     };
 
-    // TODO: Переделать таблицу под MUI библиотеки
     return (
         <div className="cards-list-wrapper">
             <div className="top">
@@ -165,25 +144,22 @@ const MarsStationListPage = () => {
                     status_task={status_task}
                     setUpdateTriggerParent={handleUpdateTrigger}
                 />
-                <MaterialUIPickers/>
-            </div>
-            <Table
-                columns={columns}
-                dataSource={MarsStation}
-                onRow={(record: any, rowIndex: any) => ({
-                    onClick: () => handleRowClick(record),
-                })}
-                pagination={false}
-            />
-
-            {count > 0 && totalPages > 1 && (
-                <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    loading={loading}
-                    onPageChange={handlePageChange}
+                <SearchDateForm
+                    setUpdateTriggerParent={handleUpdateTrigger}
                 />
-            )}
+            </div>
+            <DataGrid
+                style={{opacity: 1, backgroundColor: 'rgba(0, 0, 0, 0.3)', color: 'rgba(255, 255, 255, 1)', fontSize: '15px'}}
+                columns={columns}
+                rows={MarsStation}
+                onRowClick={handleRowClick}
+                initialState={{
+                    pagination: {
+                        paginationModel: {page: 0, pageSize: 10},
+                    },
+                }}
+                pageSizeOptions={[5, 10, 25, 50, 100]}
+            />
         </div>
     );
 };

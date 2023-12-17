@@ -19,7 +19,7 @@ const ProfileMenu = () => {
     const id_draft = useSelector((state: RootState) => state.geographical_object.id_draft);
 
     const {access_token} = useToken()
-    const {is_authenticated, username, setUser, setEmployee} = useAuth()
+    const {is_authenticated, is_moderator, username, setUser, setEmployee} = useAuth()
     const {isDesktopMedium} = useDesktop();
 
     const marsStationDraft = async () => {
@@ -110,22 +110,19 @@ const ProfileMenu = () => {
         return (
             <div className={"profile-menu-wrapper"}>
                 <div className={"menu-wrapper " + (isOpen ? "open" : "")}>
-                    <Link to="/home" className="menu-item" style={{textDecoration: 'none'}}
-                          onClick={() => setIsOpen(false)}>
+                    <Link to="/home/" className="menu-item" style={{textDecoration: 'none'}}>
                         <span className="item">Главная</span>
                     </Link>
-                    <Link to="/geographical_object" className="menu-item" style={{textDecoration: 'none'}}
-                          onClick={() => setIsOpen(false)}>
+                    <Link to="/geographical_object/" className="menu-item" style={{textDecoration: 'none'}}>
                         <span className="item">Географические объекты</span>
                     </Link>
-                    <Link to="/mars_station" className="menu-item" style={{textDecoration: 'none'}}
-                          onClick={() => setIsOpen(false)}>
+                    <Link to="/mars_station/" className="menu-item" style={{textDecoration: 'none'}}>
                         <span className="item">Марсианские станции</span>
                     </Link>
-                    <BasketBadges/>
-                    {/*<GeographicalObjectModal/>*/}
+                    {!is_moderator &&
+                        <BasketBadges/>}
                     {!isDesktopMedium &&
-                        <Link to="/profile" className="menu-item" style={{textDecoration: 'none'}}
+                        <Link to="/profile/" className="menu-item-profile" style={{textDecoration: 'none'}}
                               onClick={() => setIsOpen(false)}>
                             <span className="item">{username}</span>
                         </Link>
@@ -140,22 +137,18 @@ const ProfileMenu = () => {
     return (
         <div className={"profile-menu-wrapper"}>
             <div className={"menu-wrapper " + (isOpen ? "open" : "")}>
-                <Link to="/home" className="menu-item" style={{textDecoration: 'none'}}
-                      onClick={() => setIsOpen(false)}>
+                <Link to="/home/" className="menu-item" style={{textDecoration: 'none'}}>
                     <span className="item">Главная</span>
                 </Link>
-                <Link to="/geographical_object" className="menu-item" style={{textDecoration: 'none'}}
-                      onClick={() => setIsOpen(false)}>
+                <Link to="/geographical_object/" className="menu-item" style={{textDecoration: 'none'}}>
                     <span className="item">Географические объекты</span>
                 </Link>
-                <Link to="/auth" className="menu-item" style={{textDecoration: 'none'}}
-                      onClick={() => setIsOpen(false)}>
+                <Link to="/auth/" className="menu-item" style={{textDecoration: 'none'}}>
                     <span className="item">Вход</span>
                 </Link>
             </div>
             <Hamburger isOpen={isOpen} setIsOpen={setIsOpen}/>
         </div>
-
     )
 }
 

@@ -1,9 +1,14 @@
-// Employee.ts
 import {createSlice} from "@reduxjs/toolkit";
 
 const initialState = {
     feature: "",
     status_task: [] as string[],
+    date: {
+        date_before: "",
+        input_before: "",
+        date_after: "",
+        input_after: "",
+    },
 };
 
 const feature_geographical_object = createSlice({
@@ -11,25 +16,47 @@ const feature_geographical_object = createSlice({
     initialState: initialState,
     reducers: {
         updateFeatureGeographicalObject: (state, action) => {
-            state.feature = action.payload;
-        },
-        cleanFeatureGeographicalObject: (state) => {
-            state.feature = initialState.feature;
+            return {
+                ...state,
+                ...action.payload,
+                feature: action.payload,
+            }
         },
         updateStatusTask: (state, action) => {
-            state.status_task = action.payload;
+            return {
+                ...state,
+                ...action.payload,
+                status_task: action.payload,
+            }
         },
-        cleanStatusTask: (state) => {
-            state.status_task = initialState.status_task;
+        updateDateFormBefore: (state, action) => {
+            return {
+                ...state,
+                date: {
+                    ...state.date,
+                    date_before: action.payload.date_before,
+                    input_before: action.payload.input_before,
+                },
+            };
+        },
+        updateDateFormAfter: (state, action) => {
+            return {
+                ...state,
+                date: {
+                    ...state.date,
+                    date_after: action.payload.date_after,
+                    input_after: action.payload.input_after,
+                },
+            }
         },
     },
 });
 
 export const {
     updateFeatureGeographicalObject,
-    cleanFeatureGeographicalObject,
     updateStatusTask,
-    cleanStatusTask
+    updateDateFormBefore,
+    updateDateFormAfter,
 } = feature_geographical_object.actions;
 
 export default feature_geographical_object.reducer;

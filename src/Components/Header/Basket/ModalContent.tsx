@@ -72,8 +72,9 @@ export function ModalContent({handleClose, count}: {
     };
 
     const put_location_and_mars_station = async (id_location: number, id_mars_station: number, direction: string) => {
-        const url = `${DOMEN}api/location/${id_location}/mars_station/${id_mars_station}/direction/${direction}/update/`;
-        await axios.put(url, {}, {
+        const url = `${DOMEN}api/location/${id_location}/mars_station/${id_mars_station}/update/`;
+        const data = {direction: direction}
+        await axios.put(url, data, {
             headers: {
                 "Content-type": "application/json; charset=UTF-8",
                 authorization: access_token,

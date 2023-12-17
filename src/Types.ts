@@ -17,6 +17,13 @@ export interface Transport {
     photo: string;
 }
 
+export interface Location {
+    id: number;
+    sequence_number: number;
+    id_geographical_object: number;
+    id_mars_station: number;
+}
+
 // Заявка - марсианская станция
 export interface MarsStation {
     id: number,
@@ -29,7 +36,8 @@ export interface MarsStation {
     geographical_object: GeographicalObject[],
     employee: string,
     moderator: string,
-    transport: Transport[]
+    transport: Transport[],
+    location: Location[],
 }
 
 // Для статуса заявки

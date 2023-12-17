@@ -24,11 +24,12 @@ export default function BasketBadges() {
   const handleOpen = () => (geographicalObjectCount > 0 ? setOpen(true) : 0);
   const handleClose = () => setOpen(false);
 
+  // !TODO: Корзинку белого цвета
   return (
       <div>
         <IconButton aria-label="cart" onClick={handleOpen}>
           <StyledBadge badgeContent={geographicalObjectCount} color="secondary">
-            <ShoppingCartIcon />
+            <ShoppingCartIcon color="info"/>
           </StyledBadge>
         </IconButton>
         {open && <GeographicalObjectModal isOpen={open} handleClose={handleClose} count={geographicalObjectCount} />}

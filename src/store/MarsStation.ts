@@ -64,13 +64,29 @@ const initialState: MarsStation = {
         date_close: "",
         status_task: "",
         status_mission: "",
-        // @ts-ignore
-        employee: {},
-        // @ts-ignore
-        moderator: {},
-        // @ts-ignore
-        transport: {},
-        // @ts-ignore
+        employee: {
+            id: -1,
+            full_name: "",
+            post: "",
+            name_organization: "",
+            address: "",
+            id_user: -1,
+        },
+        moderator: {
+            id: -1,
+            full_name: "",
+            post: "",
+            name_organization: "",
+            address: "",
+            id_user: -1,
+        },
+        transport: {
+            id: -1,
+            name: "",
+            type: "",
+            describe: "",
+            photo: "",
+        },
         location: [],
         geographical_object: [],
     },],

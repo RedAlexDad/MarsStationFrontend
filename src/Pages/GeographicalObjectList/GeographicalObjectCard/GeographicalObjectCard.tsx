@@ -10,7 +10,7 @@ import {useDispatch} from "react-redux";
 import {updateID_draft} from "../../../store/GeographicalObject.ts";
 import {updateMarsStationDraftData} from "../../../store/MarsStationDraft.ts";
 import {Dispatch, SetStateAction, useCallback} from "react";
-import DeleteIcon from "@mui/icons-material/Delete";
+import {Button} from "@mui/material";
 
 const GeographicalObjectCard = ({geographical_object, isMock, setUpdateTriggerParent}: {
     geographical_object: GeographicalObject;
@@ -29,7 +29,7 @@ const GeographicalObjectCard = ({geographical_object, isMock, setUpdateTriggerPa
                 authorization: access_token,
             };
 
-            const response = await axios.post(url, {}, { headers });
+            const response = await axios.post(url, {}, {headers});
             console.log("Успешно! Отправлена услуга на заявку!", response.data);
             dispatch(updateID_draft(response.data.id_draft));
             dispatch(updateMarsStationDraftData({
@@ -49,7 +49,7 @@ const GeographicalObjectCard = ({geographical_object, isMock, setUpdateTriggerPa
                 authorization: access_token,
             };
 
-            await axios.delete(url, { headers });
+            await axios.delete(url, {headers});
             console.log("Успешно! Услуга удалена!");
             setUpdateTriggerParent(true);
         } catch (error) {
@@ -57,41 +57,52 @@ const GeographicalObjectCard = ({geographical_object, isMock, setUpdateTriggerPa
         }
     }, [access_token, geographical_object.id, setUpdateTriggerParent]);
 
-    // TODO: Выбрать подходущую кнопку с MUI, учти, что они должны быть разными
     return (
         <div className="card-wrapper">
-            <div className="preview">
-                <img src={isMock ? mockImage : geographical_object.photo} alt="" />
-            </div>
-            <div className="card-content">
-                {is_moderator && (
+            <Link to={`/geographical_object/${geographical_object.id}`}
+                  style={{textDecoration: 'none', color: 'inherit'}}>
+                <div className="preview">
+                    <img
+                        src={isMock ? mockImage : geographical_object.photo}
+                        alt=""
+                    />
+                </div>
+                <div className="card-content">
+                    {is_moderator && (
+                        <div className="content-top">
+                            <h3>ID: {geographical_object.id}</h3>
+                        </div>
+                    )}
                     <div className="content-top">
-                        <h3>ID: {geographical_object.id}</h3>
+                        <h3 className="title">{geographical_object.feature}</h3>
                     </div>
-                )}
-                <div className="content-top">
-                    <h3 className="title">{geographical_object.feature}</h3>
                 </div>
-                <div className="content-bottom">
-                    <Link to={`/geographical_object/${geographical_object.id}`}>Посмотреть</Link>
-                </div>
+            </Link>
+            <div className="card-content">
                 {!is_moderator && is_authenticated && (
-                    <div className="content-bottom">
-                        <button onClick={addGeographicalObjectInMarsStation}>
-                            Добавить
-                        </button>
+                    <div style={{textAlign: 'center', marginTop: '0px', zIndex: '1'}}>
+                        <Button variant="contained"
+                                color="secondary"
+                                onClick={addGeographicalObjectInMarsStation}
+                        >
+                            В корзинку
+                        </Button>
                     </div>
                 )}
                 {is_moderator && (
-                    <div className="content-bottom">
-                        <button onClick={deleteGeographicalObject}>
-                            <DeleteIcon />
-                        </button>
+                    <div style={{textAlign: 'center', marginTop: '0px', zIndex: '1'}}>
+                        <Button variant="contained"
+                                color="secondary"
+                                onClick={deleteGeographicalObject}
+                        >
+                            Удалить
+                        </Button>
                     </div>
                 )}
             </div>
         </div>
-    );
+    )
+        ;
 };
 
 export default GeographicalObjectCard;

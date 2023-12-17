@@ -1,17 +1,26 @@
 @import "src/Styles/Variables.sass"
 
+.user-info
+	position: absolute
+	top: 0
+	right: 100px /* или любое другое значение, которое вам нужно */
+	display: flex
+	flex-direction: column
+	align-items: flex-end /* Выравниваем элементы контейнера справа */
+	z-index: 1000
+
 .user-info-wrapper
 	width: 350px
 	background: $secondary
 	position: absolute
 	box-shadow: rgba(0, 0, 0, 0.16) 0 10px 36px 0, rgba(0, 0, 0, 0.06) 0 0 0 1px
 	border-radius: 15px
-	top: 100px
-	right: 65px
+	top: 80px
+	right: -42px
 	opacity: 0
 	visibility: hidden
 	transform: translateY(-5px)
-	transition: 0.3s ease
+	transition: transform 1s ease
 	padding: 25px
 	display: flex
 	flex-direction: column

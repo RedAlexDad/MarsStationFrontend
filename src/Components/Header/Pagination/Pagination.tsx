@@ -1,50 +1,28 @@
-import {FaAnglesLeft, FaAnglesRight, FaAngleLeft, FaAngleRight} from 'react-icons/fa6';
+import * as React from 'react';
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
 
-interface PaginationProps {
+interface StyledPaginationProps {
     currentPage: number;
     totalPages: number;
     loading: boolean;
     onPageChange: (newPage: number) => void;
 }
 
-const Pagination: React.FC<PaginationProps> = ({currentPage, totalPages, loading, onPageChange}) => {
+const StyledPagination: React.FC<StyledPaginationProps> = ({currentPage, totalPages, loading, onPageChange}) => {
     return (
-        <div className="pagination-container">
-            <button
-                className="pagination-button"
-                onClick={() => onPageChange(1)}
-                disabled={currentPage === 1 || loading}
-            >
-                <FaAnglesLeft/>
-            </button>
-
-            <button
-                className="pagination-button"
-                onClick={() => onPageChange(currentPage - 1)}
-                disabled={currentPage === 1 || loading}
-            >
-                <FaAngleLeft/>
-            </button>
-
-            <span className="pagination-current-page">{currentPage}</span>
-
-            <button
-                className="pagination-button"
-                onClick={() => onPageChange(currentPage + 1)}
-                disabled={currentPage === totalPages || loading}
-            >
-                <FaAngleRight/>
-            </button>
-
-            <button
-                className="pagination-button"
-                onClick={() => onPageChange(totalPages)}
-                disabled={currentPage === totalPages || loading}
-            >
-                <FaAnglesRight/>
-            </button>
-        </div>
+        <Stack spacing={2} direction="row" alignItems="center" justifyContent="center">
+            <Pagination
+                count={totalPages}
+                variant="outlined"
+                color="primary"
+                page={currentPage}
+                onChange={(_, page) => onPageChange(page)}
+                disabled={loading}
+                sx={{ '& button, & .MuiPaginationItem-page': { color: 'white' } }}
+            />
+        </Stack>
     );
 };
 
-export default Pagination;
+export default StyledPagination;

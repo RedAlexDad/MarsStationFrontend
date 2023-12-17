@@ -33,7 +33,7 @@ const GeographicalObjectListPage = () => {
     };
 
     const searchGeographicalObject = async (currentPage: number) => {
-        // Если уже идет загрузка, не допускайте дополнительных запросов
+        // Если уже идет загрузка, не допускаем дополнительных запросов
         if (loading) {
             return <p>Loading...</p>;
         }
@@ -107,7 +107,6 @@ const GeographicalObjectListPage = () => {
         />
     ))
 
-    // TODO: Изменить вид поиска
     return (
         <div className="cards-list-wrapper">
             <div className="top">
