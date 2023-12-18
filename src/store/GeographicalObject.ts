@@ -43,6 +43,8 @@ const GeographicalObject = createSlice({
     reducers: {
         updateGeographicalObject: (state, action) => {
             state.data = action.payload;
+            // Упорядочиваем объекты по полю "feature"
+            state.data.sort((a, b) => a.feature.localeCompare(b.feature));
         },
         updatePagination: (state, action) => {
             state.pagination = action.payload;

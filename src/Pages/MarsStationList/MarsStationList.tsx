@@ -35,7 +35,7 @@ const MarsStationListPage = () => {
     const [parentUpdateTrigger, setParentUpdateTrigger] = useState(false);
 
     const searchMarsStation = async () => {
-        // Если уже идет загрузка, не допускайте дополнительных запросов
+        // Если уже идет загрузка, не допускаем дополнительных запросов
         if (loading) {
             return <p>Loading...</p>;
         }
@@ -46,8 +46,6 @@ const MarsStationListPage = () => {
             date_form_before: date.date_before,
             date_form_after: date.date_after,
         });
-        console.log(date.date_before)
-        console.log(date.date_after)
         const url = `${DOMEN}api/mars_station/?${params}`;
         await axios.get(url, {
             headers: {
@@ -100,19 +98,30 @@ const MarsStationListPage = () => {
             width: 150,
             renderCell: (params: any) => moment(params.value).format('YYYY-MM-DD'),
         },
-        is_moderator
-            ? {
-                field: 'employee',
-                headerName: 'Пользователь',
-                width: 250,
-                renderCell: (params: any) => params.value.full_name,
-            }
-            : {
-                field: 'moderator',
-                headerName: 'Модератор',
-                width: 250,
-                renderCell: (params: any) => params.value.full_name,
-            },
+        ...(is_moderator
+                ? [
+                    {
+                        field: 'employee',
+                        headerName: 'Пользователь',
+                        width: 250,
+                        renderCell: (params: any) => params.value.full_name,
+                    },
+                    {
+                        field: 'moderator',
+                        headerName: 'Модератор',
+                        width: 250,
+                        renderCell: (params: any) => params.value.full_name,
+                    }
+                ]
+                : [
+                    {
+                        field: 'moderator',
+                        headerName: 'Модератор',
+                        width: 250,
+                        renderCell: (params: any) => params.value.full_name,
+                    }
+                ]
+        ),
         {
             field: 'status_task',
             headerName: 'Статус заявки',
@@ -125,8 +134,6 @@ const MarsStationListPage = () => {
                     'Отменена': 'error',
                 };
                 const color = statusColors[params.value];
-
-                // return <Tag color={color}>{params.value}</Tag>;
                 return <Button variant="outlined" color={color}>{params.value}</Button>;
             },
         },
