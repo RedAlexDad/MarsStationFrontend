@@ -9,6 +9,7 @@ import {updateGeographicalObject, updatePagination} from "../../store/Geographic
 import {useToken} from "../../hooks/useToken.ts";
 import {RootState} from "../../store/store.ts";
 import Pagination from "../../Components/Header/Pagination/Pagination.tsx";
+import LoadingAnimation from "../../Components/Loading.tsx";
 
 const GeographicalObjectListPage = () => {
     const {access_token} = useToken()
@@ -23,7 +24,7 @@ const GeographicalObjectListPage = () => {
     const totalPages = pagination.totalPages;
     const count = pagination.count;
     // Загрузочный экран
-    const [loading, setLoading] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(true);
     // Cостояние для обновления в основном компоненте (при нажатии)
     const [parentUpdateTrigger, setParentUpdateTrigger] = useState(false);
 
@@ -33,13 +34,7 @@ const GeographicalObjectListPage = () => {
     };
 
     const searchGeographicalObject = async (currentPage: number) => {
-        // Если уже идет загрузка, не допускаем дополнительных запросов
-        if (loading) {
-            return <p>Loading...</p>;
-        }
-        // Установим состояние загрузки в true перед запросом
         setLoading(true);
-
         // Определяем параметры запроса, включая номер страницы и количество объектов на странице
         const params = new URLSearchParams({
             page: currentPage.toString(),
@@ -67,13 +62,16 @@ const GeographicalObjectListPage = () => {
                         count: response.data.count,
                     })
                 );
-                setLoading(false);
+                setLoading(true);
             })
             .catch(error => {
                 console.error("Ошибка!\n", error);
                 createMock();
-                setLoading(false);
+                setLoading(true);
                 return;
+            })
+            .finally(() => {
+                setLoading(false);
             });
     };
 
@@ -83,7 +81,7 @@ const GeographicalObjectListPage = () => {
     }
 
     const handlePageChange = (newPage: any) => {
-        dispatch(updatePagination({ currentPage: newPage, totalPages, count }));
+        dispatch(updatePagination({currentPage: newPage, totalPages, count}));
         searchGeographicalObject(newPage);
     };
 
@@ -95,8 +93,16 @@ const GeographicalObjectListPage = () => {
     }, [feature, currentPage, parentUpdateTrigger]);
 
     useEffect(() => {
+        if (loading) {
+            // Если уже идет загрузка, не допускаем дополнительных запросов
+            return;
+        }
+        // Устанавливаем состояние загрузки в true перед запросом
         setLoading(false);
-    }, [currentPage, totalPages, count]);
+    }, [currentPage, totalPages, count, loading]);
+
+    useEffect(() => {
+    }, [loading]);
 
     const cards = GeographicalObject.map(geographical_object => (
         <GeographicalObjectCard
@@ -106,9 +112,9 @@ const GeographicalObjectListPage = () => {
             setUpdateTriggerParent={handleUpdateTrigger}
         />
     ))
-
     return (
         <div className="cards-list-wrapper">
+            {loading && <LoadingAnimation isLoading={loading}/>}
             <div className="top">
                 <SearchBar
                     feature={feature}
@@ -117,7 +123,6 @@ const GeographicalObjectListPage = () => {
             <div className="bottom">
                 {cards}
             </div>
-
             {count > 0 && totalPages > 1 && (
                 <Pagination
                     currentPage={currentPage}

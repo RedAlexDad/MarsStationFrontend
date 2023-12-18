@@ -55,6 +55,14 @@ const GeographicalObject = createSlice({
         clearID_draft: (state) => {
             state.id_draft = initialState.id_draft;
         },
+        updatePhotoUrl: (state, action) => {
+            const { id, photoUrl } = action.payload;
+            const objectIndex = state.data.findIndex(obj => obj.id === id);
+
+            if (objectIndex !== -1) {
+                state.data[objectIndex].photo = photoUrl;
+            }
+        },
     },
 });
 
@@ -62,7 +70,8 @@ export const {
     updateGeographicalObject,
     updatePagination,
     updateID_draft,
-    clearID_draft
+    clearID_draft,
+    updatePhotoUrl
 } = GeographicalObject.actions;
 
 export default GeographicalObject.reducer;

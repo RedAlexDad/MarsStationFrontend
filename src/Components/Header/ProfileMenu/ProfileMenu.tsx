@@ -9,7 +9,7 @@ import {useToken} from "../../../hooks/useToken";
 import {useDesktop} from "../../../hooks/useDesktop";
 import {DOMEN} from "../../../Consts.ts";
 import {useDispatch, useSelector} from "react-redux";
-import {updateID_draft} from "../../../store/GeographicalObject.ts";
+import {updateGeographicalObject, updateID_draft} from "../../../store/GeographicalObject.ts";
 import BasketBadges from "../Basket/Basket.tsx";
 import {RootState} from "../../../store/store.ts";
 import {updateMarsStationDraft} from "../../../store/MarsStationDraft.ts";
@@ -52,6 +52,7 @@ const ProfileMenu = () => {
             .then(response => {
                 // console.log("Успешно!", response.data);
                 // console.log("ID черновика: ", response.data.id_draft_service);
+                dispatch(updateGeographicalObject([...response.data.results]));
                 dispatch(updateID_draft(response.data.id_draft_service));
             })
             .catch(error => {

@@ -13,7 +13,9 @@ export function GeographicalObjectModal({isOpen, handleClose, count}: {
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
         >
-            <ModalContent count={count} handleClose={handleClose}/>
+            <div>
+                <ModalContent count={count} handleClose={handleClose} />
+            </div>
         </Modal>
     );
 }

@@ -3,12 +3,11 @@ import "./Styles/Reset.sass"
 import Header from "./Components/Header/Header";
 import {useState} from 'react'
 import {BrowserRouter, Route, Routes, Navigate, Outlet} from "react-router-dom";
-import {GeographicalObject} from "./Types";
+import {GeographicalObject, MarsStation} from "./Types";
 import GeographicalObjectPage from "./Pages/GeographicalObject/GeographicalObject";
 import GeographicalObjectListPage from "./Pages/GeographicalObjectList/GeographicalObjectList";
 import ProfilePage from "./Pages/Profile/ProfilePage";
 import HomePage from "./Pages/Home/Home";
-
 import {store} from "./store/store.ts"
 import SignIn from "./Pages/Login/SignIn/SignIn";
 import SignUp from "./Pages/Login/SignUp/SignUp";
@@ -30,7 +29,7 @@ const LoginFormLayout = () => {
 
 function App() {
     const [selectedGeographicalObject, setSelectedGeographicalObject] = useState<GeographicalObject | undefined>(undefined)
-    const [selectedMarsStation, setSelectedMarsStation] = useState<GeographicalObject | undefined>(undefined)
+    const [selectedMarsStation, setSelectedMarsStation] = useState<MarsStation | undefined>(undefined)
     const queryClient = new QueryClient()
 
     return (
@@ -42,9 +41,9 @@ function App() {
                             <Header/>
                             <div className={"content-wrapper"}>
                                 <Routes>
-                                    <Route path="/" element={<Navigate to="/home" replace/>}/>
+                                    <Route path="/" element={<Navigate to="/home/" replace/>}/>
                                     {/*Начальное меню*/}
-                                    <Route path="/home" element={<HomePage/>}/>
+                                    <Route path="/home/" element={<HomePage/>}/>
 
                                     <Route path="/auth/" element={<LoginFormLayout/>}>
                                         <Route path="" element={<Navigate to="login/" replace/>}/>

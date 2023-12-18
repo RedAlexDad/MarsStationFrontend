@@ -2,14 +2,14 @@ import "./GeographicalObjectCard.sass";
 import axios from "axios";
 import {GeographicalObject} from "../../../Types";
 import {Link} from "react-router-dom";
-import mockImage from "/src/assets/mock.png";
-import {DOMEN} from "../../../Consts.ts";
+import mockImage from "../../../assets/mock.png";
+import {DOMEN, requestTime} from "../../../Consts.ts";
 import {useAuth} from "../../../hooks/useAuth.ts";
 import {useToken} from "../../../hooks/useToken.ts";
 import {useDispatch} from "react-redux";
 import {updateID_draft} from "../../../store/GeographicalObject.ts";
 import {updateMarsStationDraftData} from "../../../store/MarsStationDraft.ts";
-import {Dispatch, SetStateAction, useCallback} from "react";
+import {Dispatch, SetStateAction, useCallback, useEffect, useState} from "react";
 import {Button} from "@mui/material";
 
 const GeographicalObjectCard = ({geographical_object, isMock, setUpdateTriggerParent}: {
@@ -20,6 +20,27 @@ const GeographicalObjectCard = ({geographical_object, isMock, setUpdateTriggerPa
     const dispatch = useDispatch();
     const {is_moderator, is_authenticated} = useAuth();
     const {access_token} = useToken();
+    const [photoUrl, setPhotoUrl] = useState('');
+
+    const get_photo = async () => {
+        if (geographical_object.id === -1 || geographical_object.id === undefined) {
+            return
+        }
+        const url: string = `http://127.0.0.1:8000/api/geographical_object/${geographical_object.id}/image/`
+        await axios.get(url, {
+            headers: {
+                "Content-type": "application/json; charset=UTF-8",
+            },
+            signal: new AbortController().signal,
+            timeout: requestTime,
+        })
+            .then(() => {
+                setPhotoUrl(url)
+            })
+            .catch(() => {
+                setPhotoUrl(mockImage)
+            })
+    };
 
     const addGeographicalObjectInMarsStation = useCallback(async () => {
         try {
@@ -57,13 +78,17 @@ const GeographicalObjectCard = ({geographical_object, isMock, setUpdateTriggerPa
         }
     }, [access_token, geographical_object.id, setUpdateTriggerParent]);
 
+    useEffect(() => {
+        get_photo();
+    }, [geographical_object.id]);
+
     return (
         <div className="card-wrapper">
             <Link to={`/geographical_object/${geographical_object.id}`}
                   style={{textDecoration: 'none', color: 'inherit'}}>
                 <div className="preview">
                     <img
-                        src={isMock ? mockImage : geographical_object.photo}
+                        src={photoUrl}
                         alt=""
                     />
                 </div>

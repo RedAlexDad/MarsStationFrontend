@@ -13,6 +13,8 @@ import {useNavigate} from 'react-router-dom';
 import SearchDateForm from "./SearchDateForm/SearchDateForm.tsx";
 import {DataGrid} from '@mui/x-data-grid';
 import {Button} from "@mui/material";
+import Typography from "@mui/material/Typography";
+import LoadingAnimation from "../../Components/Loading.tsx";
 
 const MarsStationListPage = () => {
     const {access_token} = useToken()
@@ -35,16 +37,12 @@ const MarsStationListPage = () => {
     const [parentUpdateTrigger, setParentUpdateTrigger] = useState(false);
 
     const searchMarsStation = async () => {
-        // Если уже идет загрузка, не допускаем дополнительных запросов
-        if (loading) {
-            return <p>Loading...</p>;
-        }
         // Установим состояние загрузки в true перед запросом
         setLoading(true);
         const params = new URLSearchParams({
             status_task: status_task.length > 0 ? status_task.filter(s => s !== '5').join(',') : (is_moderator ? '2, 3, 4' : '1, 2, 3, 4'),
-            date_form_before: date.date_before,
-            date_form_after: date.date_after,
+            date_form_before: date.date_before ? date.date_before : '',
+            date_form_after: date.date_after ? date.date_after : '',
         });
         const url = `${DOMEN}api/mars_station/?${params}`;
         await axios.get(url, {
@@ -56,12 +54,14 @@ const MarsStationListPage = () => {
             // timeout: requestTime,
         })
             .then(response => {
-                dispatch(updateMarsStation([...response.data.results]));
-                setLoading(false);
+                dispatch(updateMarsStation([...response.data]));
                 // console.log(response.data.results)
             })
             .catch(error => {
                 console.error("Ошибка!\n", error);
+            })
+            .finally(() => {
+                setLoading(false);
             });
     };
 
@@ -75,28 +75,35 @@ const MarsStationListPage = () => {
     // Функция для передачи в дочерний компонент
     const handleUpdateTrigger = () => {
         setParentUpdateTrigger(true);
+        setLoading(true)
     };
 
     const columns = [
         {field: 'id', headerName: 'ID', width: 70, headerClassName: 'bold-header'},
-        {field: 'type_status', headerName: 'Тип статуса', width: 200, headerClassName: 'bold-header'},
+        {
+            field: 'type_status',
+            headerName: 'Тип статуса',
+            width: 200,
+            headerClassName: 'bold-header',
+            renderCell: (params: any) => params.value ? params.value : <Typography variant="body1" mx={2}> — </Typography>,
+        },
         {
             field: 'date_create',
             headerName: 'Дата создания',
             width: 150,
-            renderCell: (params: any) => moment(params.value).format('YYYY-MM-DD'),
+            renderCell: (params: any) => params.value ? moment(params.value).format('YYYY-MM-DD') : <Typography variant="body1" mx={2}> — </Typography>,
         },
         {
             field: 'date_form',
             headerName: 'Дата формирования',
             width: 150,
-            renderCell: (params: any) => moment(params.value).format('YYYY-MM-DD'),
+            renderCell: (params: any) => params.value ? moment(params.value).format('YYYY-MM-DD') : <Typography variant="body1" mx={2}> — </Typography>,
         },
         {
             field: 'date_close',
             headerName: 'Дата закрытия',
             width: 150,
-            renderCell: (params: any) => moment(params.value).format('YYYY-MM-DD'),
+            renderCell: (params: any) => params.value ? moment(params.value).format('YYYY-MM-DD') : <Typography variant="body1" mx={2}> — </Typography>,
         },
         ...(is_moderator
                 ? [
@@ -104,13 +111,13 @@ const MarsStationListPage = () => {
                         field: 'employee',
                         headerName: 'Пользователь',
                         width: 250,
-                        renderCell: (params: any) => params.value.full_name,
+                        renderCell: (params: any) => params.value ? params.value.full_name : <Typography variant="body1" mx={2}> — </Typography>,
                     },
                     {
                         field: 'moderator',
                         headerName: 'Модератор',
                         width: 250,
-                        renderCell: (params: any) => params.value.full_name,
+                        renderCell: (params: any) => params.value ? params.value.full_name : <Typography variant="body1" mx={2}> — </Typography>,
                     }
                 ]
                 : [
@@ -118,7 +125,7 @@ const MarsStationListPage = () => {
                         field: 'moderator',
                         headerName: 'Модератор',
                         width: 250,
-                        renderCell: (params: any) => params.value.full_name,
+                        renderCell: (params: any) => params.value ? params.value.full_name : <Typography variant="body1" mx={2}> — </Typography>,
                     }
                 ]
         ),
@@ -155,18 +162,22 @@ const MarsStationListPage = () => {
                     setUpdateTriggerParent={handleUpdateTrigger}
                 />
             </div>
-            <DataGrid
-                style={{opacity: 1, backgroundColor: 'rgba(0, 0, 0, 0.3)', color: 'rgba(255, 255, 255, 1)', fontSize: '15px'}}
-                columns={columns}
-                rows={MarsStation}
-                onRowClick={handleRowClick}
-                initialState={{
-                    pagination: {
-                        paginationModel: {page: 0, pageSize: 10},
-                    },
-                }}
-                pageSizeOptions={[5, 10, 25, 50, 100]}
-            />
+            {loading && <LoadingAnimation isLoading={loading} />}
+            {MarsStation[0] && MarsStation[0].id === -1 && <LoadingAnimation isLoading={loading} />}
+            {MarsStation[0] && MarsStation[0].id !== -1 &&
+                <DataGrid
+                    style={{opacity: 1, backgroundColor: 'rgba(0, 0, 0, 0.3)', color: 'rgba(255, 255, 255, 1)', fontSize: '15px'}}
+                    columns={columns}
+                    rows={MarsStation}
+                    onRowClick={handleRowClick}
+                    initialState={{
+                        pagination: {
+                            paginationModel: {page: 0, pageSize: 10},
+                        },
+                    }}
+                    pageSizeOptions={[5, 10, 25, 50, 100]}
+                />
+            }
         </div>
     );
 };
