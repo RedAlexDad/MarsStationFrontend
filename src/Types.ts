@@ -1,3 +1,18 @@
+// Аккаунт
+export interface User {
+    id_user: number,
+    username: string
+}
+
+// Сотрудник
+export interface Employee {
+    id_employee: number,
+    full_name: string,
+    post: string
+    name_organization: string
+    address: string
+}
+
 // Услуга - географический объект
 export interface GeographicalObject {
     id: number;
@@ -31,13 +46,13 @@ export interface MarsStation {
     date_create: string,
     date_form: string,
     date_close: string,
-    status_task: string,
+    status_task: number,
     status_mission: number,
-    geographical_object: GeographicalObject[],
-    employee: string,
-    moderator: string,
-    transport: Transport[],
+    employee: Employee,
+    moderator: Employee,
+    transport: Transport,
     location: Location[],
+    geographical_object: GeographicalObject[]
 }
 
 // Для статуса заявки
@@ -46,17 +61,3 @@ export interface Option {
     name: string
 }
 
-// Аккаунт
-export interface User {
-    id_user: number,
-    username: string
-}
-
-// Сотрудник
-export interface Employee {
-    id_employee: number,
-    full_name: string,
-    post: string
-    name_organization: string
-    address: string
-}

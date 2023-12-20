@@ -1,7 +1,7 @@
 import "./NavMenu.sass"
 import {Link} from "react-router-dom";
 
-const NavMenu = () => {
+export default function NavMenu () {
     return (
         <div className="menu-wrapper">
 
@@ -16,5 +16,3 @@ const NavMenu = () => {
         </div>
     )
 }
-
-export default NavMenu;

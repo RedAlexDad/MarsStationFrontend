@@ -10,10 +10,12 @@ import {useToken} from "../../hooks/useToken.ts";
 import {RootState} from "../../store/store.ts";
 import Pagination from "../../Components/Header/Pagination/Pagination.tsx";
 import LoadingAnimation from "../../Components/Loading.tsx";
+import GeographicalObjectCardAdd from "./GeographicalObjectCard/GeographicalObjectCardAdd.tsx";
+import {useAuth} from "../../hooks/useAuth.ts";
 
-const GeographicalObjectListPage = () => {
+export default function GeographicalObjectListPage() {
     const {access_token} = useToken()
-    const [isMock, setIsMock] = useState<boolean>(false);
+    const {is_moderator} = useAuth()
 
     const dispatch = useDispatch()
     const GeographicalObject = useSelector((state: RootState) => state.geographical_object.data);
@@ -51,7 +53,6 @@ const GeographicalObjectListPage = () => {
             timeout: requestTime,
         })
             .then(response => {
-                setIsMock(false);
                 // console.log("Успешно!", response.data);
                 dispatch(updateGeographicalObject([...response.data.results]));
                 // Обновление данных пагинации
@@ -66,7 +67,7 @@ const GeographicalObjectListPage = () => {
             })
             .catch(error => {
                 console.error("Ошибка!\n", error);
-                createMock();
+                dispatch(updateGeographicalObject(GeographicalObjectsMock));
                 setLoading(true);
                 return;
             })
@@ -74,11 +75,6 @@ const GeographicalObjectListPage = () => {
                 setLoading(false);
             });
     };
-
-    const createMock = () => {
-        setIsMock(true);
-        dispatch(updateGeographicalObject(GeographicalObjectsMock));
-    }
 
     const handlePageChange = (newPage: any) => {
         dispatch(updatePagination({currentPage: newPage, totalPages, count}));
@@ -108,10 +104,10 @@ const GeographicalObjectListPage = () => {
         <GeographicalObjectCard
             geographical_object={geographical_object}
             key={geographical_object.id}
-            isMock={isMock}
             setUpdateTriggerParent={handleUpdateTrigger}
         />
     ))
+
     return (
         <div className="cards-list-wrapper">
             {loading && <LoadingAnimation isLoading={loading}/>}
@@ -121,6 +117,9 @@ const GeographicalObjectListPage = () => {
                 />
             </div>
             <div className="bottom">
+                {/*{is_moderator &&*/}
+                {/*    <GeographicalObjectCardAdd/>*/}
+                {/*}*/}
                 {cards}
             </div>
             {count > 0 && totalPages > 1 && (
@@ -134,5 +133,3 @@ const GeographicalObjectListPage = () => {
         </div>
     )
 }
-
-export default GeographicalObjectListPage;

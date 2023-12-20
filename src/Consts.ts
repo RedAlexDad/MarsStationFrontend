@@ -101,7 +101,7 @@ export const STATUS_TASKS: Option[] = [
 export const STATUS_MISSIONS: Option[] = [
     {
         id: 0,
-        name: "Ошибка!"
+        name: "Ошибка"
     },
     {
         id: 1,

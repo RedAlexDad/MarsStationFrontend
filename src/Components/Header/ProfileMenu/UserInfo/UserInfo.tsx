@@ -1,47 +1,63 @@
-import "./UserInfo.sass"
 import {useAuth} from "../../../../hooks/useAuth";
-import {ImExit} from "react-icons/im";
 import user_avatar from "./user.png";
-import {useNavigate } from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {logOutMessage} from "../../../../Toasts/Toasts";
 import {useToken} from "../../../../hooks/useToken";
-import {useModal} from "../../../../hooks/useModal";
+import {useState} from "react";
+import Button from "@mui/material/Button";
+import {useDesktop} from "../../../../hooks/useDesktop.ts";
 
-const UserInfo = () => {
+export default function UserInfo() {
+    const navigate = useNavigate()
+    const {resetTokens} = useToken()
+    const {full_name, post, name_organization, address, is_moderator, logOut} = useAuth()
+    const [isOpen, setIsOpen] = useState(false);
+    const {isDesktopMedium} = useDesktop();
 
-	const navigate = useNavigate()
-	// @ts-ignore
-	const {full_name, post, name_organization, address, is_moderator, logOut} = useAuth()
-	const {resetTokens} = useToken()
-	const {modalRef, buttonRef, isOpen, setIsOpen} = useModal()
+    const doLogOut = () => {
+        logOut()
+        resetTokens()
+        logOutMessage()
+        navigate("/home/")
+    }
 
-	const doLogOut = () => {
-		logOut()
-		resetTokens()
-		logOutMessage()
-		navigate("/home")
-	}
+    return (
+        <div className="user-info">
+            {isDesktopMedium && <>
+                <div className="user-info-wrapper-close">
+                    <img src={user_avatar} className="user-avatar" onClick={() => setIsOpen(!isOpen)}
+                         alt="User avatar"/>
+                </div>
+                <div className={`user-info-wrapper ${isOpen ? "open" : ""}`}>
+                    <span>Имя: {full_name}</span>
+                    <span>Должность: {post}</span>
+                    <span>Название организации: {name_organization}</span>
+                    {address && <span>Адрес: {address}</span>}
+                    <span>Статус: {is_moderator ? "Модератор" : "Пользователь"}</span>
 
-	return (
-		<div className="uesr-info">
-			<div className="user-ifno-wrapper-close" ref={buttonRef}>
-				<img src={user_avatar} className="user-avatar" onClick={() => setIsOpen(!isOpen)} />
-			</div>
-
-			<div className={"user-info-wrapper " + (isOpen ? "open" : "")} ref={modalRef}>
-				<span>Имя: {full_name}</span>
-				<span>Должность: {post}</span>
-				<span>Название организации: {name_organization}</span>
-				{address && <span>Адрес: {address}</span>}
-				<span>Статус: {is_moderator ? "Модератор" : "Пользователь"}</span>
-
-				<button onClick={doLogOut}>
-					Выйти
-					<ImExit />
-				</button>
-			</div>
-		</div>
-	)
-}
-
-export default UserInfo;
+                    <Button variant="outlined" sx={{color: 'white', borderColor: 'white'}} onClick={doLogOut}>
+                        Выйти
+                    </Button>
+                </div>
+            </>
+            }
+            {!isDesktopMedium &&
+                <div style={{padding: '30px'}}>
+                    <p style={{fontSize: '18px', color: '#fff'}}>Имя: {full_name}</p>
+                    <br/>
+                    <p style={{fontSize: '18px', color: '#fff'}}>Должность: {post}</p>
+                    <br/>
+                    <p style={{fontSize: '18px', color: '#fff'}}>Название организации: {name_organization}</p>
+                    {address && <br/> && <span style={{fontSize: '18px', color: '#fff'}}>Адрес: {address}</span>}
+                    <p style={{fontSize: '18px', color: '#fff'}}> <br/> Статус: {is_moderator ? "Модератор" : "Пользователь"}</p>
+                    <br/>
+                    <Link to="/auth/" className="menu-item" style={{textDecoration: 'none'}}>
+                        <Button variant="outlined" sx={{color: 'white', borderColor: 'white'}} onClick={doLogOut}>
+                            Выйти
+                        </Button>
+                    </Link>
+                </div>
+            }
+        </div>
+    );
+};

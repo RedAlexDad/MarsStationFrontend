@@ -1,17 +1,14 @@
-import * as React from 'react';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 
-interface StyledPaginationProps {
+export default function StyledPagination({currentPage, totalPages, loading, onPageChange}: {
     currentPage: number;
     totalPages: number;
     loading: boolean;
     onPageChange: (newPage: number) => void;
-}
-
-const StyledPagination: React.FC<StyledPaginationProps> = ({currentPage, totalPages, loading, onPageChange}) => {
+}) {
     return (
-        <Stack spacing={2} direction="row" alignItems="center" justifyContent="center">
+        <Stack spacing={2} direction="row" alignItems="center" justifyContent="center" padding="50px">
             <Pagination
                 count={totalPages}
                 variant="outlined"
@@ -19,10 +16,8 @@ const StyledPagination: React.FC<StyledPaginationProps> = ({currentPage, totalPa
                 page={currentPage}
                 onChange={(_, page) => onPageChange(page)}
                 disabled={loading}
-                sx={{ '& button, & .MuiPaginationItem-page': { color: 'white' } }}
+                sx={{'& button, & .MuiPaginationItem-page': {color: 'white'}}}
             />
         </Stack>
     );
-};
-
-export default StyledPagination;
+}

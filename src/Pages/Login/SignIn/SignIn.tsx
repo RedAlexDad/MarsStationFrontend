@@ -6,24 +6,21 @@ import axios from "axios";
 import {errorMessage, successMessage} from "../../../Toasts/Toasts";
 import {useToken} from "../../../hooks/useToken";
 import {useAuth} from "../../../hooks/useAuth";
-import {variables} from "../../../utls/variables";
-import CustomButton from "../../../Components/CustomButton/CustomButton";
 import {DOMEN} from "../../../Consts.ts";
+import Button from "@mui/material/Button";
+import React from "react";
 
-const SignIn = () => {
-
+export default function SignIn() {
     const navigate = useNavigate()
     const {setAccessToken} = useToken()
     const {setUser, setEmployee} = useAuth()
 
-    // @ts-ignore
-    const login = async (formData) => {
-        await axios(`${DOMEN}api/authentication/`, {
-            method: "POST",
+    const login = async (data: any) => {
+        const url: string = `${DOMEN}api/authentication/`;
+        await axios.post(url, data, {
             headers: {
                 "Content-type": "application/json; charset=UTF-8"
             },
-            data: formData as FormData
         })
             .then(response => {
                 setAccessToken(response.data['access_token'])
@@ -51,12 +48,22 @@ const SignIn = () => {
             });
     }
 
-    // @ts-ignore
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-        const formData = new FormData(e.target as HTMLFormElement)
-        await login(formData)
-    }
+    const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+
+        const formElement = e.currentTarget.closest('form');
+        if (formElement) {
+            const formData = new FormData(formElement);
+            const username = formData.get('username') as string;
+            const password = formData.get('password') as string;
+            const data = {
+                username: username,
+                password: password
+            }
+            await login(data);
+        }
+    };
+
 
     return (
         <div className="auth-container">
@@ -65,7 +72,7 @@ const SignIn = () => {
                     Вход
                 </div>
             </div>
-            <form className="inputs" action="POST" onSubmit={handleSubmit}>
+            <form className="inputs">
                 <div className="input">
                     <GrLogin/>
                     <input type="text" name="username" placeholder="Логин" required/>
@@ -75,16 +82,18 @@ const SignIn = () => {
                     <input type="password" name="password" placeholder="Пароль" required/>
                 </div>
                 <div className="sign-up-link-container">
-                    <Link to="/auth/register" style={{textDecoration: 'none'}}>
+                    <Link to="/auth/register/" style={{textDecoration: 'none'}}>
                         <span> Ещё нет аккаунта? </span>
                     </Link>
                 </div>
-                {/*	@ts-ignore*/}
-                <CustomButton bg={variables.primary} text="Войти"/>
+                <Button
+                    variant="outlined"
+                    sx={{color: 'white', borderColor: 'white'}}
+                    onClick={(e) => handleSubmit(e as React.MouseEvent<HTMLButtonElement>)}
+                >
+                    Войти
+                </Button>
             </form>
-
         </div>
     )
 }
-
-export default SignIn;

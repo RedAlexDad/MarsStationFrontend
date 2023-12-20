@@ -4,10 +4,11 @@ import {cleanEmployee, updateEmployee} from "../store/Employee.ts";
 import axios from "axios";
 import {useToken} from "./useToken";
 import {DOMEN} from "../Consts.ts";
+import {RootState} from "../store/store.ts";
 
 export function useAuth() {
-    const selectedUserData = useSelector((state) => state.user);
-    const selectedEmployeeData = useSelector((state) => state.employee);
+    const selectedUserData = useSelector((state: RootState) => state.user);
+    const selectedEmployeeData = useSelector((state: RootState) => state.employee);
 
     const {
         id_user,
@@ -26,10 +27,10 @@ export function useAuth() {
 
     const dispatch = useDispatch()
 
-    const setUser = (user_value) => {
+    const setUser = (user_value: any) => {
         dispatch(updateUser(user_value));
     }
-    const setEmployee = (employee_value) => {
+    const setEmployee = (employee_value: any) => {
         dispatch(updateEmployee(employee_value));
     };
 
@@ -55,7 +56,6 @@ export function useAuth() {
         dispatch(cleanEmployee());
     }
 
-
     return {
         id_user,
         is_authenticated,
@@ -66,10 +66,8 @@ export function useAuth() {
         post,
         name_organization,
         address,
-        // Redux
         setUser,
         setEmployee,
-        // Other
         logOut,
     };
 }

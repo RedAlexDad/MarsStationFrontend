@@ -4,6 +4,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, {SelectChangeEvent} from '@mui/material/Select';
+import {Transport} from "../../Types.ts";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -16,27 +17,27 @@ const MenuProps = {
     },
 };
 
-function getStyles(id: number, selectedIds: number[], theme: Theme) {
+function getStyles(id: number, selectedIds: number[] | number, theme: Theme) {
+    const selectedArray = Array.isArray(selectedIds) ? selectedIds : [selectedIds];
     return {
-        fontWeight:
-            selectedIds.indexOf(id) === -1 || !id
-                ? theme.typography.fontWeightRegular
-                : theme.typography.fontWeightMedium,
+        fontWeight: selectedArray.indexOf(id) === -1 || !id
+            ? theme.typography.fontWeightRegular
+            : theme.typography.fontWeightMedium,
     };
 }
 
 export default function MultipleSelectTransport({transports, selectedTransports, onChange}: {
-    transports: { id: number; type: string }[];
-    selectedTransports: number[];
-    onChange: (selectedIds: number[]) => void;
+    transports: Transport[] | undefined;
+    selectedTransports: number;
+    onChange: (selectedIds: number | string) => void;
 }) {
     const theme = useTheme();
 
-    const handleChange = (event: SelectChangeEvent<typeof selectedTransports>) => {
+    const handleChange = (event: SelectChangeEvent<number>) => {
         const {
             target: { value },
         } = event;
-        onChange(value as number[]);
+        onChange(value);
     };
 
     return (
@@ -46,14 +47,13 @@ export default function MultipleSelectTransport({transports, selectedTransports,
                 <Select
                     labelId="demo-multiple-name-label"
                     id="demo-multiple-name"
-                    multiple
                     value={selectedTransports}
                     onChange={handleChange}
                     input={<OutlinedInput label="Type" />}
                     MenuProps={MenuProps}
                     sx={{ color: 'white' }}
                 >
-                    {transports.map((transport) => (
+                    {transports && transports?.map((transport: Transport) => (
                         <MenuItem
                             key={transport.id}
                             value={transport.id}
@@ -64,23 +64,6 @@ export default function MultipleSelectTransport({transports, selectedTransports,
                     ))}
                 </Select>
             </FormControl>
-
-            {/* Добавьте отображение выбранных карточек транспорта по аналогии с предыдущим примером */}
-            {/*{transports*/}
-            {/*    .filter((transport) => selectedTransports.includes(transport.id))*/}
-            {/*    .map((selectedTransport) => (*/}
-            {/*        <div key={selectedTransport.id} className="cards-list-wrapper">*/}
-            {/*            <div className="bottom">*/}
-            {/*                <div className="card-wrapper">*/}
-            {/*                    <div className="card-content">*/}
-            {/*                        <div className="content-top">*/}
-            {/*                            <p className="type"> Тип: {selectedTransport.type} </p>*/}
-            {/*                        </div>*/}
-            {/*                    </div>*/}
-            {/*                </div>*/}
-            {/*            </div>*/}
-            {/*        </div>*/}
-            {/*    ))}*/}
         </div>
     );
 };

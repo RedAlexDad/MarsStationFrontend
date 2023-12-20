@@ -6,29 +6,24 @@ import axios from "axios";
 import {errorMessage, successMessage} from "../../../Toasts/Toasts";
 import {useToken} from "../../../hooks/useToken";
 import {useAuth} from "../../../hooks/useAuth";
-import CustomButton from "../../../Components/CustomButton/CustomButton";
-import {variables} from "../../../utls/variables";
 import {DOMEN} from "../../../Consts.ts";
+import Button from "@mui/material/Button";
+import React from "react";
 
-const SignUp = () => {
-
+export default function SignUp() {
     const navigate = useNavigate()
     const {setAccessToken} = useToken()
     const {setUser} = useAuth()
 
-    // @ts-ignore
-    const login = async (formData) => {
-        const username = formData.get('username')
-        const password = formData.get('password')
-        await axios(`${DOMEN}api/authentication/`, {
-            method: "POST",
+    const login = async (data: any) => {
+        const url: string = `${DOMEN}api/authentication/`;
+        await axios.post(url, {
+            username: data.username,
+            password: data.password
+        }, {
             headers: {
                 "Content-type": "application/json; charset=UTF-8"
             },
-            data: {
-                username: username,
-                password: password
-            }
         })
             .then(response => {
                 setAccessToken(response.data['access_token'])
@@ -39,7 +34,7 @@ const SignUp = () => {
                     is_moderator: response.data.user["is_moderator"],
                 }
                 setUser(permissions)
-                navigate("/home");
+                navigate("/home/");
                 successMessage(response.data.user["username"])
             })
             .catch(error => {
@@ -48,88 +43,93 @@ const SignUp = () => {
             });
     }
 
-    // @ts-ignore
-    const register = async (formData) => {
-        await axios(`${DOMEN}api/register/`, {
-            method: "POST",
+    const register = async (data: any) => {
+        const url: string = `${DOMEN}api/register/`;
+        await axios.post(url, data, {
             headers: {
                 "Content-type": "application/json; charset=UTF-8"
             },
-            data: formData as FormData
         })
             .then(response => {
                 console.log(response.data)
-                login(formData)
+                console.log(data)
+                login(data)
             })
             .catch(error => {
                 console.error("Ошибка!\n", error);
                 errorMessage()
             });
     }
-    // @ts-ignore
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: any) => {
         e.preventDefault()
-        const formData: FormData = new FormData(e.target as HTMLFormElement)
-        await register(formData)
+        const formElement = e.currentTarget.closest('form');
+        if (formElement) {
+            const formData = new FormData(formElement);
+            const username = formData.get('username') as string;
+            const password = formData.get('password') as string;
+            const full_name = formData.get('full_name') as string;
+            const post = formData.get('post') as string;
+            const name_organization = formData.get('name_organization') as string;
+            const address = formData.get('address') as string;
+
+            const data = {
+                username: username,
+                password: password,
+                is_moderator: false,
+                full_name: full_name,
+                post: post,
+                name_organization: name_organization,
+                address: address
+            }
+            await register(data)
+        }
     }
 
     return (
         <div className="auth-container">
-
             <div className="header">
-
                 <div className="text">
                     Регистрация
                 </div>
-
             </div>
-
-            <form className="inputs" action="POST" onSubmit={handleSubmit}>
-
+            <form className="inputs">
                 <div className="input">
                     <GrLogin className="icon"/>
                     <input type="text" placeholder="Логин" name="username"/>
                 </div>
-
                 <div className="input">
                     <FaLock className="icon"/>
                     <input type="password" placeholder="Пароль" name="password"/>
                 </div>
-
                 <div className="input">
                     <FaUser className="icon"/>
                     <input type="text" placeholder="ФИО" name="full_name"/>
                 </div>
-
                 <div className="input">
                     <FaSignsPost className="icon"/>
                     <input type="text" placeholder="Должность" name="post"/>
                 </div>
-
                 <div className="input">
                     <FaRegBuilding className="icon"/>
                     <input type="text" placeholder="Название организации" name="name_organization"/>
                 </div>
-
                 <div className="input">
                     <GrMap className="icon"/>
                     <input type="text" placeholder="Адрес" name="address"/>
                 </div>
-
-
                 <div className="sign-in-link-container">
-                    <Link to="/auth/login" style={{textDecoration: 'none'}}>
+                    <Link to="/auth/login/" style={{textDecoration: 'none'}}>
                         <span>Уже есть аккаут?</span>
                     </Link>
                 </div>
-
-                {/*@ts-ignore*/}
-                <CustomButton bg={variables.primary} text="Зарегестрироваться"/>
-
+                <Button
+                    variant="outlined"
+                    sx={{color: 'white', borderColor: 'white'}}
+                    onClick={(e) => handleSubmit(e as React.MouseEvent<HTMLButtonElement>)}
+                >
+                    Зарегестрироваться
+                </Button>
             </form>
-
         </div>
     )
 }
-
-export default SignUp;

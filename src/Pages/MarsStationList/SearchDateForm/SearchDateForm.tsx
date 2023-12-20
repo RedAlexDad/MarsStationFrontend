@@ -1,67 +1,84 @@
-import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
-import {DatePicker} from '@mui/x-date-pickers/DatePicker';
-import {useDispatch, useSelector} from "react-redux";
-import {updateDateFormAfter, updateDateFormBefore} from "../../../store/Search.ts";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import * as dayjs from "dayjs";
-import {Dispatch, SetStateAction} from "react";
-import {RootState} from "../../../store/store.ts";
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateDateFormAfter, updateDateFormBefore } from '../../../store/Search.ts';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import dayjs from 'dayjs';
+import { Dispatch, SetStateAction } from 'react';
+import { RootState } from '../../../store/store.ts';
 
-const SearchDateForm = ({setUpdateTriggerParent}: {
-    setUpdateTriggerParent: Dispatch<SetStateAction<boolean>>,
-}) => {
+export default function ({ setUpdateTriggerParent }: { setUpdateTriggerParent: Dispatch<SetStateAction<boolean>> }) {
     const dispatch = useDispatch();
     const date = useSelector((state: RootState) => state.search.date);
-    let dayjsDateBefore = dayjs(date.input_before);
-    let dayjsDateAfter = dayjs(date.input_after);
+    const dayjsDateBefore = dayjs(date.input_before);
+    const dayjsDateAfter = dayjs(date.input_after);
 
-    const formatDate = (date: string) => dayjs(date).format("YYYY-MM-DD");
-    const handleBeforeDateChange = (date: Date | any) => {
-        const formattedDate: string = formatDate(date);
-        dispatch(
-            updateDateFormBefore({
-                date_before: formattedDate,
-                input_before: dayjsDateBefore.isValid() ? dayjsDateBefore.toISOString() : "",
-            })
-        );
+    const formatDate = (date: string) => dayjs(date).format('YYYY-MM-DD');
+
+    const handleDateChange = (type: 'before' | 'after', date: Date | null) => {
+        const formattedDate = date ? formatDate(date.toISOString()) : '';
+        const updateAction = type === 'before' ? updateDateFormBefore : updateDateFormAfter;
+        const currentDayjsDate = type === 'before' ? dayjsDateBefore : dayjsDateAfter;
+
+        if (date && dayjs(date).isSame(currentDayjsDate)) {
+            // Если выбрана та же самая дата, сбрасываем данные
+            dispatch(
+                updateAction({
+                    [`date_${type}`]: '',
+                    [`input_${type}`]: '',
+                })
+            );
+        } else {
+            // Иначе обновляем данные
+            dispatch(
+                updateAction({
+                    [`date_${type}`]: formattedDate,
+                    [`input_${type}`]: date ? date.toISOString() : '',
+                })
+            );
+        }
+
         setUpdateTriggerParent(true);
     };
-    const handleAfterDateChange = (date: any) => {
-        const formattedDate: string = formatDate(date);
-        dispatch(
-            updateDateFormAfter({
-                date_after: formattedDate,
-                input_after: dayjsDateAfter.isValid() ? dayjsDateAfter.toISOString() : "",
-            })
-        );
+
+    const handleResetDates = () => {
+        dispatch(updateDateFormBefore({ date_before: '', input_before: '' }));
+        dispatch(updateDateFormAfter({ date_after: '', input_after: '' }));
         setUpdateTriggerParent(true);
     };
 
     return (
         <div>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <Box display="flex" alignItems="center">
+                <Box display="flex" alignItems="center" sx={{ color: 'white', borderColor: 'white' }}>
                     <DatePicker
                         label="ПОСЛЕ"
                         value={dayjsDateAfter.isValid() ? dayjsDateAfter.toDate() : null}
-                        onChange={handleAfterDateChange}
-                        sx={{ '& input, & label, & .MuiIconButton-label': { color: 'white' } }}
+                        onChange={(date) => handleDateChange('after', date)}
+                        sx={{
+                            '& input, & label, & .MuiIconButton-label, & .MuiIconButton-root': { color: 'white' },
+                        }}
                     />
-                    <Typography variant="body1" mx={2}>
+                    <Typography variant="body1" mx={2} sx={{ color: 'white', borderColor: 'white' }}>
                         —
                     </Typography>
                     <DatePicker
                         label="ДО"
                         value={dayjsDateBefore.isValid() ? dayjsDateBefore.toDate() : null}
-                        onChange={handleBeforeDateChange}
-                        sx={{ '& input, & label, & .MuiIconButton-label': { color: 'white' } }}
+                        onChange={(date) => handleDateChange('before', date)}
+                        sx={{
+                            '& input, & label, & .MuiIconButton-label, & .MuiIconButton-root': { color: 'white' },
+                        }}
                     />
+                    <Typography variant="body1" mx={2}></Typography>
+                    <Button variant="outlined" sx={{ color: 'white', borderColor: 'white' }} onClick={handleResetDates}>
+                        Сбросить даты
+                    </Button>
                 </Box>
             </LocalizationProvider>
         </div>
     );
 }
-
-export default SearchDateForm;

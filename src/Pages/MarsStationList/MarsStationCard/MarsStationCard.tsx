@@ -2,7 +2,7 @@ import "./MarsStationCard.sass"
 import {MarsStation} from "../../../Types";
 import {Link} from "react-router-dom";
 
-const MarsStationCard = ({mars_station}: { mars_station: MarsStation }) => {
+export default function MarsStationCard ({mars_station}: { mars_station: MarsStation }) {
     return (
         <div className="card-wrapper">
             <div className="card-content">
@@ -29,5 +29,3 @@ const MarsStationCard = ({mars_station}: { mars_station: MarsStation }) => {
         </div>
     )
 }
-
-export default MarsStationCard;

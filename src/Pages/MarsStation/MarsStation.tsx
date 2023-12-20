@@ -1,8 +1,8 @@
 import "./MarsStation.sass"
 import {Dispatch, useEffect, useState} from "react";
 import {Link, useParams} from "react-router-dom";
-import {DOMEN, requestTime} from "../../Consts";
-import {GeographicalObject, MarsStation, Location} from "../../Types";
+import {DOMEN, requestTime, STATUS_MISSIONS, STATUS_TASKS} from "../../Consts";
+import {GeographicalObject, MarsStation, Location, Transport} from "../../Types";
 import {useToken} from "../../hooks/useToken.ts";
 import axios from "axios";
 import {useAuth} from "../../hooks/useAuth.ts";
@@ -10,17 +10,15 @@ import {useDispatch} from "react-redux";
 import {clearID_draft} from "../../store/GeographicalObject.ts";
 import {cleanDraft, updateMarsStationDraftData} from "../../store/MarsStationDraft.ts";
 import mockImage from "../../assets/mock.png";
-import DeleteIcon from "@mui/icons-material/Delete";
-import {Button, ButtonGroup, TextField} from "@mui/material";
-import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import {TextField} from "@mui/material";
 import LoadingAnimation from "../../Components/Loading.tsx";
-// import MultipleSelectTransport from "./MultipleSelectTransport.tsx";
+import MultipleSelectTransport from "./MultipleSelectTransport.tsx";
+import TableGeographicalObject from "./TableGeographicalObject.tsx";
 
-const MarsStationPage = ({selectedMarsStation, setSelectedMarsStation}: {
+export default function MarsStationPage({selectedMarsStation, setSelectedMarsStation}: {
     selectedMarsStation: MarsStation | undefined,
     setSelectedMarsStation: Dispatch<MarsStation | undefined>
-}) => {
+}) {
     const {id_mars_station} = useParams<{
         id_mars_station: string
     }>();
@@ -35,27 +33,27 @@ const MarsStationPage = ({selectedMarsStation, setSelectedMarsStation}: {
     const [updateTrigger, setUpdateTrigger] = useState(false);
 
     // Редактирование заявок
-    const [edit, setEdit] = useState<boolean>(false);
     const [editedTypeStatus, setEditedTypeStatus] = useState(selectedMarsStation?.type_status || '');
-    // const [selectedTransports, setSelectedTransports] = useState<number[]>([]);
     const [photoUrlsMap, setPhotoUrlsMap] = useState<Record<number, string>>({});
     // Загрузочный экран
     const [loading, setLoading] = useState<boolean>(true);
     // Определение переменной для отслеживания изменений фото
     const [photoUpdateCounter, setPhotoUpdateCounter] = useState(0);
+    // Транспорт
+    const [selectedTransports, setSelectedTransports] = useState<any>();
 
     const handleChangeStatus = (type_status: string) => {
         setEditedTypeStatus(type_status);
     };
 
-    // const handleTransportsChange = (selectedIds: number[]) => {
-    //     setSelectedTransports(selectedIds);
-    // };
+    const handleTransportsChange = (selectedIds: any) => {
+        setSelectedTransports(selectedIds);
+    };
 
     // Данные
     const GeographicalObjects: GeographicalObject[] | undefined = selectedMarsStation?.geographical_object;
     const Locations: Location[] | undefined = selectedMarsStation?.location;
-    // const [transports, setTransports] = useState([]);
+    const [transports, setTransports] = useState<Transport[] | undefined>([])
 
     // Создаем объект, где ключ - это id_geographical_object, а значение - сам объект geographical_object
     let geographicalObjectMap: any = {};
@@ -69,10 +67,10 @@ const MarsStationPage = ({selectedMarsStation, setSelectedMarsStation}: {
     if (Locations) {
         sortedLocations = [...Locations].sort((a, b) => a.sequence_number - b.sequence_number);
     }
-    // console.log(sortedLocations)
 
     useEffect(() => {
-        getMarsStation()
+        getMarsStation();
+        getTransports();
         if (updateTrigger) {
             // Вызываем код или обновление, которое должно произойти после успешного удаления
             // Например, здесь можно обновить список географических объектов или выполнить другие действия
@@ -83,6 +81,10 @@ const MarsStationPage = ({selectedMarsStation, setSelectedMarsStation}: {
     useEffect(() => {
         loadPhotos();
     }, [Locations, photoUpdateCounter]);
+
+    useEffect(() => {
+        setTransports(transports);
+    }, [transports]);
 
     useEffect(() => {
     }, [loading]);
@@ -118,7 +120,7 @@ const MarsStationPage = ({selectedMarsStation, setSelectedMarsStation}: {
                 await Promise.all(
                     Locations.map(async (location: any) => {
                         const obj = geographicalObjectMap[location.id_geographical_object];
-                        const url = await get_photo(obj.id);
+                        const url: string = await get_photo(obj.id);
                         newPhotoUrlsMap[obj.id] = url;
                     })
                 );
@@ -131,16 +133,6 @@ const MarsStationPage = ({selectedMarsStation, setSelectedMarsStation}: {
         }
     };
 
-    // Проверяем, есть ли у selectedMarsStation транспорты при первом рендере
-    // useEffect(() => {
-    //     if (selectedMarsStation && selectedMarsStation.transport) {
-    //         const initialTransports = selectedMarsStation.transport.map(transport => transport.id);
-    //         setSelectedTransports(initialTransports);
-    //     }
-    //     console.log(selectedTransports)
-    //     console.log(selectedMarsStation)
-    // }, [selectedMarsStation]);
-
     const getMarsStation = async () => {
         setLoading(true);
         const url = `${DOMEN}api/mars_station/${id_mars_station}/`;
@@ -151,7 +143,7 @@ const MarsStationPage = ({selectedMarsStation, setSelectedMarsStation}: {
             },
             timeout: requestTime,
         })
-            .then(response => {
+            .then((response) => {
                 const mars_station: MarsStation = response.data;
                 setSelectedMarsStation(mars_station);
                 // console.log(mars_station)
@@ -171,8 +163,8 @@ const MarsStationPage = ({selectedMarsStation, setSelectedMarsStation}: {
             'authorization': access_token
         };
         axios.put(url, {}, {headers})
-            .then(response => {
-                console.log("Успешно! Заявка отправлена!", response.data);
+            .then(() => {
+                // console.log("Успешно! Заявка отправлена!", response.data);
                 setUpdateTrigger(true);
                 dispatch(clearID_draft());
                 dispatch(cleanDraft());
@@ -189,8 +181,8 @@ const MarsStationPage = ({selectedMarsStation, setSelectedMarsStation}: {
             'authorization': access_token
         };
         axios.delete(url, {headers})
-            .then(response => {
-                console.log("Успешно! Заявка удалена!", response.data);
+            .then(() => {
+                // console.log("Успешно! Заявка удалена!", response.data);
                 setUpdateTrigger(true);
                 dispatch(clearID_draft());
                 dispatch(cleanDraft());
@@ -208,8 +200,8 @@ const MarsStationPage = ({selectedMarsStation, setSelectedMarsStation}: {
         };
         const data = {status_task: value}
         axios.put(url, data, {headers})
-            .then(response => {
-                console.log("Успешно! Заявка отправлена!", response.data);
+            .then(() => {
+                // console.log("Успешно! Заявка отправлена!", response.data);
                 setUpdateTrigger(true);
                 dispatch(clearID_draft());
             })
@@ -226,8 +218,8 @@ const MarsStationPage = ({selectedMarsStation, setSelectedMarsStation}: {
                 authorization: access_token,
             },
         })
-            .then(response => {
-                console.log("Успешно удалено с черновой заявки!", response.data);
+            .then((response) => {
+                // console.log("Успешно удалено с черновой заявки!", response.data);
                 dispatch(updateMarsStationDraftData({
                     geographical_object: response.data.geographical_object || [],
                     location: response.data.location || [],
@@ -248,8 +240,8 @@ const MarsStationPage = ({selectedMarsStation, setSelectedMarsStation}: {
                 authorization: access_token,
             },
         })
-            .then(response => {
-                console.log("Успешно обновлены черновой заявки!", response.data);
+            .then((response) => {
+                // console.log("Успешно обновлены черновой заявки!", response.data);
                 dispatch(updateMarsStationDraftData({
                     geographical_object: response.data.geographical_object || [],
                     location: response.data.location || [],
@@ -265,86 +257,70 @@ const MarsStationPage = ({selectedMarsStation, setSelectedMarsStation}: {
 
     const save_mars_station = async () => {
         const url = `${DOMEN}api/mars_station/${id_mars_station}/update/`;
-        const data = {...selectedMarsStation}
+        const data = {...selectedMarsStation};
         data.type_status = editedTypeStatus;
-        // data.transport = selectedTransports.map(selectedId => {
-        //     const foundTransport = transports.find(transport => transport.id === selectedId);
-        //     return foundTransport || {}; // Если не найден транспорт, возвращаем пустой объект
-        // });
+        data.transport = selectedTransports;
+        console.log('data', data)
         await axios.put(url, data, {
             headers: {
                 "Content-type": "application/json; charset=UTF-8",
                 authorization: access_token,
             },
         })
-            .then(response => {
-                console.log("Успешно обновлены черновой заявки!", response.data);
+            .then(() => {
+                // console.log("Успешно обновлены черновой заявки!", response.data);
                 setUpdateTrigger(true);
-                setEdit(false);
+                push_mars_station();
+            })
+            .catch(error => {
+                console.error("Ошибка!\n", error);
+            });
+    };
+
+    const getTransports = async () => {
+        const url = `${DOMEN}api/transport/`;
+        await axios.get(url, {
+            headers: {
+                "Content-type": "application/json; charset=UTF-8",
+                authorization: access_token,
+            },
+        })
+            .then((response) => {
+                // console.log("Успешно получены все транспорты!", response.data);
+                setTransports(response.data)
             })
             .catch(error => {
                 console.error("Ошибка!\n", error);
             })
     };
 
-    // const getTransports = async () => {
-    //     const url = `${DOMEN}api/transport/`;
-    //     await axios.get(url, {
-    //         headers: {
-    //             "Content-type": "application/json; charset=UTF-8",
-    //             authorization: access_token,
-    //         },
-    //     })
-    //         .then(response => {
-    //             console.log("Успешно получены все транспорты!", response.data);
-    //             setTransports(response.data)
-    //         })
-    //         .catch(error => {
-    //             console.error("Ошибка!\n", error);
-    //         })
-    // };
-
-    // Абсолютный путь для ссылки
-    const marsStationPath = `/mars_station/${id_mars_station}/`;
 
     return (
         <>
             {loading && <LoadingAnimation isLoading={loading}/>}
-
             <div className="page-details-wrapper">
-                <Link className="return-link" to="/mars_station">
+                <Link className="return-link" to="/mars_station/">
                     Назад
                 </Link>
-                {!is_moderator && selectedMarsStation?.status_task === "Черновик" && (
+                {!is_moderator && STATUS_TASKS.find(status => status.id === selectedMarsStation?.status_task)?.name === "Черновик" && (
                     <div className="button-agree">
-                        <button onClick={() => push_mars_station()}>Отправить</button>
-                    </div>
-                )}
-                {!edit && !is_moderator && selectedMarsStation?.status_task === "Черновик" && (
-                    <div className="button-edit">
                         <button onClick={() => {
-                            setEdit(true);
-                            // getTransports();
-                        }}>Редактировать
+                            save_mars_station();
+                        }}>Отправить
                         </button>
                     </div>
                 )}
-                {edit && !is_moderator && selectedMarsStation?.status_task === "Черновик" && (
-                    <div className="button-edit">
-                        <button onClick={() => save_mars_station()}>Сохранить</button>
-                    </div>
-                )}
-                {!is_moderator && selectedMarsStation?.status_task === "Черновик" && (
+                {!is_moderator && STATUS_TASKS.find(status => status.id === selectedMarsStation?.status_task)?.name === "Черновик" && (
                     <div className="button-reject">
                         <button onClick={() => delete_mars_station()}>Удалить</button>
                     </div>
                 )}
-                {is_moderator && selectedMarsStation?.status_task === "В работе" && (
+                {is_moderator && STATUS_TASKS.find(status => status.id === selectedMarsStation?.status_task)?.name === "В работе" && (
                     <div className="button-accept">
                         <button onClick={() => check_mars_station(3)}>Принять и завершить</button>
                     </div>
                 )}
-                {is_moderator && selectedMarsStation?.status_task === "В работе" && (
+                {is_moderator && STATUS_TASKS.find(status => status.id === selectedMarsStation?.status_task)?.name === "В работе" && (
                     <div className="button-reject">
                         <button onClick={() => check_mars_station(4)}>Отменить</button>
                     </div>
@@ -354,12 +330,9 @@ const MarsStationPage = ({selectedMarsStation, setSelectedMarsStation}: {
                     <div className="info-container">
                         <h2 className="name"> Номер заявки: {selectedMarsStation?.id}</h2>
                         <br/>
-                        {!edit &&
-                            <h2 className="name"> Тип заявки: {selectedMarsStation?.type_status}</h2>
-                        }
-                        {edit &&
+                        {STATUS_TASKS.find(status => status.id === selectedMarsStation?.status_task)?.name === "Черновик" &&
                             <TextField
-                                type="text"
+                                type="input"
                                 id="outlined-basic"
                                 label="Тип заявки"
                                 variant="outlined"
@@ -372,9 +345,14 @@ const MarsStationPage = ({selectedMarsStation, setSelectedMarsStation}: {
                                 }}
                             />
                         }
+                        {STATUS_TASKS.find(status => status.id === selectedMarsStation?.status_task)?.name !== "Черновик" &&
+                            <h3 className="type">Тип заявки: {selectedMarsStation?.type_status}</h3>
+                        }
                         <br/>
-                        <span className="type">Тип статуса заявки: {selectedMarsStation?.status_task}</span>
-                        <span className="type">Тип статуса миссии: {selectedMarsStation?.status_mission}</span>
+                        <span
+                            className="type">Тип статуса заявки: {STATUS_TASKS.find(status => status.id === selectedMarsStation?.status_task)?.name}</span>
+                        <span
+                            className="type">Тип статуса миссии: {STATUS_MISSIONS.find(status => status.id === selectedMarsStation?.status_mission)?.name}</span>
                         <span className="size">Дата создания заявки: {selectedMarsStation?.date_create} </span>
                         <span className="size">Дата формирования заявки: {selectedMarsStation?.date_form} </span>
                         <span className="size">Дата закрытия заявки: {selectedMarsStation?.date_close} </span>
@@ -385,97 +363,44 @@ const MarsStationPage = ({selectedMarsStation, setSelectedMarsStation}: {
                             full_name?: string
                         })?.full_name || 'Нет данных'}
                     </span>
-                        <span
-                            className="size">Должность: {(selectedMarsStation?.moderator as {
+                        <span className="size">Должность: {(selectedMarsStation?.moderator as {
                             post?: string
-                        })?.post || 'Нет данных'}</span>
-                        <span
-                            className="size">Название организации: {(selectedMarsStation?.moderator as {
+                        })?.post || 'Нет данных'}
+                        </span>
+                        <span className="size">Название организации: {(selectedMarsStation?.moderator as {
                             name_organization?: string
-                        })?.name_organization || 'Нет данных'}</span>
-                        <span
-                            className="size">Адрес: {(selectedMarsStation?.moderator as {
+                        })?.name_organization || 'Нет данных'}
+                        </span>
+                        <span className="size">Адрес: {(selectedMarsStation?.moderator as {
                             address?: string
-                        })?.address || 'Нет данных'}</span>
+                        })?.address || 'Нет данных'}
+                        </span>
                         <br/>
-                        {/*<h2> Транспорт</h2>*/}
-                        {/*{!edit && selectedTransports.length > 0 && (*/}
-                        {/*    <>*/}
-                        {/*            <span className="describe">*/}
-                        {/*                Тип: {selectedTransports.map((selectedId: number, index: number) => {*/}
-                        {/*                const foundTransport = transports.find((transport: { id: number, type?: string }) => transport.id === selectedId);*/}
-                        {/*                return (foundTransport?.type || 'Нет данных') + (index < selectedTransports.length - 1 ? ', ' : ''); // Добавляем запятую после каждого типа, кроме последнего*/}
-                        {/*            })}*/}
-                        {/*            </span>*/}
-                        {/*        <br/>*/}
-                        {/*    </>*/}
-                        {/*)}*/}
-                        {/*{edit &&*/}
-                        {/*    <MultipleSelectTransport*/}
-                        {/*        transports={transports}*/}
-                        {/*        selectedTransports={selectedTransports}*/}
-                        {/*        onChange={handleTransportsChange}*/}
-                        {/*    />*/}
-                        {/*}*/}
+                        <h2> Транспорт</h2>
+                        {STATUS_TASKS.find(status => status.id === selectedMarsStation?.status_task)?.name !== "Черновик" &&
+                            <span className="type_transport">
+                                Тип транспорта: {(selectedMarsStation?.transport?.type) || 'Нет данных'}
+                            </span>
+                        }
+                        {STATUS_TASKS.find(status => status.id === selectedMarsStation?.status_task)?.name === "Черновик" &&
+                            <MultipleSelectTransport
+                                transports={transports}
+                                selectedTransports={selectedTransports}
+                                onChange={handleTransportsChange}
+                            />
+                        }
                         <h2> Географические объекты</h2>
-                        <div className="cards-list-wrapper">
-                            <div className="bottom">
-                                {sortedLocations?.map((location: any, index: number) => (
-                                    <div key={index} className="card-wrapper">
-                                        <Link
-                                            to={`${marsStationPath}/geographical_object/${geographicalObjectMap[location.id_geographical_object].id}/`}
-                                            style={{textDecoration: 'none', color: 'inherit'}}>
-                                            <div className="preview">
-                                                <img
-                                                    src={photoUrlsMap[location.id_geographical_object]}
-                                                    // src={photoUrls[index]}
-                                                    alt=""
-                                                />
-                                            </div>
-                                            <div className="card-content">
-                                                <div className="content-top">
-                                                    <h3 className="title"> {geographicalObjectMap[location.id_geographical_object].feature} </h3>
-                                                </div>
-                                            </div>
-                                        </Link>
-                                        {edit && selectedMarsStation?.status_task === "Черновик" && (
-                                            <div className="card-content"
-                                                 style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                                                <ButtonGroup orientation="horizontal">
-
-                                                    <Button
-                                                        variant="outlined"
-                                                        color="primary"
-                                                        onClick={() => put_location_and_mars_station(location.id, location.id_mars_station, 'up')}
-                                                    >
-                                                        <KeyboardArrowLeftIcon/>
-                                                    </Button>
-                                                    <Button
-                                                        variant="outlined"
-                                                        color="secondary"
-                                                        onClick={() => delete_location_and_mars_station(location.id, location.id_mars_station)}
-                                                    >
-                                                        <DeleteIcon/>
-                                                    </Button>
-                                                    <Button
-                                                        variant="outlined"
-                                                        color="primary"
-                                                        onClick={() => put_location_and_mars_station(location.id, location.id_mars_station, 'down')}
-                                                    >
-                                                        <KeyboardArrowRightIcon/>
-                                                    </Button>
-                                                </ButtonGroup>
-                                            </div>
-                                        )}
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
+                        <TableGeographicalObject
+                            sortedLocations={sortedLocations}
+                            photoUrlsMap={photoUrlsMap}
+                            geographicalObjectMap={geographicalObjectMap}
+                            selectedMarsStation={selectedMarsStation}
+                            deleteLocationAndMarsStation={delete_location_and_mars_station}
+                            putLocationAndMarsStation={put_location_and_mars_station}
+                        />
                     </div>
                 </div>
             </div>
         </>
     )
 }
-
-export default MarsStationPage;

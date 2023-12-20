@@ -7,18 +7,15 @@ import mockImage from "/src/assets/mock.png"
 import axios from "axios";
 import LoadingAnimation from "../../../Components/Loading.tsx";
 
-const GeographicalObjectPageForMarsStation = ({selectedGeographicalObject, setSelectedGeographicalObject}: {
+export default function GeographicalObjectPageForMarsStation({selectedGeographicalObject, setSelectedGeographicalObject}: {
     selectedGeographicalObject: GeographicalObject | undefined,
     setSelectedGeographicalObject: Dispatch<GeographicalObject | undefined>
-}) => {
-
+}) {
     const {id_geographical_object, id_mars_station} = useParams<{
         id_geographical_object: string;
         id_mars_station: string
     }>();
-
-    console.log(id_mars_station)
-
+    // Ссылка на получение изображение
     const [photoUrl, setPhotoUrl] = useState<string>('');
     // Загрузочный экран
     const [loading, setLoading] = useState<boolean>(true);
@@ -75,7 +72,7 @@ const GeographicalObjectPageForMarsStation = ({selectedGeographicalObject, setSe
         <>
             {loading && <LoadingAnimation isLoading={loading}/>}
             <div className="page-details-wrapper">
-                <Link className="return-link" to={`/mars_station/${id_mars_station}`}>
+                <Link className="return-link" to={`/mars_station/${id_mars_station}/`}>
                     Назад
                 </Link>
                 <div className="left">
@@ -96,5 +93,3 @@ const GeographicalObjectPageForMarsStation = ({selectedGeographicalObject, setSe
         </>
     )
 }
-
-export default GeographicalObjectPageForMarsStation;

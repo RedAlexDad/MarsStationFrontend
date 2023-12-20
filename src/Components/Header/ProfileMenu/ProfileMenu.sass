@@ -1,70 +1,84 @@
-@import "src/Styles/Variables.sass"
+@import "src/Styles/Variables"
 
 .profile-menu-wrapper
-	display: flex
-	align-items: center
+  display: flex
+  align-items: center
 
-	.menu-wrapper
-		display: flex
-		gap: 50px
-		left: 100%
-		position: relative
+  .menu-wrapper
+    display: flex
+    gap: 150px
 
-		@media screen and (max-width: 768px)
-			width: 100%
-			height: 100vh
-			z-index: 1000
-			top: 80px
-			transition: left 0.5s
-			position: fixed
-			flex-direction: column
-			gap: 0
-			left: -100%
-			background: $secondary
+    @media screen and (max-width: 768px)
+      width: 100%
+      height: 100vh
+      z-index: 1000
+      top: 80px
+      transition: right 0.5s
+      position: fixed
+      flex-direction: column
+      gap: 0
+      right: -100%
+      background: $secondary
 
-			.menu-item
-				width: 100%
-				padding: 30px
+      .menu-item
+        width: 100%
+        padding: 30px
 
-		&.open
-			left: 0
+    &.open
+      right: 0
 
+  .user-info-wrapper
+    width: 350px
+    background: $secondary
+    position: absolute
+    box-shadow: rgba(0, 0, 0, 0.16) 0 10px 36px 0, rgba(0, 0, 0, 0.06) 0 0 0 1px
+    border-radius: 15px
+    top: 100px
+    right: 65px
+    opacity: 0
+    visibility: hidden
+    transform: translateY(-5px)
+    transition: 0.3s ease
+    padding: 25px
+    display: flex
+    flex-direction: column
+    gap: 25px
+    z-index: 1000
 
-		.menu-item
-			display: flex
-			justify-content: center
-			align-items: center
-			position: relative
-			margin-left: auto
-			right: 100%
+    &.open
+      opacity: 1
+      visibility: visible
+      transform: translateY(0)
+      right: 20.19%
 
-			&:hover
-				.item
-					color: $primary
+    &:before
+      position: absolute
+      content: ''
+      height: 14px
+      width: 14px
+      background: $secondary
+      right: 55px
+      top: -6px
+      transform: rotate(45deg)
+      border-top: 1px solid rgba(0, 0, 0, 0.06)
+      border-left: 1px solid rgba(0, 0, 0, 0.06)
 
-			.item
-				color: #fff
-				font-size: 20px
-				transition: 0.2s ease
+    span
+      font-size: 18px
+      color: #fff
 
+  .user-avatar
+    width: 55%
+    height: auto
+    border-radius: 50%
+    cursor: pointer
+    background-size: cover
+    z-index: 1
 
-		.menu-item-profile 
-			cursor: pointer
-			display: flex
-			justify-content: center
-			align-items: center
-			position: relative
-			margin-left: auto
-			right: 100px
+  a
+    color: #fff
+    text-decoration: none
+    font-size: 24px
 
-			&:hover
-				.item
-					color: $primary
-
-			.item
-				color: #fff
-				font-size: 20px
-				transition: 0.2s ease
-
-
-
+    &:hover
+      text-decoration: underline

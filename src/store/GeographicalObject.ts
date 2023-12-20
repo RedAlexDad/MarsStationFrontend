@@ -15,6 +15,7 @@ interface GeographicalObjectState {
         currentPage: number;
         totalPages: number;
         count: number;
+        countItem: number;
     };
     id_draft: number;
 }
@@ -33,6 +34,7 @@ const initialState: GeographicalObjectState = {
         currentPage: 1,
         totalPages: 1,
         count: 0,
+        countItem: 5,
     },
     id_draft: -1,
 };
@@ -48,6 +50,9 @@ const GeographicalObject = createSlice({
         },
         updatePagination: (state, action) => {
             state.pagination = action.payload;
+        },
+        updatePaginationCurrentPage: (state, action) => {
+            state.pagination.currentPage = action.payload;
         },
         updateID_draft: (state, action) => {
             state.id_draft = action.payload === null ? -1 : action.payload;
@@ -71,7 +76,8 @@ export const {
     updatePagination,
     updateID_draft,
     clearID_draft,
-    updatePhotoUrl
+    updatePhotoUrl,
+    updatePaginationCurrentPage
 } = GeographicalObject.actions;
 
 export default GeographicalObject.reducer;

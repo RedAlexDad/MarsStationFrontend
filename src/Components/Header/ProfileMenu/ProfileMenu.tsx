@@ -6,7 +6,6 @@ import axios from "axios";
 import UserInfo from "./UserInfo/UserInfo";
 import {useAuth} from "../../../hooks/useAuth";
 import {useToken} from "../../../hooks/useToken";
-import {useDesktop} from "../../../hooks/useDesktop";
 import {DOMEN} from "../../../Consts.ts";
 import {useDispatch, useSelector} from "react-redux";
 import {updateGeographicalObject, updateID_draft} from "../../../store/GeographicalObject.ts";
@@ -14,13 +13,12 @@ import BasketBadges from "../Basket/Basket.tsx";
 import {RootState} from "../../../store/store.ts";
 import {updateMarsStationDraft} from "../../../store/MarsStationDraft.ts";
 
-const ProfileMenu = () => {
+export default function ProfileMenu() {
     const dispatch = useDispatch();
     const id_draft = useSelector((state: RootState) => state.geographical_object.id_draft);
 
     const {access_token} = useToken()
-    const {is_authenticated, is_moderator, username, setUser, setEmployee} = useAuth()
-    const {isDesktopMedium} = useDesktop();
+    const {is_authenticated, is_moderator, setUser, setEmployee} = useAuth()
 
     const marsStationDraft = async () => {
         if (id_draft !== -1) {
@@ -114,21 +112,23 @@ const ProfileMenu = () => {
                     <Link to="/home/" className="menu-item" style={{textDecoration: 'none'}}>
                         <span className="item">Главная</span>
                     </Link>
-                    <Link to="/geographical_object/" className="menu-item" style={{textDecoration: 'none'}}>
-                        <span className="item">Географические объекты</span>
-                    </Link>
+                    {!is_moderator &&
+                        <Link to="/geographical_object/" className="menu-item" style={{textDecoration: 'none'}}>
+                            <span className="item">Географические объекты</span>
+                        </Link>
+                    }
+                    {is_moderator &&
+                        <Link to="/geographical_object/moderator/" className="menu-item"
+                              style={{textDecoration: 'none'}}>
+                            <span className="item">Географические объекты</span>
+                        </Link>
+                    }
                     <Link to="/mars_station/" className="menu-item" style={{textDecoration: 'none'}}>
                         <span className="item">Марсианские станции</span>
                     </Link>
                     {!is_moderator &&
                         <BasketBadges/>}
-                    {!isDesktopMedium &&
-                        <Link to="/profile/" className="menu-item-profile" style={{textDecoration: 'none'}}
-                              onClick={() => setIsOpen(false)}>
-                            <span className="item">{username}</span>
-                        </Link>
-                    }
-                    {isDesktopMedium && <UserInfo/>}
+                    <UserInfo/>
                 </div>
                 <Hamburger isOpen={isOpen} setIsOpen={setIsOpen}/>
             </div>
@@ -152,5 +152,3 @@ const ProfileMenu = () => {
         </div>
     )
 }
-
-export default ProfileMenu;

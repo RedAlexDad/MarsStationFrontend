@@ -12,11 +12,10 @@ import {updateMarsStationDraftData} from "../../../store/MarsStationDraft.ts";
 import {Dispatch, SetStateAction, useCallback, useEffect, useState} from "react";
 import {Button} from "@mui/material";
 
-const GeographicalObjectCard = ({geographical_object, isMock, setUpdateTriggerParent}: {
+export default function GeographicalObjectCard ({geographical_object, setUpdateTriggerParent}: {
     geographical_object: GeographicalObject;
-    isMock: boolean;
     setUpdateTriggerParent: Dispatch<SetStateAction<boolean>>;
-}) => {
+}) {
     const dispatch = useDispatch();
     const {is_moderator, is_authenticated} = useAuth();
     const {access_token} = useToken();
@@ -84,7 +83,7 @@ const GeographicalObjectCard = ({geographical_object, isMock, setUpdateTriggerPa
 
     return (
         <div className="card-wrapper">
-            <Link to={`/geographical_object/${geographical_object.id}`}
+            <Link to={`/geographical_object/${geographical_object.id}/`}
                   style={{textDecoration: 'none', color: 'inherit'}}>
                 <div className="preview">
                     <img
@@ -110,24 +109,34 @@ const GeographicalObjectCard = ({geographical_object, isMock, setUpdateTriggerPa
                                 color="secondary"
                                 onClick={addGeographicalObjectInMarsStation}
                         >
-                            В корзинку
+                            Добавить в полет
                         </Button>
                     </div>
                 )}
                 {is_moderator && (
-                    <div style={{textAlign: 'center', marginTop: '0px', zIndex: '1'}}>
-                        <Button variant="contained"
-                                color="secondary"
-                                onClick={deleteGeographicalObject}
-                        >
-                            Удалить
-                        </Button>
-                    </div>
+                    <>
+                        <div style={{textAlign: 'center', marginTop: '0px', zIndex: '1'}}>
+                            <Button variant="contained"
+                                    color="secondary"
+                                    onClick={deleteGeographicalObject}
+                            >
+                                Удалить
+                            </Button>
+                        </div>
+                        <Link to={`/geographical_object/${geographical_object.id}/edit/`}
+                              style={{textDecoration: 'none', color: 'inherit'}}>
+                            <div style={{textAlign: 'center', marginTop: '0px', zIndex: '1'}}>
+                                <Button variant="contained"
+                                        color="info"
+                                >
+                                    Редактировать
+                                </Button>
+                            </div>
+                        </Link>
+                    </>
                 )}
             </div>
         </div>
     )
         ;
 };
-
-export default GeographicalObjectCard;

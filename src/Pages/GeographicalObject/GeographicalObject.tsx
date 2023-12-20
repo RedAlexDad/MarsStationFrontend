@@ -7,25 +7,24 @@ import mockImage from "/src/assets/mock.png"
 import axios from "axios";
 import LoadingAnimation from "../../Components/Loading.tsx";
 
-const GeographicalObjectPage = ({selectedGeographicalObject, setSelectedGeographicalObject}: {
+export default function GeographicalObjectPage({selectedGeographicalObject, setSelectedGeographicalObject}: {
     selectedGeographicalObject: GeographicalObject | undefined,
     setSelectedGeographicalObject: Dispatch<GeographicalObject | undefined>
-}) => {
-
-    const {id_geographical_object} = useParams<{ id_geographical_object: string }>();
-    const [isMock, setIsMock] = useState<boolean>(false);
+}) {
+    const {id_geographical_object} = useParams<{ id_geographical_object?: string }>();
     const [photoUrl, setPhotoUrl] = useState<string>('');
     // Загрузочный экран
     const [loading, setLoading] = useState<boolean>(true);
 
-    if (id_geographical_object == undefined) {
+    if (id_geographical_object === undefined) {
         return;
     }
 
     const CreateMock = () => {
-        setSelectedGeographicalObject(GeographicalObjectsMock.find((service: GeographicalObject) => service?.id == parseInt(id_geographical_object)))
-        setIsMock(true)
-    }
+        setSelectedGeographicalObject(
+            GeographicalObjectsMock.find((service: GeographicalObject) => service?.id === parseInt(id_geographical_object))
+        );
+    };
 
     useEffect(() => {
         GetGeographicalObhectID();
@@ -65,7 +64,6 @@ const GeographicalObjectPage = ({selectedGeographicalObject, setSelectedGeograph
             .then(response => {
                 const geographicalObject: GeographicalObject = response.data;
                 setSelectedGeographicalObject(geographicalObject);
-                setIsMock(false);
             })
             .catch(error => {
                 console.error(error);
@@ -77,7 +75,7 @@ const GeographicalObjectPage = ({selectedGeographicalObject, setSelectedGeograph
         <>
             {loading && <LoadingAnimation isLoading={loading}/>}
             <div className="page-details-wrapper">
-                <Link className="return-link" to="/geographical_object">
+                <Link className="return-link" to="/geographical_object/">
                     Назад
                 </Link>
                 <div className="left">
@@ -91,16 +89,14 @@ const GeographicalObjectPage = ({selectedGeographicalObject, setSelectedGeograph
                     <div className="info-container">
                         <h2 className="name">{selectedGeographicalObject?.feature}</h2>
                         <br/>
-                        <span className="type">Тип местности: {selectedGeographicalObject?.type}г</span>
+                        <span className="type">Тип местности: {selectedGeographicalObject?.type}</span>
                         <br/>
                         <span className="size">Площадь: {selectedGeographicalObject?.size}</span>
                         <br/>
-                        <span className="describe"> {selectedGeographicalObject?.describe}</span>
+                        <span className="describe"> Описание: {selectedGeographicalObject?.describe}</span>
                     </div>
                 </div>
             </div>
         </>
     )
 }
-
-export default GeographicalObjectPage;

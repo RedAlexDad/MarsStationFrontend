@@ -38,7 +38,6 @@ export default function SearchBarStatusTask({status_task, setUpdateTriggerParent
             {value: '4', label: 'Отменена'},
         ]
         : [
-            {value: '1', label: 'Черновик'},
             {value: '2', label: 'В работе'},
             {value: '3', label: 'Завершена'},
             {value: '4', label: 'Отменена'},

@@ -80,7 +80,6 @@ export function ModalContent({handleClose, count}: {
             });
             return url;
         } catch {
-            console.log(mockImage);
             return mockImage;
         } finally {
             setLoading(false);
@@ -118,7 +117,7 @@ export function ModalContent({handleClose, count}: {
             },
         })
             .then(response => {
-                console.log("Успешно удалено с черновой заявки!", response.data);
+                console.log("Успешно удалено с черновой заявки!");
                 dispatch(updateMarsStationDraftData({
                     geographical_object: response.data.geographical_object || [],
                     location: response.data.location || [],
@@ -139,7 +138,7 @@ export function ModalContent({handleClose, count}: {
             },
         })
             .then(response => {
-                console.log("Успешно обновлены черновой заявки!", response.data);
+                console.log("Успешно обновлены черновой заявки!");
                 dispatch(updateMarsStationDraftData({
                     geographical_object: response.data.geographical_object || [],
                     location: response.data.location || [],
