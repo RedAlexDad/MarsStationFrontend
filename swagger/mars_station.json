@@ -1,0 +1,671 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Географические объекты",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8000",
+      "description": "Локальный сервер разработки"
+    }
+  ],
+  "paths": {
+    "/api/mars_station/": {
+      "get": {
+        "summary": "Получение списка марсианских станций",
+        "operationId": "GET_MarsStationList",
+        "tags": [
+          "Mars Station"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Токен авторизации JWT"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный запрос",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarsStationSerializerDetail"
+                },
+                "example": [
+                  {
+                    "id": 1,
+                    "type_status": "Исследовательская",
+                    "date_create": "1972-09-01",
+                    "date_form": "1973-11-04",
+                    "date_close": "1975-05-08",
+                    "status_task": 1,
+                    "status_mission": 3,
+                    "employee": {
+                      "id": 1,
+                      "full_name": "Джон Гротцингер",
+                      "post": "Профессор геологии, главный ученый миссии марсохода Curiosity",
+                      "name_organization": "Калифорнийский технологический институт (Caltech)",
+                      "address": "",
+                      "id_user": 1
+                    },
+                    "moderator": {
+                      "id": 3,
+                      "full_name": "Джеймс М. Бегс",
+                      "post": "Руководитель NASA",
+                      "name_organization": "NASA",
+                      "address": "",
+                      "id_user": 3
+                    },
+                    "transport": {
+                      "id": 1,
+                      "name": "Mars Pathfinder Rover (USA)",
+                      "type": "Rover",
+                      "describe": null,
+                      "photo": null
+                    },
+                    "location": [
+                      {
+                        "id": 1,
+                        "sequence_number": 1,
+                        "id_geographical_object": 1,
+                        "id_mars_station": 1
+                      },
+                      {
+                        "id": 2,
+                        "sequence_number": 1,
+                        "id_geographical_object": 2,
+                        "id_mars_station": 1
+                      }
+                    ],
+                    "geographical_object": [
+                      {
+                        "id": 1,
+                        "feature": "Acidalia Planitia",
+                        "type": "Planitia, planitiae",
+                        "size": 2300,
+                        "describe": "обширная тёмная равнина на Марсе. Размер — около 3 тысяч км, координаты центра — 50° с. ш. 339°. Расположена между вулканическим регионом Тарсис и Землёй Аравия, к северо-востоку от долин Маринера. На севере переходит в Великую Северную равнину, на юге — в равнину Хриса; на восточном краю равнины находится регион Кидония. Диаметр около 3000 км.",
+                        "photo": null,
+                        "status": false
+                      },
+                      {
+                        "id": 2,
+                        "feature": "Alba Patera",
+                        "type": "Patera, paterae",
+                        "size": 530,
+                        "describe": "Огромный низкий вулкан, расположенный в северной части региона Фарсида на планете Марс. Это самый большой по площади вулкан на Марсе: потоки извергнутой из него породы прослеживаются на расстоянии как минимум 1350 км от его пика.",
+                        "photo": null,
+                        "status": false
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mars_station/{id}/": {
+      "get": {
+        "summary": "Получение данных о марсианской станции",
+        "operationId": "GET_MarsStation",
+        "tags": [
+          "Mars Station"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Токен авторизации JWT"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный запрос",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarsStationSerializerDetail"
+                },
+                "example": {
+                  "id": 1,
+                  "type_status": "Исследовательская",
+                  "date_create": "1972-09-01",
+                  "date_form": "1973-11-04",
+                  "date_close": "1975-05-08",
+                  "status_task": 1,
+                  "status_mission": 3,
+                  "employee": {
+                    "id": 1,
+                    "full_name": "Джон Гротцингер",
+                    "post": "Профессор геологии, главный ученый миссии марсохода Curiosity",
+                    "name_organization": "Калифорнийский технологический институт (Caltech)",
+                    "address": "",
+                    "id_user": 1
+                  },
+                  "moderator": {
+                    "id": 3,
+                    "full_name": "Джеймс М. Бегс",
+                    "post": "Руководитель NASA",
+                    "name_organization": "NASA",
+                    "address": "",
+                    "id_user": 3
+                  },
+                  "transport": {
+                    "id": 1,
+                    "name": "Mars Pathfinder Rover (USA)",
+                    "type": "Rover",
+                    "describe": null,
+                    "photo": null
+                  },
+                  "location": [
+                    {
+                      "id": 1,
+                      "sequence_number": 1,
+                      "id_geographical_object": 1,
+                      "id_mars_station": 1
+                    },
+                    {
+                      "id": 2,
+                      "sequence_number": 1,
+                      "id_geographical_object": 2,
+                      "id_mars_station": 1
+                    }
+                  ],
+                  "geographical_object": [
+                    {
+                      "id": 1,
+                      "feature": "Acidalia Planitia",
+                      "type": "Planitia, planitiae",
+                      "size": 2300,
+                      "describe": "обширная тёмная равнина на Марсе. Размер — около 3 тысяч км, координаты центра — 50° с. ш. 339°. Расположена между вулканическим регионом Тарсис и Землёй Аравия, к северо-востоку от долин Маринера. На севере переходит в Великую Северную равнину, на юге — в равнину Хриса; на восточном краю равнины находится регион Кидония. Диаметр около 3000 км.",
+                      "photo": null,
+                      "status": false
+                    },
+                    {
+                      "id": 2,
+                      "feature": "Alba Patera",
+                      "type": "Patera, paterae",
+                      "size": 530,
+                      "describe": "Огромный низкий вулкан, расположенный в северной части региона Фарсида на планете Марс. Это самый большой по площади вулкан на Марсе: потоки извергнутой из него породы прослеживаются на расстоянии как минимум 1350 км от его пика.",
+                      "photo": null,
+                      "status": false
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Марсианская станция не найдена"
+          }
+        }
+      }
+    },
+    "/api/mars_station/{id}/update/": {
+      "put": {
+        "summary": "Обновление информации о марсианской станции по ID",
+        "operationId": "PUT_MarsStation",
+        "tags": [
+          "Mars Station"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Токен авторизации JWT"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarsStationSerializer"
+              },
+              "example": {
+                "type_status": "Исследовательская",
+                "date_create": "1972-09-01",
+                "date_form": "1973-11-04",
+                "date_close": "1975-05-08",
+                "id_employee": 1,
+                "id_moderator": null,
+                "id_transport": 2,
+                "status_task": "В работе",
+                "status_mission": "Успех"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Успешное обновление",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarsStationSerializer"
+                },
+                "example": {
+                  "message": "Марсианская станция успешно обновлена",
+                  "data": {
+                    "id": 1,
+                    "type_status": "Исследовательская",
+                    "date_create": "1972-09-01",
+                    "date_form": "1973-11-04",
+                    "date_close": "1975-05-08",
+                    "id_employee": 1,
+                    "id_moderator": null,
+                    "id_transport": 2,
+                    "status_task": "В работе",
+                    "status_mission": "Успех"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Марсианская станция не найдена"
+          },
+          "400": {
+            "description": "Некорректный запрос"
+          }
+        }
+      }
+    },
+    "/api/mars_station/{id}/update_by_user/": {
+      "put": {
+        "summary": "Обновление информации о марсианской станции по ID создателя",
+        "operationId": "PUT_MarsStation_BY_USER",
+        "tags": [
+          "Mars Station"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Токен авторизации JWT"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешное обновление",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Успешно обновлен статус"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Марсианская станция не найдена"
+          },
+          "400": {
+            "description": "Некорректный запрос"
+          }
+        }
+      }
+    },
+    "/api/mars_station/{id}/update_by_admin/": {
+      "put": {
+        "summary": "Обновление информации о марсианской станции по ID модератора",
+        "operationId": "PUT_MarsStation_BY_ADMIN",
+        "tags": [
+          "Mars Station"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Токен авторизации JWT"
+          }
+        ],
+        "requestBody": {
+          "description": "Данные географического объекта",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status_task": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "status_task"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Успешное обновление",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Успешно обновлен статус"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Марсианская станция не найдена"
+          },
+          "400": {
+            "description": "Некорректный запрос"
+          }
+        }
+      }
+    },
+    "/api/mars_station/{id}/delete/": {
+      "delete": {
+        "summary": "Удаление марсианской станции",
+        "operationId": "DELETE_MarsStation",
+        "tags": [
+          "Mars Station"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Токен авторизации JWT"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешное удаление",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Марсианская станция успешно удалена"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Марсианская станция не найдена"
+          },
+          "400": {
+            "description": "Некорректный запрос"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "EmployeeSerializer": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "full_name": {
+            "type": "string"
+          },
+          "post": {
+            "type": "string"
+          },
+          "name_organization": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "id_user": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "TransportSerializer": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "describe": {
+            "type": "string"
+          },
+          "photo": {
+            "type": "string"
+          }
+        }
+      },
+      "LocationSerializer": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sequence_number": {
+            "type": "integer"
+          },
+          "id_geographical_object": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "id_mars_station": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "GeographicalObjectSerializer": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "feature": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "size": {
+            "type": "integer"
+          },
+          "describe": {
+            "type": "string"
+          },
+          "photo": {
+            "type": "string"
+          },
+          "status": {
+            "type": "boolean"
+          }
+        }
+      },
+      "MarsStationSerializerDetail": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "type_status": {
+            "type": "string"
+          },
+          "date_create": {
+            "type": "string",
+            "format": "date"
+          },
+          "date_form": {
+            "type": "string",
+            "format": "date"
+          },
+          "date_close": {
+            "type": "string",
+            "format": "date"
+          },
+          "id_employee": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "id_moderator": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "id_transport": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "status_task": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "status_mission": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "employee": {
+            "$ref": "#/components/schemas/EmployeeSerializer"
+          },
+          "moderator": {
+            "$ref": "#/components/schemas/EmployeeSerializer"
+          },
+          "transport": {
+            "$ref": "#/components/schemas/TransportSerializer"
+          },
+          "location": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LocationSerializer"
+            }
+          },
+          "geographical_object": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GeographicalObjectSerializer"
+            }
+          }
+        }
+      },
+      "MarsStationSerializer": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "type_status": {
+            "type": "string"
+          },
+          "date_create": {
+            "type": "string",
+            "format": "date"
+          },
+          "date_form": {
+            "type": "string",
+            "format": "date"
+          },
+          "date_close": {
+            "type": "string",
+            "format": "date"
+          },
+          "id_employee": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "id_moderator": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "id_transport": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "status_task": {
+            "type": "string"
+          },
+          "status_mission": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

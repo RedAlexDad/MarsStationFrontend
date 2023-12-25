@@ -1,13 +1,16 @@
 import "./GeographicalObject.sass"
 import {Dispatch, useEffect, useRef, useState} from "react";
 import {Link, useParams} from "react-router-dom";
-import {DOMEN, requestTime} from "../../Consts";
 import {GeographicalObject} from "../../Types";
 import mockImage from "/src/assets/mock.png"
-import axios from "axios";
 import LoadingAnimation from "../../Components/Loading.tsx";
 import {useToken} from "../../hooks/useToken.ts";
 import {TextField} from "@mui/material";
+import {
+    ApiGeographicalObjectIdUpdateImagePutRequest, ApiGeographicalObjectIdUpdatePutRequest,
+    GeographicalObjectApi,
+    GeographicalObjectSerializer
+} from "../../../swagger/generated-code";
 
 export default function GeographicalObjectPageEdit({selectedGeographicalObject, setSelectedGeographicalObject}: {
     selectedGeographicalObject: GeographicalObject | undefined,
@@ -25,9 +28,9 @@ export default function GeographicalObjectPageEdit({selectedGeographicalObject, 
     const [formData, setFormData] = useState({
         feature: "",
         type: "",
-        size: "",
+        size: Number(),
         describe: "",
-        photo: "",
+        photo: new Blob([""], { type: "image/jpeg" }),
         status: true
     });
     // Статус для обновления фотки
@@ -46,7 +49,6 @@ export default function GeographicalObjectPageEdit({selectedGeographicalObject, 
 
     const handleImageUpload = () => {
         const fileInput = fileInputRef.current;
-        console.log(fileInput)
         if (fileInput && fileInput.files && fileInput.files.length > 0) {
             const file = fileInput.files[0];
             uploadImage(file);
@@ -73,22 +75,22 @@ export default function GeographicalObjectPageEdit({selectedGeographicalObject, 
     }, [loading]);
 
     const editGeographicalObject = async () => {
-        setLoading(true)
-        const url = `${DOMEN}api/geographical_object/${id_geographical_object}/update/`;
-        await axios.put(url, formData, {
-            headers: {
-                "Content-type": "application/json; charset=UTF-8",
-                authorization: access_token,
-            },
-            timeout: requestTime,
-        })
-            .then(response => {
-                const geographical_object: GeographicalObject = response.data;
-                setSelectedGeographicalObject(geographical_object);
+        setLoading(true);
+        const api = new GeographicalObjectApi();
+        const requestParameters: ApiGeographicalObjectIdUpdatePutRequest = {
+            id: parseInt(id_geographical_object),
+            authorization: access_token,
+            geographicalObjectSerializer: formData,
+        };
+        api.apiGeographicalObjectIdUpdatePut(requestParameters)
+            .then((response) => {
+                const geographicalObject: GeographicalObjectSerializer = response as GeographicalObjectSerializer;
+                // @ts-ignore
+                setSelectedGeographicalObject(geographicalObject);
                 setEditPhoto(true)
             })
-            .catch(error => {
-                console.error(error);
+            .catch((error) => {
+                console.error('Ошибка запроса:', error);
             })
             .finally(() => {
                 setLoading(false)
@@ -97,16 +99,19 @@ export default function GeographicalObjectPageEdit({selectedGeographicalObject, 
 
     const uploadImage = async (imageFile: any) => {
         setLoading(true)
-        const url: string = `${DOMEN}api/geographical_object/${selectedGeographicalObject?.id}/update_image/`;
-        const formData = new FormData();
-        formData.append("photo", imageFile);
-        await axios.put(url, formData, {
-            headers: {
-                "Content-type": "multipart/form-data",
-                authorization: access_token,
-            },
-            timeout: requestTime,
-        })
+        // Получаем ID географического объекта
+        const geographicalObjectId = selectedGeographicalObject?.id;
+        if (geographicalObjectId === undefined || geographicalObjectId === null) {
+            console.error('ID географического объекта не определено.');
+            return;
+        }
+        const api = new GeographicalObjectApi();
+        const requestParameters: ApiGeographicalObjectIdUpdateImagePutRequest = {
+            id: geographicalObjectId,
+            authorization: access_token,
+            photo: imageFile
+        };
+        api.apiGeographicalObjectIdUpdateImagePut(requestParameters)
             .then(() => {
                 get_photo(selectedGeographicalObject?.id)
             })
@@ -120,39 +125,39 @@ export default function GeographicalObjectPageEdit({selectedGeographicalObject, 
 
     const get_photo = async (id_geographical_object: any) => {
         setLoading(true);
-        const url: string = `http://127.0.0.1:8000/api/geographical_object/${id_geographical_object}/image/`
-        console.log('url', url)
-        await axios.get(url, {
-            headers: {
-                "Content-type": "application/json; charset=UTF-8",
-            },
-            signal: new AbortController().signal,
-            timeout: requestTime,
-        })
-            .then(() => {
-                // Обновляем URL фото
-                setPhotoUrl(url)
-            })
-            .catch(error => {
-                setPhotoUrl(mockImage)
-                console.error(error);
-            })
-            .finally(() => {
-                setLoading(false);
-            })
+        const api = new GeographicalObjectApi();
+        try {
+            const response: Blob = await api.apiGeographicalObjectIdImageGet({
+                id: id_geographical_object,
+            });
+            if (response) {
+                const blob = response as Blob;
+                const url = URL.createObjectURL(blob);
+                setPhotoUrl(url);
+            } else {
+                setPhotoUrl(mockImage);
+            }
+        } catch (error) {
+            console.error('Error fetching image:', error);
+            setPhotoUrl(mockImage);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const GetGeographicalObhectID = async () => {
-        const url = `${DOMEN}api/geographical_object/${id_geographical_object}/`;
-        await axios.get(url, {
-            timeout: requestTime,
-        })
-            .then(response => {
-                const geographicalObject: GeographicalObject = response.data;
+        const api = new GeographicalObjectApi();
+        api.apiGeographicalObjectIdGet({id: parseInt(id_geographical_object)})
+            .then((response) => {
+                const geographicalObject: GeographicalObjectSerializer = response as GeographicalObjectSerializer;
+                // @ts-ignore
                 setSelectedGeographicalObject(geographicalObject);
             })
-            .catch(error => {
-                console.error(error);
+            .catch((error) => {
+                console.error('Ошибка запроса:', error);
+            })
+            .finally(() => {
+                setLoading(false)
             });
     };
 

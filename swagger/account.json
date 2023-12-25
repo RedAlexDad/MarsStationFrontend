@@ -1,0 +1,373 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Аутентификация и регистрация",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8000",
+      "description": "Локальный сервер разработки"
+    }
+  ],
+  "paths": {
+    "/api/register/": {
+      "post": {
+        "summary": "Регистрация нового пользователя",
+        "tags": [
+          "Account"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRegisterSerializer"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Успешная регистрация",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserRegisterSerializer"
+                },
+                "example": {
+                  "user": {
+                    "id": 1,
+                    "username": "example_user",
+                    "is_moderator": false
+                  },
+                  "employee": {
+                    "id": 1,
+                    "name": "Имя сотрудника",
+                    "post": "Должность",
+                    "name_organization": "Название организации",
+                    "address": "Адрес",
+                    "id_user": 1
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ошибка в запросе",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Сообщение об ошибке"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/authentication/": {
+      "post": {
+        "summary": "Аутентификация пользователя",
+        "tags": [
+          "Account"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserAuthenticationSerializer"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Успешная аутентификация",
+            "content": {
+              "application/json": {
+                "example": {
+                  "user": {
+                    "id": 1,
+                    "username": "example_user",
+                    "is_moderator": false
+                  },
+                  "employee": {
+                    "id": 1,
+                    "name": "Имя сотрудника",
+                    "post": "Должность",
+                    "name_organization": "Название организации",
+                    "address": "Адрес"
+                  },
+                  "message": "Успешно",
+                  "access_token": "example_access_token"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ошибка в запросе",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Сообщение об ошибке"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Неудачная аутентификация",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Такого аккаунта не найдены. Вы неверно ввели свои учетные данные"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/get_token/": {
+      "post": {
+        "summary": "Получение токена",
+        "tags": [
+          "Account"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Токен авторизации JWT"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешное получение токена",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetTokenSerializer"
+                },
+                "example": {
+                  "user_data": {
+                    "id": 1,
+                    "username": "example_user",
+                    "is_moderator": false
+                  },
+                  "employee": {
+                    "id": 1,
+                    "name": "Имя сотрудника",
+                    "post": "Должность",
+                    "name_organization": "Название организации",
+                    "address": "Адрес"
+                  },
+                  "message": "Успешно",
+                  "access_token": "example_access_token"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Неудачное получение токена",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Сообщение об ошибке"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/logout/": {
+      "post": {
+        "summary": "Выход с учетной записи",
+        "tags": [
+          "Account"
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный выход с учетной записи",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Успешно",
+                  "is_token_in_blacklist": true
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Неудачный выход с учетной записи",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Сообщение об ошибке"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Users": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "is_moderator": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "username",
+          "password",
+          "is_moderator"
+        ]
+      },
+      "Employee": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "full_name": {
+            "type": "string"
+          },
+          "post": {
+            "type": "string"
+          },
+          "name_organization": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "id_user": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "full_name",
+          "post",
+          "name_organization",
+          "address",
+          "id_user"
+        ]
+      },
+      "UsersRegister": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "is_moderator": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "username",
+          "password",
+          "is_moderator"
+        ]
+      },
+      "EmployeeRegister": {
+        "type": "object",
+        "properties": {
+          "full_name": {
+            "type": "string"
+          },
+          "post": {
+            "type": "string"
+          },
+          "name_organization": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "full_name",
+          "post",
+          "name_organization",
+          "address"
+        ]
+      },
+      "UserRegisterSerializer": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "$ref": "#/components/schemas/UsersRegister"
+          },
+          "employee": {
+            "$ref": "#/components/schemas/EmployeeRegister"
+          }
+        },
+        "required": [
+          "user",
+          "employee"
+        ]
+      },
+      "UserAuthenticationSerializer": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "username",
+          "password"
+        ]
+      },
+      "GetTokenSerializer": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "$ref": "#/components/schemas/Users"
+          },
+          "employee": {
+            "$ref": "#/components/schemas/Employee"
+          },
+          "message": {
+            "type": "string"
+          },
+          "access_token": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "user",
+          "employee",
+          "message",
+          "access_token"
+        ]
+      }
+    }
+  }
+}

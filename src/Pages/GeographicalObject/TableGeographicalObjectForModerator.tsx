@@ -1,4 +1,4 @@
-import {DOMEN, GeographicalObjectsMock, requestTime} from "../../Consts.ts";
+import {GeographicalObjectsMock} from "../../Consts.ts";
 import {Link} from "react-router-dom";
 import {useToken} from "../../hooks/useToken.ts";
 import {useDispatch, useSelector} from "react-redux";
@@ -6,7 +6,6 @@ import {RootState} from "../../store/store.ts";
 import SearchBar from "../GeographicalObjectList/SearchBar/SearchBar.tsx";
 import LoadingAnimation from "../../Components/Loading.tsx";
 import {useEffect, useState} from "react";
-import axios from "axios";
 import {
     updateGeographicalObject,
     updatePagination,
@@ -28,6 +27,11 @@ import Pagination from "../../Components/Header/Pagination/Pagination.tsx";
 import EditIcon from '@mui/icons-material/Edit';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import Typography from "@mui/material/Typography";
+import {
+    ApiGeographicalObjectGetRequest,
+    ApiGeographicalObjectIdDeleteDeleteRequest,
+    GeographicalObjectApi
+} from "../../../swagger/generated-code";
 
 export default function TableGeographicalObjectForModerator() {
     const {access_token} = useToken()
@@ -50,29 +54,23 @@ export default function TableGeographicalObjectForModerator() {
 
     const searchGeographicalObject = async (currentPage: number) => {
         setLoading(true);
-        const params = new URLSearchParams({
+        const api = new GeographicalObjectApi();
+        const requestParameters: ApiGeographicalObjectGetRequest = {
+            authorization: access_token,
             page: currentPage.toString(),
             status: 'True',
             feature: feature,
-        });
-        const url = `${DOMEN}api/geographical_object/?${params}`
-        await axios.get(url, {
-            headers: {
-                "Content-type": "application/json; charset=UTF-8",
-                authorization: access_token,
-            },
-            signal: new AbortController().signal,
-            timeout: requestTime,
-        })
+        };
+        api.apiGeographicalObjectGet(requestParameters)
             .then((response) => {
                 // console.log("Успешно!", response.data);
-                dispatch(updateGeographicalObject([...response.data.results]));
+                dispatch(updateGeographicalObject([...response.results]));
                 // Обновление данных пагинации
                 dispatch(
                     updatePagination({
                         currentPage: currentPage,
-                        totalPages: Math.ceil(response.data.count / 5),
-                        count: response.data.count,
+                        totalPages: Math.ceil(response.count / 5),
+                        count: response.count,
                     })
                 );
                 setLoading(true);
@@ -89,20 +87,22 @@ export default function TableGeographicalObjectForModerator() {
     };
 
     // Получить фотки
-    const get_photo = async (id_geographical_object: number) => {
+    const get_photo = async (id_geographical_object: any) => {
         setLoading(true);
-        const url: string = `http://127.0.0.1:8000/api/geographical_object/${id_geographical_object}/image/`;
+        const api = new GeographicalObjectApi();
         try {
-            await axios.get(url, {
-                headers: {
-                    "Content-type": "application/json; charset=UTF-8",
-                },
-                signal: new AbortController().signal,
-                timeout: requestTime,
+            const response: Blob = await api.apiGeographicalObjectIdImageGet({
+                id: id_geographical_object,
             });
-            return url;
-        } catch {
-            console.log(mockImage);
+            if (response) {
+                const blob = response as Blob;
+                const url = URL.createObjectURL(blob);
+                return url;
+            } else {
+                return mockImage;
+            }
+        } catch (error) {
+            // console.error('Error fetching image:', error);
             return mockImage;
         } finally {
             setLoading(false);
@@ -130,14 +130,13 @@ export default function TableGeographicalObjectForModerator() {
 
     const deleteGeographicalObject = async (id_geographical_object: number) => {
         try {
-            const url = `${DOMEN}api/geographical_object/${id_geographical_object}/delete/`;
-            const headers = {
-                "Content-type": "application/json; charset=UTF-8",
+            const api = new GeographicalObjectApi();
+            const requestParameters: ApiGeographicalObjectIdDeleteDeleteRequest = {
+                id: id_geographical_object,
                 authorization: access_token,
             };
-
-            await axios.delete(url, {headers});
-            console.log("Успешно! Услуга удалена!");
+            await api.apiGeographicalObjectIdDeleteDelete(requestParameters);
+            // console.log("Успешно! Услуга удалена!");
             setParentUpdateTrigger(true);
         } catch (error) {
             console.error("Ошибка удаления!\n", error);
@@ -171,7 +170,6 @@ export default function TableGeographicalObjectForModerator() {
     }, [countItem, currentPage]);
 
 
-    console.log('pagination', pagination)
     return (
         <div className="cards-list-wrapper">
             {loading && <LoadingAnimation isLoading={loading}/>}

@@ -1,0 +1,220 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Местоположение",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8000",
+      "description": "Локальный сервер разработки"
+    }
+  ],
+  "paths": {
+    "/api/location/{id_location}/mars_station/{pk_mars_station}/delete/": {
+      "delete": {
+        "summary": "Удаляет марсианскую станцию по ID",
+        "tags": [
+          "Локация"
+        ],
+        "parameters": [
+          {
+            "name": "id_location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID локации"
+          },
+          {
+            "name": "pk_mars_station",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID марсианской станции"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Токен авторизации JWT"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Местоположение успешно удалено",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Местоположение успешно удалено"
+                    },
+                    "location": {
+                      "$ref": "#/components/schemas/LocationSerializer"
+                    },
+                    "geographical_object": {
+                      "$ref": "#/components/schemas/GeographicalObjectSerializer"
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Местоположение успешно удалено",
+                  "location": [],
+                  "geographical_object": []
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Недопустимый запрос на удаление"
+          }
+        }
+      }
+    },
+    "/api/location/{id_location}/mars_station/{id_mars_station}/update/": {
+      "put": {
+        "summary": "Обновляет информацию о марсианской станции по ID",
+        "tags": [
+          "Локация"
+        ],
+        "parameters": [
+          {
+            "name": "id_location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID локации"
+          },
+          {
+            "name": "id_mars_station",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID марсианской станции"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Токен авторизации JWT"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "example": "Местоположение успешно отредактировано"
+                  },
+                  "location": {
+                    "$ref": "#/components/schemas/LocationSerializer"
+                  },
+                  "geographical_object": {
+                    "$ref": "#/components/schemas/GeographicalObjectSerializer"
+                  }
+                }
+              },
+              "example": {
+                "direction": "up"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Местоположение успешно отредактировано",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Местоположение успешно отредактировано",
+                  "location": [],
+                  "geographical_object": []
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Недопустимый запрос на перемещение"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "LocationSerializer": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "id_geographical_object": {
+            "type": "integer",
+            "example": 1
+          },
+          "id_mars_station": {
+            "type": "integer",
+            "example": 1
+          },
+          "sequence_number": {
+            "type": "integer",
+            "example": 1
+          }
+        }
+      },
+      "GeographicalObjectSerializer": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "feature": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "size": {
+            "type": "integer"
+          },
+          "describe": {
+            "type": "string"
+          },
+          "photo": {
+            "type": "string",
+            "format": "binary"
+          },
+          "status": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "feature",
+          "type",
+          "status"
+        ]
+      }
+    }
+  }
+}

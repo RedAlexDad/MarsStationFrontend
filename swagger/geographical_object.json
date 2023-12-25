@@ -1,0 +1,615 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Географические объекты",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8000",
+      "description": "Локальный сервер разработки"
+    }
+  ],
+  "paths": {
+    "/api/geographical_object/{id}/": {
+      "get": {
+        "summary": "Получить информацию о географическом объекте",
+        "tags": [
+          "Geographical Object"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeographicalObjectSerializer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/geographical_object/create/": {
+      "post": {
+        "summary": "Создать географический объект",
+        "tags": [
+          "Geographical Object"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Токен авторизации JWT"
+          }
+        ],
+        "requestBody": {
+          "description": "Данные географического объекта",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GeographicalObjectSerializer"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Успешное создание",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeographicalObjectSerializer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ошибка валидации",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "Некорректные данные"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/geographical_object/": {
+      "get": {
+        "summary": "Получить список географических объектов",
+        "tags": [
+          "Geographical Object"
+        ],
+        "parameters": [
+          {
+            "name": "feature",
+            "in": "query",
+            "description": "Фильтр по особенности",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Фильтр по типу",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "Фильтр по размеру",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "describe",
+            "in": "query",
+            "description": "Фильтр по описанию",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Фильтр по статусу",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeographicalObjectListSerializer"
+                },
+                "example": [
+                  {
+                    "count": 42,
+                    "id_draft_service": null,
+                    "results": [
+                      {
+                        "id": 1,
+                        "feature": "Acidalia Planitia",
+                        "type": "Planitia, planitiae",
+                        "size": 2300,
+                        "describe": "обширная тёмная равнина на Марсе. Размер — около 3 тысяч км, координаты центра — 50° с. ш. 339°. Расположена между вулканическим регионом Тарсис и Землёй Аравия, к северо-востоку от долин Маринера. На севере переходит в Великую Северную равнину, на юге — в равнину Хриса; на восточном краю равнины находится регион Кидония. Диаметр около 3000 км.",
+                        "photo": null,
+                        "status": true
+                      },
+                      {
+                        "id": 2,
+                        "feature": "Alba Patera",
+                        "type": "Patera, paterae",
+                        "size": 530,
+                        "describe": "Огромный низкий вулкан, расположенный в северной части региона Фарсида на планете Марс. Это самый большой по площади вулкан на Марсе: потоки извергнутой из него породы прослеживаются на расстоянии как минимум 1350 км от его пика.",
+                        "photo": null,
+                        "status": true
+                      },
+                      {
+                        "id": 3,
+                        "feature": "Albor Tholus",
+                        "type": "Tholus, tholi",
+                        "size": 170,
+                        "describe": "Потухший вулкан нагорья Элизий, расположенный на Марсе. Находится к югу от соседних горы Элизий и купола Гекаты. Вулкан достигает 4,5 километров в высоту и 160 километров в диаметре основания.",
+                        "photo": null,
+                        "status": true
+                      },
+                      {
+                        "id": 4,
+                        "feature": "Amazonis Planitia",
+                        "type": "Planitia, planitiae",
+                        "size": 2800,
+                        "describe": "Слабоокрашенная равнина в северной экваториальной области Марса. Довольно молода, породы имеют возраст 10-100 млн. лет. Часть этих пород представляют собой застывшую вулканическую лаву.",
+                        "photo": null,
+                        "status": true
+                      },
+                      {
+                        "id": 5,
+                        "feature": "Arabia Terra",
+                        "type": "Terra, terrae",
+                        "size": 5100,
+                        "describe": "Большая возвышенная область на севере Марса, которая лежит в основном в четырехугольнике Аравия, но небольшая часть находится в четырехугольнике Маре Ацидалиум. Она густо изрыта кратерами и сильно разрушена.",
+                        "photo": null,
+                        "status": true
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/geographical_object/{id}/image/": {
+      "get": {
+        "summary": "Получить изображение географического объекта",
+        "tags": [
+          "Geographical Object"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "image/jpeg": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                },
+                "example": "Binary image data"
+              }
+            }
+          },
+          "404": {
+            "description": "Географический объект или изображение не найдено",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Не существует географический объект с {id}"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ошибка при обработке объекта",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Ошибка при обработке объекта\nError details"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/geographical_object/{id}/update_image/": {
+      "put": {
+        "summary": "Обновить изображение географического объекта",
+        "tags": [
+          "Geographical Object"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Токен авторизации JWT"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "photo": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "photo"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Успешный ответ"
+          },
+          "400": {
+            "description": "Неверный запрос"
+          },
+          "404": {
+            "description": "Географический объект не найден"
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера"
+          }
+        }
+      }
+    },
+    "/api/geographical_object/{id}/update/": {
+      "put": {
+        "summary": "Обновить информацию о географическом объекте",
+        "tags": [
+          "Geographical Object"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Токен авторизации JWT"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GeographicalObjectSerializer"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeographicalObjectSerializer"
+                },
+                "example": {
+                  "id": 1,
+                  "feature": "Название",
+                  "type": "Тип",
+                  "size": 100,
+                  "describe": "Описание",
+                  "photo": "base64-encoded-image-data",
+                  "status": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Неверный запрос",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "Сообщение об ошибке"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Географический объект не найден"
+          }
+        }
+      }
+    },
+    "/api/geographical_object/{id}/delete/": {
+      "delete": {
+        "summary": "Удалить географический объект",
+        "tags": [
+          "Geographical Object"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Токен авторизации JWT"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешное удаление",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Географический объект успешно удален"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Географический объект не найден",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Географический объект по {id} не существует"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/geographical_object/{id}/create_service_in_task/": {
+      "post": {
+        "summary": "Создание заявки и связывание географического объекта с Марсианской станцией",
+        "tags": [
+          "Geographical Object"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Идентификатор географического объекта"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Токен авторизации JWT"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Успешно создана заявка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "id_draft": {
+                      "type": "integer"
+                    },
+                    "geographical_object": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/GeographicalObjectSerializer"
+                      }
+                    },
+                    "location": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/LocationSerializer"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Успешно создана заявка",
+                  "id_draft": 1,
+                  "geographical_object": [
+                    {
+                      "id": 1,
+                      "feature": "Название",
+                      "type": "Тип",
+                      "size": 100,
+                      "describe": "Описание",
+                      "photo": "Фото",
+                      "status": true
+                    }
+                  ],
+                  "location": [
+                    {
+                      "id": 1,
+                      "id_geographical_object": 1,
+                      "id_mars_station": 1,
+                      "sequence_number": 1
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Географический объект не найден"
+          },
+          "400": {
+            "description": "Аккаунт не является сотрудником или другие ошибки"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "GeographicalObjectSerializer": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "feature": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "size": {
+            "type": "integer"
+          },
+          "describe": {
+            "type": "string"
+          },
+          "photo": {
+            "type": "string",
+            "format": "binary"
+          },
+          "status": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "feature",
+          "type",
+          "status"
+        ]
+      },
+      "LocationSerializer": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "id_geographical_object": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "id_mars_station": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sequence_number": {
+            "type": "integer"
+          }
+        }
+      },
+      "GeographicalObjectListSerializer": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer"
+          },
+          "id_draft_service": {
+            "type": "integer"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GeographicalObjectSerializer"
+            }
+          }
+        },
+        "required": [
+          "count",
+          "results"
+        ]
+      }
+    }
+  }
+}

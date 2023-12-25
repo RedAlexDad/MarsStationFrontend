@@ -1,0 +1,73 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Транспорт",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8000",
+      "description": "Локальный сервер разработки"
+    }
+  ],
+  "paths": {
+    "/api/transport/": {
+      "get": {
+        "summary": "Получает список транспорта",
+        "tags": ["Транспорт"],
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Тип транспорта (опционально)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Список транспорта успешно получен",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TypeTransportSerializerID_TYPE"
+                  }
+                },
+                "example": [
+                  {
+                    "id": 1,
+                    "type": "Тип_транспорта_1"
+                  },
+                  {
+                    "id": 2,
+                    "type": "Тип_транспорта_2"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "TypeTransportSerializerID_TYPE": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "type": {
+            "type": "string",
+            "example": "Spacecraft"
+          }
+        }
+      }
+    }
+  }
+}

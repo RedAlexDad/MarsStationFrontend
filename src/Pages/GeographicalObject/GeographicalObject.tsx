@@ -1,11 +1,12 @@
 import "./GeographicalObject.sass"
 import {Dispatch, useEffect, useState} from "react";
 import {Link, useParams} from "react-router-dom";
-import {DOMEN, GeographicalObjectsMock, requestTime} from "../../Consts";
+import {GeographicalObjectsMock} from "../../Consts";
 import {GeographicalObject} from "../../Types";
 import mockImage from "/src/assets/mock.png"
-import axios from "axios";
 import LoadingAnimation from "../../Components/Loading.tsx";
+import {GeographicalObjectApi} from "../../../swagger/generated-code/apis/GeographicalObjectApi.ts";
+import {GeographicalObjectSerializer} from "../../../swagger/generated-code";
 
 export default function GeographicalObjectPage({selectedGeographicalObject, setSelectedGeographicalObject}: {
     selectedGeographicalObject: GeographicalObject | undefined,
@@ -36,38 +37,40 @@ export default function GeographicalObjectPage({selectedGeographicalObject, setS
 
     const get_photo = async () => {
         setLoading(true);
-        const url: string = `http://127.0.0.1:8000/api/geographical_object/${id_geographical_object}/image/`
-        console.log('url', url)
-        await axios.get(url, {
-            headers: {
-                "Content-type": "application/json; charset=UTF-8",
-            },
-            signal: new AbortController().signal,
-            timeout: requestTime,
-        })
-            .then(() => {
-                setPhotoUrl(url)
-            })
-            .catch(() => {
+        const api = new GeographicalObjectApi();
+        try {
+            const response: Blob = await api.apiGeographicalObjectIdImageGet({
+                id: parseInt(id_geographical_object),
+            });
+            if (response) {
+                const blob = response as Blob;
+                const url = URL.createObjectURL(blob);
+                setPhotoUrl(url);
+            } else {
                 setPhotoUrl(mockImage);
-            })
-            .finally(() => {
-                setLoading(false);
-            })
+            }
+        } catch (error) {
+            console.error('Error fetching image:', error);
+            setPhotoUrl(mockImage);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const GetGeographicalObhectID = async () => {
-        const url = `${DOMEN}api/geographical_object/${id_geographical_object}/`;
-        await axios.get(url, {
-            timeout: requestTime,
-        })
-            .then(response => {
-                const geographicalObject: GeographicalObject = response.data;
+        const api = new GeographicalObjectApi();
+        api.apiGeographicalObjectIdGet({id: parseInt(id_geographical_object)})
+            .then((response) => {
+                const geographicalObject: GeographicalObjectSerializer = response as GeographicalObjectSerializer;
+                // @ts-ignore
                 setSelectedGeographicalObject(geographicalObject);
             })
-            .catch(error => {
-                console.error(error);
+            .catch((error) => {
+                console.error('Ошибка запроса:', error);
                 CreateMock();
+            })
+            .finally(() => {
+                setLoading(false)
             });
     };
 

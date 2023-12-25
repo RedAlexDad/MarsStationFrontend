@@ -2,13 +2,12 @@ import "../Login.sass"
 import {FaLock, FaRegBuilding, FaSignsPost, FaUser} from "react-icons/fa6";
 import {GrLogin, GrMap} from "react-icons/gr";
 import {Link, useNavigate} from "react-router-dom";
-import axios from "axios";
 import {errorMessage, successMessage} from "../../../Toasts/Toasts";
 import {useToken} from "../../../hooks/useToken";
 import {useAuth} from "../../../hooks/useAuth";
-import {DOMEN} from "../../../Consts.ts";
 import Button from "@mui/material/Button";
 import React from "react";
+import {AccountApi, ApiAuthenticationPostRequest, ApiRegisterPostRequest} from "../../../../swagger/generated-code";
 
 export default function SignUp() {
     const navigate = useNavigate()
@@ -16,50 +15,50 @@ export default function SignUp() {
     const {setUser} = useAuth()
 
     const login = async (data: any) => {
-        const url: string = `${DOMEN}api/authentication/`;
-        await axios.post(url, {
-            username: data.username,
-            password: data.password
-        }, {
-            headers: {
-                "Content-type": "application/json; charset=UTF-8"
-            },
-        })
-            .then(response => {
-                setAccessToken(response.data['access_token'])
+        console.log('login', data)
+        const api = new AccountApi(); // Замените на фактический класс вашего API
+        const requestParameters: ApiAuthenticationPostRequest = {
+            userAuthenticationSerializer: data,
+        };
+        await api.apiAuthenticationPost(requestParameters)
+            .then((response) => {
+                const {accessToken, user} = response;
+                setAccessToken(accessToken);
                 const permissions = {
+                    id: user.id,
                     is_authenticated: true,
-                    id: response.data.user["id"],
-                    username: response.data.user["username"],
-                    is_moderator: response.data.user["is_moderator"],
+                    username: user.username,
+                    is_moderator: user.isModerator,
                 }
                 setUser(permissions)
                 navigate("/home/");
-                successMessage(response.data.user["username"])
+                successMessage(user.username)
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error("Ошибка!\n", error);
-                errorMessage()
-            });
-    }
+                errorMessage();
+            })
+    };
 
     const register = async (data: any) => {
-        const url: string = `${DOMEN}api/register/`;
-        await axios.post(url, data, {
-            headers: {
-                "Content-type": "application/json; charset=UTF-8"
-            },
-        })
-            .then(response => {
-                console.log(response.data)
-                console.log(data)
-                login(data)
-            })
-            .catch(error => {
-                console.error("Ошибка!\n", error);
-                errorMessage()
-            });
-    }
+        try {
+            const api = new AccountApi(); // Замените YourApiClassName на фактическое имя вашего класса API
+            const requestParameters: ApiRegisterPostRequest = {
+                userRegisterSerializer: data,
+            };
+            console.log(data)
+            const response = await api.apiRegisterPost(requestParameters);
+
+            console.log(response);
+            console.log(data);
+
+            login(data.user);
+        } catch (error) {
+            console.error("Ошибка!\n", error);
+            errorMessage();
+        }
+    };
+
     const handleSubmit = async (e: any) => {
         e.preventDefault()
         const formElement = e.currentTarget.closest('form');
@@ -73,13 +72,17 @@ export default function SignUp() {
             const address = formData.get('address') as string;
 
             const data = {
-                username: username,
-                password: password,
-                is_moderator: false,
-                full_name: full_name,
-                post: post,
-                name_organization: name_organization,
-                address: address
+                user: {
+                    username: username,
+                    password: password,
+                    is_moderator: false,
+                },
+                employee: {
+                    fullName: full_name,
+                    post: post,
+                    nameOrganization: name_organization,
+                    address: address
+                }
             }
             await register(data)
         }

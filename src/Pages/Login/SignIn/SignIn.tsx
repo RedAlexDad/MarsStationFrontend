@@ -2,13 +2,12 @@ import "../Login.sass"
 import {FaLock} from "react-icons/fa6";
 import {GrLogin} from "react-icons/gr";
 import {Link, useNavigate} from "react-router-dom";
-import axios from "axios";
 import {errorMessage, successMessage} from "../../../Toasts/Toasts";
 import {useToken} from "../../../hooks/useToken";
 import {useAuth} from "../../../hooks/useAuth";
-import {DOMEN} from "../../../Consts.ts";
 import Button from "@mui/material/Button";
 import React from "react";
+import {AccountApi, ApiAuthenticationPostRequest} from "../../../../swagger/generated-code";
 
 export default function SignIn() {
     const navigate = useNavigate()
@@ -16,37 +15,40 @@ export default function SignIn() {
     const {setUser, setEmployee} = useAuth()
 
     const login = async (data: any) => {
-        const url: string = `${DOMEN}api/authentication/`;
-        await axios.post(url, data, {
-            headers: {
-                "Content-type": "application/json; charset=UTF-8"
-            },
-        })
-            .then(response => {
-                setAccessToken(response.data['access_token'])
-                const user = {
-                    id_user: response.data.user["id"],
+        const api = new AccountApi(); // Замените на фактический класс вашего API
+        const requestParameters: ApiAuthenticationPostRequest = {
+            userAuthenticationSerializer: data,
+        };
+        await api.apiAuthenticationPost(requestParameters)
+            .then((response) => {
+                const {accessToken, user, employee} = response;
+                setAccessToken(accessToken);
+
+                const userObject = {
+                    id_user: user.id,
                     is_authenticated: true,
-                    username: response.data.user["username"],
-                    is_moderator: response.data.user["is_moderator"],
-                }
-                const employee = {
-                    id_employee: response.data.employee["id"],
-                    full_name: response.data.employee["name"],
-                    post: response.data.employee["post"],
-                    name_organization: response.data.employee["name_organization"],
-                    address: response.data.employee["address"],
-                }
-                setUser(user)
-                setEmployee(employee)
+                    username: user.username,
+                    is_moderator: user.isModerator,
+                };
+                const employeeObject = {
+                    id_employee: employee.id,
+                    full_name: employee.fullName,
+                    post: employee.post,
+                    name_organization: employee.nameOrganization,
+                    address: employee.address,
+                };
+
+                setUser(userObject);
+                setEmployee(employeeObject);
                 navigate("/home");
-                successMessage(response.data.user["username"])
+                successMessage(user.username);
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error("Ошибка!\n", error);
-                errorMessage()
-            });
-    }
+                errorMessage();
+            })
+    };
+
 
     const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();

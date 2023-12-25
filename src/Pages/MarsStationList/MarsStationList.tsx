@@ -1,8 +1,7 @@
 import "./MarsStationList.sass"
 import {useEffect, useState} from "react";
-import {DOMEN, STATUS_MISSIONS, STATUS_TASKS} from "../../Consts";
+import {STATUS_MISSIONS, STATUS_TASKS} from "../../Consts";
 import {useToken} from "../../hooks/useToken.ts";
-import axios from "axios";
 import {useAuth} from "../../hooks/useAuth.ts";
 import {useDispatch, useSelector} from "react-redux";
 import {updateMarsStation} from "../../store/MarsStation.ts";
@@ -15,6 +14,11 @@ import {DataGrid} from '@mui/x-data-grid';
 import {Button} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import LoadingAnimation from "../../Components/Loading.tsx";
+import {
+    GETMarsStationListRequest,
+    MarsStationApi,
+    MarsStationSerializerDetailToJSON,
+} from "../../../swagger/generated-code";
 
 export default function MarsStationListPage() {
     const {access_token} = useToken()
@@ -34,35 +38,27 @@ export default function MarsStationListPage() {
     const [parentUpdateTrigger, setParentUpdateTrigger] = useState(false);
 
     const searchMarsStation = async () => {
-        // Установим состояние загрузки в true перед запросом
-        const params = new URLSearchParams({
-            // Фильтр даты (если is_moderator, то фильтр через бекенд, иначе через фронтенд)
-            status_task: is_moderator ? status_task.length > 0 ? status_task.filter((s: string) => s).join(',') : (is_moderator ? '2, 3, 4' : '2, 3, 4') : '',
-            date_form_before: is_moderator ? date.date_before : '',
-            date_form_after: is_moderator ? date.date_after : '',
-        });
-        const url = `${DOMEN}api/mars_station/?${params}`;
-        await axios.get(url, {
-            headers: {
-                "Content-type": "application/json; charset=UTF-8",
+        try {
+            const api = new MarsStationApi();
+            const requestParameters: GETMarsStationListRequest = {
                 authorization: access_token,
-            },
-            signal: new AbortController().signal,
-            // timeout: requestTime,
-        })
-            .then(response => {
-                if(is_moderator) {
-                    dispatch(updateMarsStation([...response.data]));
-                } else {
-                    filterData([...response.data]);
-                }
-            })
-            .catch(error => {
-                console.error("Ошибка!\n", error);
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+                statusTask: is_moderator ? status_task.length > 0 ? status_task.filter((s: string) => s).join(',') : (is_moderator ? '2, 3, 4' : '2, 3, 4') : '',
+                dateFormBefore: is_moderator ? date.date_before : '',
+                dateFormAfter: is_moderator ? date.date_after : '',
+            };
+
+            const response = await api.gETMarsStationList(requestParameters);
+            const transformedData = response.map(item => MarsStationSerializerDetailToJSON(item));
+            if (is_moderator) {
+                dispatch(updateMarsStation(transformedData));
+            } else {
+                filterData(transformedData);
+            }
+        } catch (error) {
+            console.error("Ошибка!\n", error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     // Функция для фильтрации данных пользователями
@@ -121,7 +117,7 @@ export default function MarsStationListPage() {
         {
             field: 'type_status',
             headerName: 'Тип статуса',
-            width: 200,
+            width: 170,
             headerClassName: 'bold-header',
             renderCell: (params: any) => params.value ? params.value :
                 <Typography variant="body1" mx={2}> — </Typography>,
@@ -129,7 +125,7 @@ export default function MarsStationListPage() {
         {
             field: 'status_mission',
             headerName: 'Статус миссии',
-            width: 150,
+            width: 130,
             renderCell: (params: any) => {
                 const selectedStatus = STATUS_MISSIONS.find(status => status.id === params.value);
                 const statusName: string = selectedStatus ? selectedStatus.name : 'Неизвестный статус';
@@ -194,7 +190,7 @@ export default function MarsStationListPage() {
         {
             field: 'status_task',
             headerName: 'Статус заявки',
-            width: 150,
+            width: 130,
             renderCell: (params: any) => {
                 const selectedStatus = STATUS_TASKS.find(status => status.id === params.value);
                 const statusName: string = selectedStatus ? selectedStatus.name : 'Неизвестный статус';
@@ -234,7 +230,8 @@ export default function MarsStationListPage() {
                         opacity: 1,
                         backgroundColor: 'rgba(0, 0, 0, 0.3)',
                         color: 'rgba(255, 255, 255, 1)',
-                        fontSize: '15px'
+                        fontSize: '15px',
+                        width: "auto"
                     }}
                     columns={columns}
                     rows={MarsStation}

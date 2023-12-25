@@ -60,7 +60,7 @@ export default function SearchBarStatusTask({status_task, setUpdateTriggerParent
                     id="demo-multiple-chip-label"
                     sx={{color: 'white'}} // Цвет текста над выпадающим списком
                 >
-                    Статус задачи
+                    Статус заявки
                 </InputLabel>
                 <Select
                     labelId="demo-multiple-chip-label"
@@ -68,7 +68,7 @@ export default function SearchBarStatusTask({status_task, setUpdateTriggerParent
                     multiple
                     value={status_task}
                     onChange={handleChange}
-                    input={<OutlinedInput id="select-multiple-chip" label="Статус задачи"/>}
+                    input={<OutlinedInput id="select-multiple-chip" label="Статус заявки"/>}
                     renderValue={(selected) => (
                         <Box sx={{display: 'flex', flexWrap: 'wrap', gap: 0.5, color: 'white'}}>
                             {selected.map((value) => (

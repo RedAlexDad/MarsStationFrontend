@@ -1,0 +1,1946 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Географические объекты",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8000",
+      "description": "Локальный сервер разработки"
+    }
+  ],
+  "paths": {
+    "/api/geographical_object/{id}/": {
+      "get": {
+        "summary": "Получить информацию о географическом объекте",
+        "tags": [
+          "Geographical Object"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeographicalObjectSerializer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/geographical_object/create/": {
+      "post": {
+        "summary": "Создать географический объект",
+        "tags": [
+          "Geographical Object"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Токен авторизации JWT"
+          }
+        ],
+        "requestBody": {
+          "description": "Данные географического объекта",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GeographicalObjectSerializer"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Успешное создание",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeographicalObjectSerializer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ошибка валидации",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "Некорректные данные"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/geographical_object/": {
+      "get": {
+        "summary": "Получить список географических объектов",
+        "tags": [
+          "Geographical Object"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Токен авторизации JWT"
+          },
+          {
+            "name": "feature",
+            "in": "query",
+            "description": "Фильтр по особенности",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Фильтр по типу",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "Фильтр по размеру",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "describe",
+            "in": "query",
+            "description": "Фильтр по описанию",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Фильтр по статусу",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Страница",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeographicalObjectListSerializer"
+                },
+                "example": [
+                  {
+                    "count": 42,
+                    "id_draft_service": null,
+                    "results": [
+                      {
+                        "id": 1,
+                        "feature": "Acidalia Planitia",
+                        "type": "Planitia, planitiae",
+                        "size": 2300,
+                        "describe": "обширная тёмная равнина на Марсе. Размер — около 3 тысяч км, координаты центра — 50° с. ш. 339°. Расположена между вулканическим регионом Тарсис и Землёй Аравия, к северо-востоку от долин Маринера. На севере переходит в Великую Северную равнину, на юге — в равнину Хриса; на восточном краю равнины находится регион Кидония. Диаметр около 3000 км.",
+                        "photo": null,
+                        "status": true
+                      },
+                      {
+                        "id": 2,
+                        "feature": "Alba Patera",
+                        "type": "Patera, paterae",
+                        "size": 530,
+                        "describe": "Огромный низкий вулкан, расположенный в северной части региона Фарсида на планете Марс. Это самый большой по площади вулкан на Марсе: потоки извергнутой из него породы прослеживаются на расстоянии как минимум 1350 км от его пика.",
+                        "photo": null,
+                        "status": true
+                      },
+                      {
+                        "id": 3,
+                        "feature": "Albor Tholus",
+                        "type": "Tholus, tholi",
+                        "size": 170,
+                        "describe": "Потухший вулкан нагорья Элизий, расположенный на Марсе. Находится к югу от соседних горы Элизий и купола Гекаты. Вулкан достигает 4,5 километров в высоту и 160 километров в диаметре основания.",
+                        "photo": null,
+                        "status": true
+                      },
+                      {
+                        "id": 4,
+                        "feature": "Amazonis Planitia",
+                        "type": "Planitia, planitiae",
+                        "size": 2800,
+                        "describe": "Слабоокрашенная равнина в северной экваториальной области Марса. Довольно молода, породы имеют возраст 10-100 млн. лет. Часть этих пород представляют собой застывшую вулканическую лаву.",
+                        "photo": null,
+                        "status": true
+                      },
+                      {
+                        "id": 5,
+                        "feature": "Arabia Terra",
+                        "type": "Terra, terrae",
+                        "size": 5100,
+                        "describe": "Большая возвышенная область на севере Марса, которая лежит в основном в четырехугольнике Аравия, но небольшая часть находится в четырехугольнике Маре Ацидалиум. Она густо изрыта кратерами и сильно разрушена.",
+                        "photo": null,
+                        "status": true
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/geographical_object/{id}/image/": {
+      "get": {
+        "summary": "Получить изображение географического объекта",
+        "tags": [
+          "Geographical Object"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "image/jpeg": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Географический объект или изображение не найдено",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Не существует географический объект с {id}"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ошибка при обработке объекта",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Ошибка при обработке объекта\nError details"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/geographical_object/{id}/update_image/": {
+      "put": {
+        "summary": "Обновить изображение географического объекта",
+        "tags": [
+          "Geographical Object"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Токен авторизации JWT"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "photo": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "photo"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Успешный ответ"
+          },
+          "400": {
+            "description": "Неверный запрос"
+          },
+          "404": {
+            "description": "Географический объект не найден"
+          },
+          "500": {
+            "description": "Внутренняя ошибка сервера"
+          }
+        }
+      }
+    },
+    "/api/geographical_object/{id}/update/": {
+      "put": {
+        "summary": "Обновить информацию о географическом объекте",
+        "tags": [
+          "Geographical Object"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Токен авторизации JWT"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GeographicalObjectSerializer"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Успешный ответ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GeographicalObjectSerializer"
+                },
+                "example": {
+                  "id": 1,
+                  "feature": "Название",
+                  "type": "Тип",
+                  "size": 100,
+                  "describe": "Описание",
+                  "photo": "base64-encoded-image-data",
+                  "status": true
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Неверный запрос",
+            "content": {
+              "application/json": {
+                "example": {
+                  "error": "Сообщение об ошибке"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Географический объект не найден"
+          }
+        }
+      }
+    },
+    "/api/geographical_object/{id}/delete/": {
+      "delete": {
+        "summary": "Удалить географический объект",
+        "tags": [
+          "Geographical Object"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Токен авторизации JWT"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешное удаление",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Географический объект успешно удален"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Географический объект не найден",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Географический объект по {id} не существует"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/geographical_object/{id}/create_service_in_task/": {
+      "post": {
+        "summary": "Создание заявки и связывание географического объекта с Марсианской станцией",
+        "tags": [
+          "Geographical Object"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Идентификатор географического объекта"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Токен авторизации JWT"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Успешно создана заявка",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "id_draft": {
+                      "type": "integer"
+                    },
+                    "geographical_object": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/GeographicalObjectSerializer"
+                      }
+                    },
+                    "location": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/LocationSerializer"
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Успешно создана заявка",
+                  "id_draft": 1,
+                  "geographical_object": [
+                    {
+                      "id": 1,
+                      "feature": "Название",
+                      "type": "Тип",
+                      "size": 100,
+                      "describe": "Описание",
+                      "photo": "Фото",
+                      "status": true
+                    }
+                  ],
+                  "location": [
+                    {
+                      "id": 1,
+                      "id_geographical_object": 1,
+                      "id_mars_station": 1,
+                      "sequence_number": 1
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Географический объект не найден"
+          },
+          "400": {
+            "description": "Аккаунт не является сотрудником или другие ошибки"
+          }
+        }
+      }
+    },
+    "/api/mars_station/": {
+      "get": {
+        "summary": "Получение списка марсианских станций",
+        "operationId": "GET_MarsStationList",
+        "tags": [
+          "Mars Station"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Токен авторизации JWT"
+          },
+          {
+            "name": "status_mission",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Статус миссии"
+          },
+          {
+            "name": "date_create",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Дата создания"
+          },
+          {
+            "name": "date_close",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Дата закрытия"
+          },
+          {
+            "name": "status_task",
+            "in": "query",
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Статус задачи (может быть множественным)"
+          },
+          {
+            "name": "date_form_after",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Дата формирования ПОСЛЕ"
+          },
+          {
+            "name": "date_form_before",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Дата формирования ДО"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный запрос",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MarsStationSerializerDetail"
+                  }
+                },
+                "example": [
+                  {
+                    "id": 1,
+                    "type_status": "Исследовательская",
+                    "date_create": "1972-09-01",
+                    "date_form": "1973-11-04",
+                    "date_close": "1975-05-08",
+                    "status_task": 1,
+                    "status_mission": 3,
+                    "employee": {
+                      "id": 1,
+                      "full_name": "Джон Гротцингер",
+                      "post": "Профессор геологии, главный ученый миссии марсохода Curiosity",
+                      "name_organization": "Калифорнийский технологический институт (Caltech)",
+                      "address": "",
+                      "id_user": 1
+                    },
+                    "moderator": {
+                      "id": 3,
+                      "full_name": "Джеймс М. Бегс",
+                      "post": "Руководитель NASA",
+                      "name_organization": "NASA",
+                      "address": "",
+                      "id_user": 3
+                    },
+                    "transport": {
+                      "id": 1,
+                      "name": "Mars Pathfinder Rover (USA)",
+                      "type": "Rover",
+                      "describe": null,
+                      "photo": null
+                    },
+                    "location": [
+                      {
+                        "id": 1,
+                        "sequence_number": 1,
+                        "id_geographical_object": 1,
+                        "id_mars_station": 1
+                      },
+                      {
+                        "id": 2,
+                        "sequence_number": 1,
+                        "id_geographical_object": 2,
+                        "id_mars_station": 1
+                      }
+                    ],
+                    "geographical_object": [
+                      {
+                        "id": 1,
+                        "feature": "Acidalia Planitia",
+                        "type": "Planitia, planitiae",
+                        "size": 2300,
+                        "describe": "обширная тёмная равнина на Марсе. Размер — около 3 тысяч км, координаты центра — 50° с. ш. 339°. Расположена между вулканическим регионом Тарсис и Землёй Аравия, к северо-востоку от долин Маринера. На севере переходит в Великую Северную равнину, на юге — в равнину Хриса; на восточном краю равнины находится регион Кидония. Диаметр около 3000 км.",
+                        "photo": null,
+                        "status": false
+                      },
+                      {
+                        "id": 2,
+                        "feature": "Alba Patera",
+                        "type": "Patera, paterae",
+                        "size": 530,
+                        "describe": "Огромный низкий вулкан, расположенный в северной части региона Фарсида на планете Марс. Это самый большой по площади вулкан на Марсе: потоки извергнутой из него породы прослеживаются на расстоянии как минимум 1350 км от его пика.",
+                        "photo": null,
+                        "status": false
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/mars_station/{id}/": {
+      "get": {
+        "summary": "Получение данных о марсианской станции",
+        "operationId": "GET_MarsStation",
+        "tags": [
+          "Mars Station"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Токен авторизации JWT"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный запрос",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarsStationSerializerDetail"
+                },
+                "example": {
+                  "id": 1,
+                  "type_status": "Исследовательская",
+                  "date_create": "1972-09-01",
+                  "date_form": "1973-11-04",
+                  "date_close": "1975-05-08",
+                  "status_task": 1,
+                  "status_mission": 3,
+                  "employee": {
+                    "id": 1,
+                    "full_name": "Джон Гротцингер",
+                    "post": "Профессор геологии, главный ученый миссии марсохода Curiosity",
+                    "name_organization": "Калифорнийский технологический институт (Caltech)",
+                    "address": "",
+                    "id_user": 1
+                  },
+                  "moderator": {
+                    "id": 3,
+                    "full_name": "Джеймс М. Бегс",
+                    "post": "Руководитель NASA",
+                    "name_organization": "NASA",
+                    "address": "",
+                    "id_user": 3
+                  },
+                  "transport": {
+                    "id": 1,
+                    "name": "Mars Pathfinder Rover (USA)",
+                    "type": "Rover",
+                    "describe": null,
+                    "photo": null
+                  },
+                  "location": [
+                    {
+                      "id": 1,
+                      "sequence_number": 1,
+                      "id_geographical_object": 1,
+                      "id_mars_station": 1
+                    },
+                    {
+                      "id": 2,
+                      "sequence_number": 1,
+                      "id_geographical_object": 2,
+                      "id_mars_station": 1
+                    }
+                  ],
+                  "geographical_object": [
+                    {
+                      "id": 1,
+                      "feature": "Acidalia Planitia",
+                      "type": "Planitia, planitiae",
+                      "size": 2300,
+                      "describe": "обширная тёмная равнина на Марсе. Размер — около 3 тысяч км, координаты центра — 50° с. ш. 339°. Расположена между вулканическим регионом Тарсис и Землёй Аравия, к северо-востоку от долин Маринера. На севере переходит в Великую Северную равнину, на юге — в равнину Хриса; на восточном краю равнины находится регион Кидония. Диаметр около 3000 км.",
+                      "photo": null,
+                      "status": false
+                    },
+                    {
+                      "id": 2,
+                      "feature": "Alba Patera",
+                      "type": "Patera, paterae",
+                      "size": 530,
+                      "describe": "Огромный низкий вулкан, расположенный в северной части региона Фарсида на планете Марс. Это самый большой по площади вулкан на Марсе: потоки извергнутой из него породы прослеживаются на расстоянии как минимум 1350 км от его пика.",
+                      "photo": null,
+                      "status": false
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Марсианская станция не найдена"
+          }
+        }
+      }
+    },
+    "/api/mars_station/{id}/update/": {
+      "put": {
+        "summary": "Обновление информации о марсианской станции по ID",
+        "operationId": "PUT_MarsStation",
+        "tags": [
+          "Mars Station"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Токен авторизации JWT"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarsStationSerializer"
+              },
+              "example": {
+                "type_status": "Исследовательская",
+                "date_create": "1972-09-01",
+                "date_form": "1973-11-04",
+                "date_close": "1975-05-08",
+                "id_employee": 1,
+                "id_moderator": null,
+                "id_transport": 2,
+                "status_task": "В работе",
+                "status_mission": "Успех"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Успешное обновление",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarsStationSerializer"
+                },
+                "example": {
+                  "message": "Марсианская станция успешно обновлена",
+                  "data": {
+                    "id": 1,
+                    "type_status": "Исследовательская",
+                    "date_create": "1972-09-01",
+                    "date_form": "1973-11-04",
+                    "date_close": "1975-05-08",
+                    "id_employee": 1,
+                    "id_moderator": null,
+                    "id_transport": 2,
+                    "status_task": "В работе",
+                    "status_mission": "Успех"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Марсианская станция не найдена"
+          },
+          "400": {
+            "description": "Некорректный запрос"
+          }
+        }
+      }
+    },
+    "/api/mars_station/{id}/update_by_user/": {
+      "put": {
+        "summary": "Обновление информации о марсианской станции по ID создателя",
+        "operationId": "PUT_MarsStation_BY_USER",
+        "tags": [
+          "Mars Station"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Токен авторизации JWT"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешное обновление",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Успешно обновлен статус"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Марсианская станция не найдена"
+          },
+          "400": {
+            "description": "Некорректный запрос"
+          }
+        }
+      }
+    },
+    "/api/mars_station/{id}/update_by_admin/": {
+      "put": {
+        "summary": "Обновление информации о марсианской станции по ID модератора",
+        "operationId": "PUT_MarsStation_BY_ADMIN",
+        "tags": [
+          "Mars Station"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Токен авторизации JWT"
+          }
+        ],
+        "requestBody": {
+          "description": "Данные географического объекта",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status_task": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "status_task"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Успешное обновление",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Успешно обновлен статус"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Марсианская станция не найдена"
+          },
+          "400": {
+            "description": "Некорректный запрос"
+          }
+        }
+      }
+    },
+    "/api/mars_station/{id}/delete/": {
+      "delete": {
+        "summary": "Удаление марсианской станции",
+        "operationId": "DELETE_MarsStation",
+        "tags": [
+          "Mars Station"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Токен авторизации JWT"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешное удаление",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Марсианская станция успешно удалена"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Марсианская станция не найдена"
+          },
+          "400": {
+            "description": "Некорректный запрос"
+          }
+        }
+      }
+    },
+    "/api/location/{id_location}/mars_station/{pk_mars_station}/delete/": {
+      "delete": {
+        "summary": "Удаляет марсианскую станцию по ID",
+        "tags": [
+          "Location"
+        ],
+        "parameters": [
+          {
+            "name": "id_location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID локации"
+          },
+          {
+            "name": "pk_mars_station",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID марсианской станции"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Токен авторизации JWT"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Местоположение успешно удалено",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Местоположение успешно удалено"
+                    },
+                    "location": {
+                      "$ref": "#/components/schemas/LocationSerializer"
+                    },
+                    "geographical_object": {
+                      "$ref": "#/components/schemas/GeographicalObjectSerializer"
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Местоположение успешно удалено",
+                  "location": [],
+                  "geographical_object": []
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Недопустимый запрос на удаление"
+          }
+        }
+      }
+    },
+    "/api/location/{id_location}/mars_station/{id_mars_station}/update/": {
+      "put": {
+        "summary": "Обновляет информацию о марсианской станции по ID",
+        "tags": [
+          "Location"
+        ],
+        "parameters": [
+          {
+            "name": "id_location",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID локации"
+          },
+          {
+            "name": "id_mars_station",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID марсианской станции"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Токен авторизации JWT"
+          }
+        ],
+        "requestBody": {
+          "description": "Вектор направления",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "direction": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "direction"
+                ]
+              },
+              "example": {
+                "direction": "up"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Местоположение успешно отредактировано",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Местоположение успешно отредактировано"
+                    },
+                    "location": {
+                      "$ref": "#/components/schemas/LocationSerializer"
+                    },
+                    "geographical_object": {
+                      "$ref": "#/components/schemas/GeographicalObjectSerializer"
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Местоположение успешно отредактировано",
+                  "location": [],
+                  "geographical_object": []
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Недопустимый запрос на перемещение"
+          }
+        }
+      }
+    },
+    "/api/register/": {
+      "post": {
+        "summary": "Регистрация нового пользователя",
+        "tags": [
+          "Account"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRegisterSerializer"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Успешная регистрация",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserRegisterSerializer"
+                },
+                "example": {
+                  "user": {
+                    "id": 1,
+                    "username": "example_user",
+                    "is_moderator": false
+                  },
+                  "employee": {
+                    "id": 1,
+                    "name": "Имя сотрудника",
+                    "post": "Должность",
+                    "name_organization": "Название организации",
+                    "address": "Адрес",
+                    "id_user": 1
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ошибка в запросе",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Сообщение об ошибке"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/authentication/": {
+      "post": {
+        "summary": "Аутентификация пользователя",
+        "tags": [
+          "Account"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserAuthenticationSerializer"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Успешная аутентификация",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetTokenSerializer"
+                },
+                "example": {
+                  "user": {
+                    "id": 1,
+                    "username": "example_user",
+                    "is_moderator": false
+                  },
+                  "employee": {
+                    "id": 1,
+                    "name": "Имя сотрудника",
+                    "post": "Должность",
+                    "name_organization": "Название организации",
+                    "address": "Адрес"
+                  },
+                  "message": "Успешно",
+                  "access_token": "example_access_token"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ошибка в запросе",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Сообщение об ошибке"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Неудачная аутентификация",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Такого аккаунта не найдены. Вы неверно ввели свои учетные данные"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/get_token/": {
+      "post": {
+        "summary": "Получение токена",
+        "tags": [
+          "Account"
+        ],
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Токен авторизации JWT"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешное получение токена",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetTokenSerializer"
+                },
+                "example": {
+                  "user_data": {
+                    "id": 1,
+                    "username": "example_user",
+                    "is_moderator": false
+                  },
+                  "employee": {
+                    "id": 1,
+                    "name": "Имя сотрудника",
+                    "post": "Должность",
+                    "name_organization": "Название организации",
+                    "address": "Адрес"
+                  },
+                  "message": "Успешно",
+                  "access_token": "example_access_token"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Неудачное получение токена",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Сообщение об ошибке"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/logout/": {
+      "post": {
+        "summary": "Выход с учетной записи",
+        "tags": [
+          "Account"
+        ],
+        "responses": {
+          "200": {
+            "description": "Успешный выход с учетной записи",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Успешно",
+                  "is_token_in_blacklist": true
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Неудачный выход с учетной записи",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Сообщение об ошибке"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/transport/": {
+      "get": {
+        "summary": "Получает список транспорта",
+        "tags": ["Transport"],
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Тип транспорта (опционально)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Список транспорта успешно получен",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TypeTransportSerializerID_TYPE"
+                  }
+                },
+                "example": [
+                  {
+                    "id": 1,
+                    "type": "Тип_транспорта_1"
+                  },
+                  {
+                    "id": 2,
+                    "type": "Тип_транспорта_2"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+  },
+    "/api/async_result/": {
+      "put": {
+        "summary": "Изменяет результат асинхронной операции",
+        "tags": ["Asynchronous service"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AsyncResultInput"
+              },
+              "example": {
+                "token": "my_secret_token",
+                "id_draft": 1,
+                "status_mission": "completed"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Статус миссии успешно обновлен",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Статус миссии успешно обновлен"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/AsyncResultOutput"
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Статус миссии успешно обновлен",
+                  "data": {
+                    "id": 1,
+                    "status_task": "Статус_задачи",
+                    "status_mission": "Статус_миссии"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ошибка декодирования JSON"
+          },
+          "403": {
+            "description": "Ошибка, токен не соответствует"
+          }
+        }
+      }
+    }
+},
+  "components": {
+    "schemas": {
+      "EmployeeSerializer": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "full_name": {
+            "type": "string"
+          },
+          "post": {
+            "type": "string"
+          },
+          "name_organization": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "id_user": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "TransportSerializer": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "describe": {
+            "type": "string"
+          },
+          "photo": {
+            "type": "string"
+          }
+        }
+      },
+      "LocationSerializer": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sequence_number": {
+            "type": "integer"
+          },
+          "id_geographical_object": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "id_mars_station": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "GeographicalObjectSerializer": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "feature": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "size": {
+            "type": "integer"
+          },
+          "describe": {
+            "type": "string"
+          },
+          "photo": {
+            "type": "string",
+            "format": "binary"
+          },
+          "status": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "feature",
+          "type",
+          "status"
+        ]
+      },
+      "MarsStationSerializerDetail": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "type_status": {
+            "type": "string"
+          },
+          "date_create": {
+            "type": "string"
+          },
+          "date_form": {
+            "type": "string"
+          },
+          "date_close": {
+            "type": "string"
+          },
+          "id_employee": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "id_moderator": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "id_transport": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "status_task": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "status_mission": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "employee": {
+            "$ref": "#/components/schemas/EmployeeSerializer"
+          },
+          "moderator": {
+            "$ref": "#/components/schemas/EmployeeSerializer"
+          },
+          "transport": {
+            "$ref": "#/components/schemas/TransportSerializer"
+          },
+          "location": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LocationSerializer"
+            }
+          },
+          "geographical_object": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GeographicalObjectSerializer"
+            }
+          }
+        }
+      },
+      "MarsStationSerializer": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "type_status": {
+            "type": "string"
+          },
+          "date_create": {
+            "type": "string"
+          },
+          "date_form": {
+            "type": "string"
+          },
+          "date_close": {
+            "type": "string"
+          },
+          "id_employee": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "id_moderator": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "id_transport": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "status_task": {
+            "type": "string"
+          },
+          "status_mission": {
+            "type": "string"
+          }
+        }
+      },
+      "GeographicalObjectListSerializer": {
+        "type": "object",
+        "properties": {
+          "count": {
+            "type": "integer"
+          },
+          "id_draft_service": {
+            "type": "integer"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GeographicalObjectSerializer"
+            }
+          }
+        },
+        "required": [
+          "count",
+          "results"
+        ]
+      },
+      "Users": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "is_moderator": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "username",
+          "password",
+          "is_moderator"
+        ]
+      },
+      "Employee": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "full_name": {
+            "type": "string"
+          },
+          "post": {
+            "type": "string"
+          },
+          "name_organization": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "id_user": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "full_name",
+          "post",
+          "name_organization",
+          "address",
+          "id_user"
+        ]
+      },
+      "UsersRegister": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "is_moderator": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "username",
+          "password",
+          "is_moderator"
+        ]
+      },
+      "EmployeeRegister": {
+        "type": "object",
+        "properties": {
+          "full_name": {
+            "type": "string"
+          },
+          "post": {
+            "type": "string"
+          },
+          "name_organization": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "full_name",
+          "post",
+          "name_organization",
+          "address"
+        ]
+      },
+      "UserRegisterSerializer": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "$ref": "#/components/schemas/UsersRegister"
+          },
+          "employee": {
+            "$ref": "#/components/schemas/EmployeeRegister"
+          }
+        },
+        "required": [
+          "user",
+          "employee"
+        ]
+      },
+      "UserAuthenticationSerializer": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "username",
+          "password"
+        ]
+      },
+      "GetTokenSerializer": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "$ref": "#/components/schemas/Users"
+          },
+          "employee": {
+            "$ref": "#/components/schemas/Employee"
+          },
+          "message": {
+            "type": "string"
+          },
+          "access_token": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "user",
+          "employee",
+          "message",
+          "access_token"
+        ]
+      },
+      "TypeTransportSerializerID_TYPE": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "type": {
+            "type": "string",
+            "example": "Spacecraft"
+          }
+        }
+      },
+      "AsyncResultInput": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "example": "my_secret_token"
+          },
+          "id_draft": {
+            "type": "integer",
+            "example": 1
+          },
+          "status_mission": {
+            "type": "string",
+            "example": "completed"
+          }
+        },
+        "required": ["token", "id_draft", "status_mission"]
+      },
+      "AsyncResultOutput": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "status_task": {
+            "type": "string",
+            "example": "Статус_задачи"
+          },
+          "status_mission": {
+            "type": "string",
+            "example": "Статус_миссии"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,10 +1,9 @@
 import "./MarsStation.sass"
 import {Dispatch, useEffect, useState} from "react";
 import {Link, useParams} from "react-router-dom";
-import {DOMEN, requestTime, STATUS_MISSIONS, STATUS_TASKS} from "../../Consts";
+import {STATUS_MISSIONS, STATUS_TASKS} from "../../Consts";
 import {GeographicalObject, MarsStation, Location, Transport} from "../../Types";
 import {useToken} from "../../hooks/useToken.ts";
-import axios from "axios";
 import {useAuth} from "../../hooks/useAuth.ts";
 import {useDispatch} from "react-redux";
 import {clearID_draft} from "../../store/GeographicalObject.ts";
@@ -14,6 +13,18 @@ import {TextField} from "@mui/material";
 import LoadingAnimation from "../../Components/Loading.tsx";
 import MultipleSelectTransport from "./MultipleSelectTransport.tsx";
 import TableGeographicalObject from "./TableGeographicalObject.tsx";
+import {
+    ApiLocationIdLocationMarsStationIdMarsStationUpdatePutOperationRequest,
+    ApiLocationIdLocationMarsStationPkMarsStationDeleteDeleteRequest,
+    ApiTransportGetRequest, DELETEMarsStationRequest,
+    GeographicalObjectApi,
+    GETMarsStationRequest, LocationApi,
+    MarsStationApi,
+    MarsStationSerializerDetailToJSON, PUTMarsStationBYADMINOperationRequest,
+    PUTMarsStationBYUSERRequest,
+    PUTMarsStationRequest,
+    TransportApi,
+} from "../../../swagger/generated-code";
 
 export default function MarsStationPage({selectedMarsStation, setSelectedMarsStation}: {
     selectedMarsStation: MarsStation | undefined,
@@ -91,20 +102,21 @@ export default function MarsStationPage({selectedMarsStation, setSelectedMarsSta
 
 
     // Получить фотки
-    const get_photo = async (id_geographical_object: number) => {
+    const get_photo = async (id_geographical_object: any) => {
         setLoading(true);
-        const url: string = `http://127.0.0.1:8000/api/geographical_object/${id_geographical_object}/image/`;
+        const api = new GeographicalObjectApi();
         try {
-            await axios.get(url, {
-                headers: {
-                    "Content-type": "application/json; charset=UTF-8",
-                },
-                signal: new AbortController().signal,
-                timeout: requestTime,
+            const response: Blob = await api.apiGeographicalObjectIdImageGet({
+                id: id_geographical_object,
             });
-            return url;
-        } catch {
-            console.log(mockImage);
+            if (response) {
+                const blob = response as Blob;
+                const url = URL.createObjectURL(blob);
+                return url;
+            } else {
+                return mockImage;
+            }
+        } catch (error) {
             return mockImage;
         } finally {
             setLoading(false);
@@ -134,21 +146,18 @@ export default function MarsStationPage({selectedMarsStation, setSelectedMarsSta
     };
 
     const getMarsStation = async () => {
-        setLoading(true);
-        const url = `${DOMEN}api/mars_station/${id_mars_station}/`;
-        await axios.get(url, {
-            headers: {
-                "Content-type": "application/json; charset=UTF-8",
-                authorization: access_token,
-            },
-            timeout: requestTime,
-        })
+        const api = new MarsStationApi();
+        const requestParameters: GETMarsStationRequest = {
+            id: parseInt(id_mars_station),
+            authorization: access_token,
+        };
+        await api.gETMarsStation(requestParameters)
             .then((response) => {
-                const mars_station: MarsStation = response.data;
-                setSelectedMarsStation(mars_station);
-                // console.log(mars_station)
+                // Преобразование данных
+                const transformedResponse = MarsStationSerializerDetailToJSON(response);
+                setSelectedMarsStation(transformedResponse);
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error("Ошибка!\n", error);
             })
             .finally(() => {
@@ -157,30 +166,30 @@ export default function MarsStationPage({selectedMarsStation, setSelectedMarsSta
     };
 
     const push_mars_station = () => {
-        const url = `${DOMEN}api/mars_station/${id_mars_station}/update_by_user/`;
-        const headers = {
-            "Content-type": "application/json; charset=UTF-8",
-            'authorization': access_token
+        const api = new MarsStationApi();
+        const requestParameters: PUTMarsStationBYUSERRequest = {
+            id: parseInt(id_mars_station),
+            authorization: access_token,
         };
-        axios.put(url, {}, {headers})
+        api.pUTMarsStationBYUSER(requestParameters)
             .then(() => {
                 // console.log("Успешно! Заявка отправлена!", response.data);
                 setUpdateTrigger(true);
                 dispatch(clearID_draft());
                 dispatch(cleanDraft());
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error("Ошибка отправки!\n", error);
             });
     };
 
     const delete_mars_station = () => {
-        const url = `${DOMEN}api/mars_station/${id_mars_station}/delete/`;
-        const headers = {
-            "Content-type": "application/json; charset=UTF-8",
-            'authorization': access_token
+        const api = new MarsStationApi();
+        const requestParameters: DELETEMarsStationRequest = {
+            id: parseInt(id_mars_station),
+            authorization: access_token,
         };
-        axios.delete(url, {headers})
+        api.dELETEMarsStation(requestParameters)
             .then(() => {
                 // console.log("Успешно! Заявка удалена!", response.data);
                 setUpdateTrigger(true);
@@ -193,13 +202,13 @@ export default function MarsStationPage({selectedMarsStation, setSelectedMarsSta
     };
 
     const check_mars_station = (value: number) => {
-        const url = `${DOMEN}api/mars_station/${id_mars_station}/update_by_admin/`;
-        const headers = {
-            "Content-type": "application/json; charset=UTF-8",
-            'authorization': access_token
+        const api = new MarsStationApi();
+        const requestParameters: PUTMarsStationBYADMINOperationRequest = {
+            id: parseInt(id_mars_station),
+            authorization: access_token,
+            pUTMarsStationBYADMINRequest: { statusTask: value },
         };
-        const data = {status_task: value}
-        axios.put(url, data, {headers})
+        api.pUTMarsStationBYADMIN(requestParameters)
             .then(() => {
                 // console.log("Успешно! Заявка отправлена!", response.data);
                 setUpdateTrigger(true);
@@ -211,18 +220,18 @@ export default function MarsStationPage({selectedMarsStation, setSelectedMarsSta
     };
 
     const delete_location_and_mars_station = async (id_location: number, id_mars_station: number) => {
-        const url = `${DOMEN}api/location/${id_location}/mars_station/${id_mars_station}/delete/`;
-        await axios.delete(url, {
-            headers: {
-                "Content-type": "application/json; charset=UTF-8",
-                authorization: access_token,
-            },
-        })
+        const api = new LocationApi();
+        const requestParameters: ApiLocationIdLocationMarsStationPkMarsStationDeleteDeleteRequest = {
+            idLocation: id_location,
+            pkMarsStation: id_mars_station,
+            authorization: access_token,
+        };
+        await api.apiLocationIdLocationMarsStationPkMarsStationDeleteDelete(requestParameters)
             .then((response) => {
                 // console.log("Успешно удалено с черновой заявки!", response.data);
                 dispatch(updateMarsStationDraftData({
-                    geographical_object: response.data.geographical_object || [],
-                    location: response.data.location || [],
+                    geographical_object: response.geographicalObject || [],
+                    location: response.location || [],
                 }));
                 setUpdateTrigger(true);
             })
@@ -232,19 +241,19 @@ export default function MarsStationPage({selectedMarsStation, setSelectedMarsSta
     };
 
     const put_location_and_mars_station = async (id_location: number, id_mars_station: number, direction: string) => {
-        const url = `${DOMEN}api/location/${id_location}/mars_station/${id_mars_station}/update/`;
-        const data = {direction: direction}
-        await axios.put(url, data, {
-            headers: {
-                "Content-type": "application/json; charset=UTF-8",
-                authorization: access_token,
-            },
-        })
+        const api = new LocationApi(); // Замените YourApiClassName на фактическое имя вашего класса API
+        const requestParameters: ApiLocationIdLocationMarsStationIdMarsStationUpdatePutOperationRequest = {
+            idLocation: id_location,
+            idMarsStation: id_mars_station,
+            authorization: access_token,
+            apiLocationIdLocationMarsStationIdMarsStationUpdatePutRequest: { direction: direction },
+        };
+        await api.apiLocationIdLocationMarsStationIdMarsStationUpdatePut(requestParameters)
             .then((response) => {
                 // console.log("Успешно обновлены черновой заявки!", response.data);
                 dispatch(updateMarsStationDraftData({
-                    geographical_object: response.data.geographical_object || [],
-                    location: response.data.location || [],
+                    geographical_object: response.geographicalObject || [],
+                    location: response.location || [],
                 }));
                 setUpdateTrigger(true);
                 // Увеличиваем счетчик для изменения фото
@@ -255,43 +264,41 @@ export default function MarsStationPage({selectedMarsStation, setSelectedMarsSta
             })
     };
 
-    const save_mars_station = async () => {
-        const url = `${DOMEN}api/mars_station/${id_mars_station}/update/`;
-        const data = {...selectedMarsStation};
-        data.type_status = editedTypeStatus;
-        data.transport = selectedTransports;
-        console.log('data', data)
-        await axios.put(url, data, {
-            headers: {
-                "Content-type": "application/json; charset=UTF-8",
-                authorization: access_token,
+    const save_mars_station = () => {
+        const api = new MarsStationApi();
+        const requestParameters: PUTMarsStationRequest = {
+            id: parseInt(id_mars_station),
+            authorization: access_token,
+            marsStationSerializer: {
+                typeStatus: editedTypeStatus,
+                idTransport: selectedTransports,
             },
-        })
-            .then(() => {
-                // console.log("Успешно обновлены черновой заявки!", response.data);
+        };
+        console.log(requestParameters)
+        api.pUTMarsStation(requestParameters)
+            .then((response) => {
+                console.log("Успешно обновлены черновой заявки!", response);
                 setUpdateTrigger(true);
                 push_mars_station();
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error("Ошибка!\n", error);
             });
     };
 
     const getTransports = async () => {
-        const url = `${DOMEN}api/transport/`;
-        await axios.get(url, {
-            headers: {
-                "Content-type": "application/json; charset=UTF-8",
-                authorization: access_token,
-            },
-        })
+        const api = new TransportApi(); // Замените YourApiClassName на фактическое имя вашего класса API
+        const requestParameters: ApiTransportGetRequest = {}; // Укажите необходимые параметры запроса, если есть
+
+        api.apiTransportGet(requestParameters)
             .then((response) => {
-                // console.log("Успешно получены все транспорты!", response.data);
-                setTransports(response.data)
+                // console.log("Успешно получены все транспорты!", response);
+                // @ts-ignore
+                setTransports(response);
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error("Ошибка!\n", error);
-            })
+            });
     };
 
 

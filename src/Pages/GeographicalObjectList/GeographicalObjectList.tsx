@@ -2,20 +2,20 @@ import "./GeographicalObjectList.sass"
 import SearchBar from "./SearchBar/SearchBar";
 import {useEffect, useState} from "react";
 import GeographicalObjectCard from "./GeographicalObjectCard/GeographicalObjectCard";
-import {GeographicalObjectsMock, requestTime, DOMEN} from "../../Consts";
-import axios from "axios";
+import {GeographicalObjectsMock} from "../../Consts";
 import {useDispatch, useSelector} from "react-redux";
 import {updateGeographicalObject, updatePagination} from "../../store/GeographicalObject.ts";
 import {useToken} from "../../hooks/useToken.ts";
 import {RootState} from "../../store/store.ts";
 import Pagination from "../../Components/Header/Pagination/Pagination.tsx";
 import LoadingAnimation from "../../Components/Loading.tsx";
-import GeographicalObjectCardAdd from "./GeographicalObjectCard/GeographicalObjectCardAdd.tsx";
-import {useAuth} from "../../hooks/useAuth.ts";
+import {ApiGeographicalObjectGetRequest, GeographicalObjectApi} from "../../../swagger/generated-code";
+// import GeographicalObjectCardAdd from "./GeographicalObjectCard/GeographicalObjectCardAdd.tsx";
+// import {useAuth} from "../../hooks/useAuth.ts";
 
 export default function GeographicalObjectListPage() {
     const {access_token} = useToken()
-    const {is_moderator} = useAuth()
+    // const {is_moderator} = useAuth()
 
     const dispatch = useDispatch()
     const GeographicalObject = useSelector((state: RootState) => state.geographical_object.data);
@@ -37,30 +37,23 @@ export default function GeographicalObjectListPage() {
 
     const searchGeographicalObject = async (currentPage: number) => {
         setLoading(true);
-        // Определяем параметры запроса, включая номер страницы и количество объектов на странице
-        const params = new URLSearchParams({
+        const api = new GeographicalObjectApi();
+        const requestParameters: ApiGeographicalObjectGetRequest = {
+            authorization: access_token,
             page: currentPage.toString(),
             status: 'True',
             feature: feature,
-        });
-        const url = `${DOMEN}api/geographical_object/?${params}`
-        await axios.get(url, {
-            headers: {
-                "Content-type": "application/json; charset=UTF-8",
-                authorization: access_token,
-            },
-            signal: new AbortController().signal,
-            timeout: requestTime,
-        })
+        };
+        api.apiGeographicalObjectGet(requestParameters)
             .then(response => {
                 // console.log("Успешно!", response.data);
-                dispatch(updateGeographicalObject([...response.data.results]));
+                dispatch(updateGeographicalObject([...response.results]));
                 // Обновление данных пагинации
                 dispatch(
                     updatePagination({
                         currentPage: currentPage,
-                        totalPages: Math.ceil(response.data.count / 5),
-                        count: response.data.count,
+                        totalPages: Math.ceil(response.count / 5),
+                        count: response.count,
                     })
                 );
                 setLoading(true);

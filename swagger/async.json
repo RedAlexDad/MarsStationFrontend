@@ -1,0 +1,110 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Транспорт",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8000",
+      "description": "Локальный сервер разработки"
+    }
+  ],
+  "paths": {
+    "/api/async_result/": {
+      "put": {
+        "summary": "Изменяет результат асинхронной операции",
+        "tags": ["Асинхронный сервис"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AsyncResultInput"
+              },
+              "example": {
+                "token": "my_secret_token",
+                "id_draft": 1,
+                "status_mission": "completed"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Статус миссии успешно обновлен",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Статус миссии успешно обновлен"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/AsyncResultOutput"
+                    }
+                  }
+                },
+                "example": {
+                  "message": "Статус миссии успешно обновлен",
+                  "data": {
+                    "id": 1,
+                    "status_task": "Статус_задачи",
+                    "status_mission": "Статус_миссии"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Ошибка декодирования JSON"
+          },
+          "403": {
+            "description": "Ошибка, токен не соответствует"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AsyncResultInput": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "example": "my_secret_token"
+          },
+          "id_draft": {
+            "type": "integer",
+            "example": 1
+          },
+          "status_mission": {
+            "type": "string",
+            "example": "completed"
+          }
+        },
+        "required": ["token", "id_draft", "status_mission"]
+      },
+      "AsyncResultOutput": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "status_task": {
+            "type": "string",
+            "example": "Статус_задачи"
+          },
+          "status_mission": {
+            "type": "string",
+            "example": "Статус_миссии"
+          }
+        }
+      }
+    }
+  }
+}
