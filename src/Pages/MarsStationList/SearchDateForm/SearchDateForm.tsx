@@ -1,16 +1,16 @@
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { useDispatch, useSelector } from 'react-redux';
-import { updateDateFormAfter, updateDateFormBefore } from '../../../store/Search.ts';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
+import {DatePicker} from '@mui/x-date-pickers/DatePicker';
+import {useDispatch, useSelector} from 'react-redux';
+import {updateDateFormAfter, updateDateFormBefore} from '../../../store/Search.ts';
+import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import dayjs from 'dayjs';
-import { Dispatch, SetStateAction } from 'react';
-import { RootState } from '../../../store/store.ts';
+import {Dispatch, SetStateAction} from 'react';
+import {RootState} from '../../../store/store.ts';
 
-export default function ({ setUpdateTriggerParent }: { setUpdateTriggerParent: Dispatch<SetStateAction<boolean>> }) {
+export default function ({setUpdateTriggerParent}: { setUpdateTriggerParent: Dispatch<SetStateAction<boolean>> }) {
     const dispatch = useDispatch();
     const date = useSelector((state: RootState) => state.search.date);
     const dayjsDateBefore = dayjs(date.input_before);
@@ -45,24 +45,40 @@ export default function ({ setUpdateTriggerParent }: { setUpdateTriggerParent: D
     };
 
     const handleResetDates = () => {
-        dispatch(updateDateFormBefore({ date_before: '', input_before: '' }));
-        dispatch(updateDateFormAfter({ date_after: '', input_after: '' }));
+        dispatch(updateDateFormBefore({date_before: '', input_before: ''}));
+        dispatch(updateDateFormAfter({date_after: '', input_after: ''}));
         setUpdateTriggerParent(true);
     };
 
     return (
         <div>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <Box display="flex" alignItems="center" sx={{ color: 'white', borderColor: 'white' }}>
+                <Box
+                    display="flex"
+                    alignItems="center"
+                    sx={{
+                        '& input, & label, & .MuiIconButton-label': {color: 'white'},
+                        '& .MuiOutlinedInput-notchedOutline': {
+                            borderColor: 'white',
+                        },
+                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                            borderColor: 'white',
+                        },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                            borderColor: 'white',
+                        },
+                        '& .MuiChip-root': {color: 'white'}
+                    }}
+                >
                     <DatePicker
                         label="ПОСЛЕ"
                         value={dayjsDateAfter.isValid() ? dayjsDateAfter.toDate() : null}
                         onChange={(date) => handleDateChange('after', date)}
                         sx={{
-                            '& input, & label, & .MuiIconButton-label, & .MuiIconButton-root': { color: 'white' },
+                            '& input, & label, & .MuiIconButton-label, & .MuiIconButton-root': {color: 'white'},
                         }}
                     />
-                    <Typography variant="body1" mx={2} sx={{ color: 'white', borderColor: 'white' }}>
+                    <Typography variant="body1" mx={2} sx={{color: 'white', borderColor: 'white'}}>
                         —
                     </Typography>
                     <DatePicker
@@ -70,11 +86,11 @@ export default function ({ setUpdateTriggerParent }: { setUpdateTriggerParent: D
                         value={dayjsDateBefore.isValid() ? dayjsDateBefore.toDate() : null}
                         onChange={(date) => handleDateChange('before', date)}
                         sx={{
-                            '& input, & label, & .MuiIconButton-label, & .MuiIconButton-root': { color: 'white' },
+                            '& input, & label, & .MuiIconButton-label, & .MuiIconButton-root': {color: 'white'},
                         }}
                     />
                     <Typography variant="body1" mx={2}></Typography>
-                    <Button variant="outlined" sx={{ color: 'white', borderColor: 'white' }} onClick={handleResetDates}>
+                    <Button variant="outlined" sx={{color: 'white', borderColor: 'white'}} onClick={handleResetDates}>
                         Сбросить даты
                     </Button>
                 </Box>

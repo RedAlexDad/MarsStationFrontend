@@ -24,8 +24,7 @@ export default function BasketBadges() {
     // Получаем значение из Redux
     // Используем значение для установки количества
     const IDMarsStationDraft = useSelector((state: RootState) => state.geographical_object.id_draft);
-    const geographicalObjectCount = useSelector((state: RootState) => state.mars_station_draft.geographical_object.length);
-
+    const geographicalObjectCount = useSelector((state: RootState) => state.geographical_object.count_geographical_object_by_draft);
 
     useEffect(() => {
         // Проверяем текущий путь и скрываем часть компонента при необходимости
@@ -41,9 +40,11 @@ export default function BasketBadges() {
             {isPartVisible && (
                 <Link to={geographicalObjectCount > 0 ? `/mars_station/${IDMarsStationDraft}/` : '#'}>
                     <IconButton aria-label="cart">
-                        <StyledBadge badgeContent={geographicalObjectCount} color="secondary">
-                            <RocketLaunchIcon color="warning"/>
-                        </StyledBadge>
+                        {geographicalObjectCount >= 0 &&
+                            <StyledBadge badgeContent={geographicalObjectCount} color="secondary">
+                                <RocketLaunchIcon color="warning"/>
+                            </StyledBadge>
+                        }
                     </IconButton>
                 </Link>
             )}

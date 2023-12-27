@@ -36,7 +36,7 @@ function App() {
     return (
         <QueryClientProvider client={queryClient}>
             <Provider store={store}>
-                <BrowserRouter basename="/mars">
+                <BrowserRouter basename="/MarsStationFrontend">
                     <div className="App">
                         <div className="wrapper">
                             <Header/>

@@ -2,6 +2,7 @@ import {createSlice} from "@reduxjs/toolkit";
 
 const initialState = {
     feature: "",
+    full_name: "",
     status_task: [] as string[],
     date: {
         date_before: "",
@@ -20,6 +21,13 @@ const feature_geographical_object = createSlice({
                 ...state,
                 ...action.payload,
                 feature: action.payload,
+            }
+        },
+        updateFullNameEmployee: (state, action) => {
+            return {
+                ...state,
+                ...action.payload,
+                full_name: action.payload,
             }
         },
         updateStatusTask: (state, action) => {
@@ -54,6 +62,7 @@ const feature_geographical_object = createSlice({
 
 export const {
     updateFeatureGeographicalObject,
+    updateFullNameEmployee,
     updateStatusTask,
     updateDateFormBefore,
     updateDateFormAfter,

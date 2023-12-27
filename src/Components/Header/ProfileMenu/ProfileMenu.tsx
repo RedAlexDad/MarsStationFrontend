@@ -29,7 +29,7 @@ export default function ProfileMenu() {
 
     const marsStationDraft = async () => {
         if (id_draft !== -1 && id_draft !== undefined) {
-            const api = new MarsStationApi(); // Замените YourApiClassName на фактическое имя вашего класса API
+            const api = new MarsStationApi();
             const requestParameters: GETMarsStationRequest = {
                 id: id_draft,
                 authorization: access_token,
@@ -54,9 +54,9 @@ export default function ProfileMenu() {
         api.apiGeographicalObjectGet(requestParameters)
             .then(response => {
                 // console.log("Успешно!", response);
-                // console.log("ID черновика: ", response.data.id_draft_service);
                 dispatch(updateGeographicalObject([...response.results]));
                 dispatch(updateID_draft(response.idDraftService));
+                // console.log("ID черновика: ", response.idDraftService);
             })
             .catch(error => {
                 console.error("Ошибка!\n", error);
@@ -64,10 +64,11 @@ export default function ProfileMenu() {
     };
 
     const auth = () => {
-        const api = new AccountApi(); // Замените YourApiClassName на фактическое имя вашего класса API
+        const api = new AccountApi();
         const requestParameters: ApiGetTokenPostRequest = {
             authorization: access_token,
         };
+        console.log(access_token)
 
         api.apiGetTokenPost(requestParameters)
             .then((response) => {
@@ -132,8 +133,7 @@ export default function ProfileMenu() {
                     <Link to="/mars_station/" className="menu-item" style={{textDecoration: 'none'}}>
                         <span className="item">Марсианские станции</span>
                     </Link>
-                    {!is_moderator &&
-                        <BasketBadges/>}
+                    <BasketBadges/>
                     <UserInfo/>
                 </div>
                 <Hamburger isOpen={isOpen} setIsOpen={setIsOpen}/>

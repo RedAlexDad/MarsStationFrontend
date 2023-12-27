@@ -19,6 +19,8 @@ import {
     MarsStationApi,
     MarsStationSerializerDetailToJSON,
 } from "../../../swagger/generated-code";
+import SearchNameEmployee from './SearchNameEmployee/SearchNameEmployee.tsx'
+
 
 export default function MarsStationListPage() {
     const {access_token} = useToken()
@@ -32,6 +34,7 @@ export default function MarsStationListPage() {
     const date = useSelector((state: RootState) => state.search.date);
     const date_before: string = date.date_before;
     const date_after: string = date.date_after;
+    const full_name = useSelector((state: RootState) => state.search.full_name);
     // Загрузочный экран
     const [loading, setLoading] = useState<boolean>(false);
     // Cостояние для обновления в основном компоненте (при нажатии)
@@ -50,9 +53,9 @@ export default function MarsStationListPage() {
             const response = await api.gETMarsStationList(requestParameters);
             const transformedData = response.map(item => MarsStationSerializerDetailToJSON(item));
             if (is_moderator) {
-                dispatch(updateMarsStation(transformedData));
+                filterFullNameForModerator(transformedData)
             } else {
-                filterData(transformedData);
+                filterDataForEmployee(transformedData);
             }
         } catch (error) {
             console.error("Ошибка!\n", error);
@@ -61,12 +64,11 @@ export default function MarsStationListPage() {
         }
     };
 
-    // Функция для фильтрации данных пользователями
-    const filterData = (mars_station: any[]) => {
+    // Функция для фильтрации данных пользователям
+    const filterDataForEmployee = (mars_station: any[]) => {
         if (Array.isArray(mars_station)) {
             // Если status_task не определён или не является массивом, установим непустой массив
             const statusTaskArray: string[] = status_task !== undefined && status_task.length > 0 ? status_task : ['2', '3', '4'];
-
             const filteredData = mars_station.filter(item => {
                 // Преобразование строковых дат в объекты Date
                 const dateForm = new Date(item.date_form);
@@ -79,7 +81,21 @@ export default function MarsStationListPage() {
                 const isDateInRange =
                     (!dateBefore || dateForm.getTime() <= dateBefore.getTime()) &&
                     (!dateAfter || dateForm.getTime() >= dateAfter.getTime());
+
                 return isStatusMatch && isDateInRange;
+            });
+            dispatch(updateMarsStation(filteredData));
+        }
+    };
+
+    // Функция для фильтрации данных пользователями
+    const filterFullNameForModerator = (mars_station: any[]) => {
+        if (Array.isArray(mars_station)) {
+            const filteredData = mars_station.filter(item => {
+                // Условие для фильтрации по ФИО
+                return full_name
+                    ? item.employee.full_name.toLowerCase().includes(full_name.toLowerCase())
+                    : true;
             });
             dispatch(updateMarsStation(filteredData));
         }
@@ -88,13 +104,15 @@ export default function MarsStationListPage() {
     useEffect(() => {
         setLoading(true);
         searchMarsStation();
-        if(!is_moderator) {
-            filterData(MarsStation);
+        if (!is_moderator) {
+            filterDataForEmployee(MarsStation);
+        } else {
+            filterFullNameForModerator(MarsStation);
         }
         if (parentUpdateTrigger) {
             setParentUpdateTrigger(false);
         }
-    }, [date_before, date_after, parentUpdateTrigger]);
+    }, [full_name, date_before, date_after, parentUpdateTrigger]);
 
     // SHORT POOLING
     useEffect(() => {
@@ -104,7 +122,7 @@ export default function MarsStationListPage() {
         const interval = setInterval(fetchData, 1000);
         // Очищаем интервал при размонтировании компонента
         return () => clearInterval(interval);
-    }, [status_task, date]);
+    }, [full_name, status_task, date]);
 
     // Функция для передачи в дочерний компонент
     const handleUpdateTrigger = () => {
@@ -214,6 +232,7 @@ export default function MarsStationListPage() {
     return (
         <div className="cards-list-wrapper">
             <div className="top">
+                {is_moderator && <SearchNameEmployee/>}
                 <SearchBar
                     status_task={status_task}
                     setUpdateTriggerParent={handleUpdateTrigger}

@@ -18,12 +18,16 @@ export default function GeographicalObjectPageEdit({selectedGeographicalObject, 
 }) {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const {access_token} = useToken()
-    // const [selectedGeographicalObject, setSelectedGeographicalObject] = useState<GeographicalObject | undefined>(undefined)
     const {id_geographical_object} = useParams<{ id_geographical_object: string }>();
     // Ссылки с фото
     const [photoUrl, setPhotoUrl] = useState<string>('');
     // Загрузочный экран
     const [loading, setLoading] = useState<boolean>(true);
+
+    if (id_geographical_object === undefined) {
+        return;
+    }
+
     // Новые данные
     const [formData, setFormData] = useState({
         feature: "",
@@ -33,12 +37,27 @@ export default function GeographicalObjectPageEdit({selectedGeographicalObject, 
         photo: new Blob([""], { type: "image/jpeg" }),
         status: true
     });
-    // Статус для обновления фотки
-    const [editPhoto, setEditPhoto] = useState<boolean>(false);
 
-    if (id_geographical_object == undefined) {
-        return;
-    }
+    const setInitialFormData = (object: any) => {
+        if (object) {
+            setFormData({
+                feature: object.feature || "",
+                type: object.type || "",
+                size: object.size || Number(),
+                describe: object.describe || "",
+                photo: object.photo
+                    ? new Blob([object.photo], { type: "image/jpeg" })
+                    : new Blob([""], { type: "image/jpeg" }),
+                status: object.status || true
+            });
+        }
+    };
+
+    // Ваш компонент
+    useEffect(() => {
+        // Вызываем функцию для установки начальных значений при изменении selectedGeographicalObject
+        setInitialFormData(selectedGeographicalObject);
+    }, [selectedGeographicalObject]);
 
     const handleChange = (field: string, value: string) => {
         setFormData(prevData => ({
@@ -87,7 +106,6 @@ export default function GeographicalObjectPageEdit({selectedGeographicalObject, 
                 const geographicalObject: GeographicalObjectSerializer = response as GeographicalObjectSerializer;
                 // @ts-ignore
                 setSelectedGeographicalObject(geographicalObject);
-                setEditPhoto(true)
             })
             .catch((error) => {
                 console.error('Ошибка запроса:', error);
@@ -164,45 +182,58 @@ export default function GeographicalObjectPageEdit({selectedGeographicalObject, 
     return (
         <>
             {loading && <LoadingAnimation isLoading={loading}/>}
-            {!editPhoto &&
-                <div className="page-details-wrapper">
-                    <Link className="return-link" to="/geographical_object">
-                        Назад
-                    </Link>
-                    <div className="return-link" style={{top: '60px', right: '24px'}}>
-                        <div className="button-create">
+            <div className="page-details-wrapper">
+                <Link className="return-link" to="/geographical_object">
+                    Назад
+                </Link>
+                <div className="return-link" style={{position: 'fixed', top: '60px', right: '20px'}}>
+                    <div className="button-create">
+                        <div>
                             <button onClick={() => editGeographicalObject()}>Сохранить изменения</button>
                         </div>
+                        <div style={{position: 'relative', top: '10px', right: '3px'}}>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleImageUpload}
+                                ref={fileInputRef as React.RefObject<HTMLInputElement>}
+                                style={{display: 'none'}}
+                            />
+                            <button onClick={() => fileInputRef.current && fileInputRef.current.click()}>
+                                Выбрать изображение
+                            </button>
+                        </div>
                     </div>
-                    <div className="left">
-                        {photoUrl !== '' ? (
-                            <img src={photoUrl} alt=""/>
-                        ) : (
-                            <div>Загрузка изображения...</div>
-                        )}
-                    </div>
-                    <div className="right">
-                        <h2>Редактирование географического объекта</h2>
+                </div>
+                <div className="left">
+                    {photoUrl !== '' ? (
+                        <img src={photoUrl} alt=""/>
+                    ) : (
+                        <div>Загрузка изображения...</div>
+                    )}
+                </div>
+                <div className="right">
+                    <h2>Редактирование географического объекта</h2>
+                    <br/>
+                    <div className="info-container">
+                        <h2 className="feature">
+                            <TextField
+                                type="text"
+                                id="outlined-basic"
+                                label="Название географического объекта"
+                                variant="outlined"
+                                autoComplete="feature"
+                                value={formData.feature || ""}
+                                onChange={(e) => handleChange("feature", e.target.value)}
+                                sx={{
+                                    '& input, & label, & .MuiIconButton-label': {color: 'white'},
+                                    width: '800px'
+                                }}
+                                placeholder={selectedGeographicalObject?.feature}
+                            />
+                        </h2>
                         <br/>
-                        <div className="info-container">
-                            <h2 className="feature">
-                                <TextField
-                                    type="text"
-                                    id="outlined-basic"
-                                    label="Название географического объекта"
-                                    variant="outlined"
-                                    autoComplete="feature"
-                                    value={formData.feature || ""}
-                                    onChange={(e) => handleChange("feature", e.target.value)}
-                                    sx={{
-                                        '& input, & label, & .MuiIconButton-label': {color: 'white'},
-                                        width: '800px'
-                                    }}
-                                    placeholder={selectedGeographicalObject?.feature}
-                                />
-                            </h2>
-                            <br/>
-                            <span className="type">
+                        <span className="type">
                            <TextField
                                type="text"
                                id="outlined-basic"
@@ -218,8 +249,8 @@ export default function GeographicalObjectPageEdit({selectedGeographicalObject, 
                                placeholder={selectedGeographicalObject?.type}
                            />
                         </span>
-                            <br/>
-                            <span className="size">
+                        <br/>
+                        <span className="size">
                            <TextField
                                type="text"
                                id="outlined-basic"
@@ -235,8 +266,8 @@ export default function GeographicalObjectPageEdit({selectedGeographicalObject, 
                                placeholder={selectedGeographicalObject?.size !== undefined ? String(selectedGeographicalObject?.size) : undefined}
                            />
                         </span>
-                            <br/>
-                            <span className="describe">
+                        <br/>
+                        <span className="describe">
                            <TextField
                                type="text"
                                id="outlined-basic"
@@ -252,47 +283,9 @@ export default function GeographicalObjectPageEdit({selectedGeographicalObject, 
                                placeholder={selectedGeographicalObject?.describe}
                            />
                         </span>
-                        </div>
                     </div>
                 </div>
-            }
-            {editPhoto &&
-                <div className="page-details-wrapper">
-                    <Link className="return-link" to={`/geographical_object/`} style={{top: '60px'}}>
-                        Сохранить и назад к географическим объектам
-                    </Link>
-                    <div className="left">
-                        {photoUrl !== '' ? (
-                            <img src={photoUrl} alt=""/>
-                        ) : (
-                            <div>Загрузка изображения...</div>
-                        )}
-                    </div>
-                    <div className="right">
-                        <div className="info-container">
-                            <h2 className="name">Название: {selectedGeographicalObject?.feature}</h2>
-                            <br/>
-                            <span className="type">Тип местности: {selectedGeographicalObject?.type}</span>
-                            <br/>
-                            <span className="size">Площадь: {selectedGeographicalObject?.size}</span>
-                            <br/>
-                            <span className="describe"> Описание: {selectedGeographicalObject?.describe}</span>
-                        </div>
-                    </div>
-                    <div className="button-create">
-                        <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleImageUpload}
-                            ref={fileInputRef as React.RefObject<HTMLInputElement>}
-                            style={{display: 'none'}}
-                        />
-                        <button onClick={() => fileInputRef.current && fileInputRef.current.click()}>Выбрать
-                            изображение
-                        </button>
-                    </div>
-                </div>
-            }
+            </div>
         </>
     )
 }

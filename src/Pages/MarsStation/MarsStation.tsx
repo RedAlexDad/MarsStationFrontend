@@ -39,7 +39,7 @@ export default function MarsStationPage({selectedMarsStation, setSelectedMarsSta
     }
 
     const dispatch = useDispatch();
-    const {is_moderator} = useAuth()
+    const {is_authenticated, is_moderator} = useAuth()
     const {access_token} = useToken()
     const [updateTrigger, setUpdateTrigger] = useState(false);
 
@@ -206,7 +206,7 @@ export default function MarsStationPage({selectedMarsStation, setSelectedMarsSta
         const requestParameters: PUTMarsStationBYADMINOperationRequest = {
             id: parseInt(id_mars_station),
             authorization: access_token,
-            pUTMarsStationBYADMINRequest: { statusTask: value },
+            pUTMarsStationBYADMINRequest: {statusTask: value},
         };
         api.pUTMarsStationBYADMIN(requestParameters)
             .then(() => {
@@ -246,7 +246,7 @@ export default function MarsStationPage({selectedMarsStation, setSelectedMarsSta
             idLocation: id_location,
             idMarsStation: id_mars_station,
             authorization: access_token,
-            apiLocationIdLocationMarsStationIdMarsStationUpdatePutRequest: { direction: direction },
+            apiLocationIdLocationMarsStationIdMarsStationUpdatePutRequest: {direction: direction},
         };
         await api.apiLocationIdLocationMarsStationIdMarsStationUpdatePut(requestParameters)
             .then((response) => {
@@ -274,10 +274,9 @@ export default function MarsStationPage({selectedMarsStation, setSelectedMarsSta
                 idTransport: selectedTransports,
             },
         };
-        console.log(requestParameters)
         api.pUTMarsStation(requestParameters)
-            .then((response) => {
-                console.log("Успешно обновлены черновой заявки!", response);
+            .then(() => {
+                // console.log("Успешно обновлены черновой заявки!", response);
                 setUpdateTrigger(true);
                 push_mars_station();
             })
@@ -309,7 +308,7 @@ export default function MarsStationPage({selectedMarsStation, setSelectedMarsSta
                 <Link className="return-link" to="/mars_station/">
                     Назад
                 </Link>
-                {!is_moderator && STATUS_TASKS.find(status => status.id === selectedMarsStation?.status_task)?.name === "Черновик" && (
+                {is_authenticated && STATUS_TASKS.find(status => status.id === selectedMarsStation?.status_task)?.name === "Черновик" && (
                     <div className="button-agree">
                         <button onClick={() => {
                             save_mars_station();
@@ -317,7 +316,7 @@ export default function MarsStationPage({selectedMarsStation, setSelectedMarsSta
                         </button>
                     </div>
                 )}
-                {!is_moderator && STATUS_TASKS.find(status => status.id === selectedMarsStation?.status_task)?.name === "Черновик" && (
+                {is_authenticated && STATUS_TASKS.find(status => status.id === selectedMarsStation?.status_task)?.name === "Черновик" && (
                     <div className="button-reject">
                         <button onClick={() => delete_mars_station()}>Удалить</button>
                     </div>

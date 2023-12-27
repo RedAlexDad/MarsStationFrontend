@@ -18,6 +18,7 @@ interface GeographicalObjectState {
         countItem: number;
     };
     id_draft: number;
+    count_geographical_object_by_draft: number;
 }
 
 const initialState: GeographicalObjectState = {
@@ -37,6 +38,7 @@ const initialState: GeographicalObjectState = {
         countItem: 5,
     },
     id_draft: -1,
+    count_geographical_object_by_draft: 0,
 };
 
 const GeographicalObject = createSlice({
@@ -57,6 +59,9 @@ const GeographicalObject = createSlice({
         updateID_draft: (state, action) => {
             state.id_draft = action.payload === null ? -1 : action.payload;
         },
+        getCountGeographicalObjectByDraft: (state, action) => {
+            state.count_geographical_object_by_draft = action.payload;
+        },
         clearID_draft: (state) => {
             state.id_draft = initialState.id_draft;
         },
@@ -76,6 +81,7 @@ export const {
     updatePagination,
     updateID_draft,
     clearID_draft,
+    getCountGeographicalObjectByDraft,
     updatePhotoUrl,
     updatePaginationCurrentPage
 } = GeographicalObject.actions;
