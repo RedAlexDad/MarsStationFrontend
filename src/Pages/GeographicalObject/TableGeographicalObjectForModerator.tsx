@@ -245,7 +245,7 @@ export default function TableGeographicalObjectForModerator() {
                                         </Button>
                                     </TableCell>
                                     <TableCell>
-                                        <Link to={`/geographical_object/${obj?.id}/edit/`}
+                                        <Link to={`/geographical_object/${obj?.id}/edition/`}
                                               style={{textDecoration: 'none', color: 'inherit'}}>
                                             <Button
                                                 variant="outlined"

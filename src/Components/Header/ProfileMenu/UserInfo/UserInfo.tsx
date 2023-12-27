@@ -33,7 +33,7 @@ export default function UserInfo() {
                     <span>Должность: {post}</span>
                     <span>Название организации: {name_organization}</span>
                     {address && <span>Адрес: {address}</span>}
-                    <span>Статус: {is_moderator ? "Модератор" : "Пользователь"}</span>
+                    <span>Статус: {is_moderator ? "Модератор" : "Сотрудник"}</span>
 
                     <Button variant="outlined" sx={{color: 'white', borderColor: 'white'}} onClick={doLogOut}>
                         Выйти

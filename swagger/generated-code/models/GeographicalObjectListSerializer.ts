@@ -40,6 +40,12 @@ export interface GeographicalObjectListSerializer {
     idDraftService?: number;
     /**
      * 
+     * @type {number}
+     * @memberof GeographicalObjectListSerializer
+     */
+    countGeographicalObjectByDraft?: number;
+    /**
+     * 
      * @type {Array<GeographicalObjectSerializer>}
      * @memberof GeographicalObjectListSerializer
      */
@@ -69,6 +75,7 @@ export function GeographicalObjectListSerializerFromJSONTyped(json: any, ignoreD
         
         'count': json['count'],
         'idDraftService': !exists(json, 'id_draft_service') ? undefined : json['id_draft_service'],
+        'countGeographicalObjectByDraft': !exists(json, 'count_geographical_object_by_draft') ? undefined : json['count_geographical_object_by_draft'],
         'results': ((json['results'] as Array<any>).map(GeographicalObjectSerializerFromJSON)),
     };
 }
@@ -84,6 +91,7 @@ export function GeographicalObjectListSerializerToJSON(value?: GeographicalObjec
         
         'count': value.count,
         'id_draft_service': value.idDraftService,
+        'count_geographical_object_by_draft': value.countGeographicalObjectByDraft,
         'results': ((value.results as Array<any>).map(GeographicalObjectSerializerToJSON)),
     };
 }

@@ -1,41 +1,41 @@
-import "./SearchBar.sass";
+import "./SearchNameEmployee.sass";
 import {useDispatch, useSelector} from "react-redux";
-import {updateFeatureGeographicalObject} from "../../../store/Search.ts";
+import {updateFullNameEmployee} from "../../../store/Search.ts";
 import {InputAdornment, TextField} from "@mui/material";
 import {useState} from "react";
 import SearchIcon from '@mui/icons-material/Search';
 import IconButton from "@mui/material/IconButton";
 import {RootState} from "../../../store/store.ts";
 
-export default function SearchBar() {
+export default function SearchNameEmployee() {
     const dispatch = useDispatch();
-    const feature = useSelector((state: RootState) => state.search.feature);
-    const [searchFeature, setSearchFeature] = useState<string>('' || feature)
+    const full_name = useSelector((state: RootState) => state.search.full_name);
+    const [searchFullName, setSearchFullName] = useState<string>('' || full_name)
 
     const handleChange = (value: string) => {
-        setSearchFeature(value)
+        setSearchFullName(value)
     };
 
     // Выполняем поиск при нажатии на клавише Enter (код клавиши 13)
     const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
         if (e.key === "Enter") {
-            dispatch(updateFeatureGeographicalObject(searchFeature));
+            dispatch(updateFullNameEmployee(searchFullName));
         }
     };
 
     // Выполняем поиск при нажатии на кнопку поиска
     const handleSearchClick = () => {
-        dispatch(updateFeatureGeographicalObject(searchFeature));
+        dispatch(updateFullNameEmployee(searchFullName));
     };
 
     return (
         <TextField
             type="text"
             id="outlined-basic"
-            label="Поиск..."
+            label="Поиск ФИО сотрудника..."
             variant="outlined"
-            autoComplete="feature"
-            value={searchFeature}
+            autoComplete="full_name"
+            value={searchFullName}
             onChange={(e) => handleChange(e.target.value)}
             // Добавляем обработчик события для клавиши Enter
             onKeyDown={handleKeyDown}

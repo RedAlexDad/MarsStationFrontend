@@ -77,7 +77,19 @@ export default function SearchBarStatusTask({status_task, setUpdateTriggerParent
                         </Box>
                     )}
                     MenuProps={MenuProps}
-                    sx={{'& .MuiChip-root': {color: 'white'}}} // Цвет текста в выбранных элементах
+                    sx={{
+                        '& input, & label, & .MuiIconButton-label': {color: 'white'},
+                        '& .MuiOutlinedInput-notchedOutline': {
+                            borderColor: 'white',
+                        },
+                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                            borderColor: 'white',
+                        },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                            borderColor: 'white',
+                        },
+                        '& .MuiChip-root': {color: 'white'}
+                    }}
                 >
                     {statusOptions.map((option) => (
                         <MenuItem

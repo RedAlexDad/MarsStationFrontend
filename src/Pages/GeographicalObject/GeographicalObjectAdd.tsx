@@ -1,7 +1,6 @@
 import "../MarsStation/GeographicalObject/GeographicalObject.sass"
 import {useEffect, useRef, useState} from "react";
-import {Link} from "react-router-dom";
-import {GeographicalObject} from "../../Types.ts";
+import {Link, useNavigate} from "react-router-dom";
 import LoadingAnimation from "../../Components/Loading.tsx";
 import {TextField} from "@mui/material";
 import {useToken} from "../../hooks/useToken.ts";
@@ -12,11 +11,17 @@ import {
 } from "../../../swagger/generated-code/apis/GeographicalObjectApi.ts";
 import {GeographicalObjectSerializer} from "../../../swagger/generated-code/";
 import mockImage from "../../assets/mock.png";
+import {useDispatch, useSelector} from "react-redux";
+import {RootState} from "../../store/store.ts";
+import {updateGeographicalObjectEdit} from "../../store/GeographicalObjectEdit.ts";
 
 export default function GeographicalObjectPageAdd() {
+    const navigate = useNavigate();
+    const dispatch = useDispatch()
     const fileInputRef = useRef<HTMLInputElement>(null);
     const {access_token} = useToken()
-    const [selectedGeographicalObject, setSelectedGeographicalObject] = useState<GeographicalObject | undefined>(undefined)
+    // Данные
+    const selectedGeographicalObject = useSelector((state: RootState) => state.geographical_object_edit);
     // Загрузочный экран
     const [loading, setLoading] = useState<boolean>(false);
     // Новые данные
@@ -68,8 +73,9 @@ export default function GeographicalObjectPageAdd() {
         api.apiGeographicalObjectCreatePost(requestParameters)
             .then((response) => {
                 const geographicalObject: GeographicalObjectSerializer = response as GeographicalObjectSerializer;
-                // @ts-ignore
-                setSelectedGeographicalObject(geographicalObject);
+                dispatch(updateGeographicalObjectEdit(geographicalObject));
+                // После успешного выполнения запроса, выполняем перенаправление
+                navigate(`/geographical_object/${geographicalObject.id}/edit/`);
             })
             .catch((error) => {
                 console.error('Ошибка запроса:', error);
@@ -136,37 +142,36 @@ export default function GeographicalObjectPageAdd() {
     return (
         <>
             {loading && <LoadingAnimation isLoading={loading}/>}
-            {!selectedGeographicalObject &&
-                <div className="page-details-wrapper">
-                    <Link className="return-link" to={`/geographical_object/`}>
-                        Назад
-                    </Link>
-                    <div className="return-link" style={{top: '60px', right: '24px'}}>
-                        <div className="button-create">
-                            <button onClick={() => createGeographicalObject()}>Сохранить и добавить фото</button>
-                        </div>
+            <div className="page-details-wrapper">
+                <Link className="return-link" to={`/geographical_object/`}>
+                    Назад
+                </Link>
+                <div className="return-link" style={{top: '60px', right: '24px'}}>
+                    <div className="button-create">
+                        <button onClick={() => createGeographicalObject()}>Сохранить и добавить фото</button>
                     </div>
-                    <div className="right">
-                        <h2>Создайте новый географический объект</h2>
+                </div>
+                <div className="right">
+                    <h2>Создайте новый географический объект</h2>
+                    <br/>
+                    <div className="info-container">
+                        <h2 className="feature">
+                            <TextField
+                                type="text"
+                                id="outlined-basic"
+                                label="Название географического объекта"
+                                variant="outlined"
+                                autoComplete="feature"
+                                value={formData.feature || ""}
+                                onChange={(e) => handleChange("feature", e.target.value)}
+                                sx={{
+                                    '& input, & label, & .MuiIconButton-label': {color: 'white'},
+                                    width: '800px'
+                                }}
+                            />
+                        </h2>
                         <br/>
-                        <div className="info-container">
-                            <h2 className="feature">
-                                <TextField
-                                    type="text"
-                                    id="outlined-basic"
-                                    label="Название географического объекта"
-                                    variant="outlined"
-                                    autoComplete="feature"
-                                    value={formData.feature || ""}
-                                    onChange={(e) => handleChange("feature", e.target.value)}
-                                    sx={{
-                                        '& input, & label, & .MuiIconButton-label': {color: 'white'},
-                                        width: '800px'
-                                    }}
-                                />
-                            </h2>
-                            <br/>
-                            <span className="type">
+                        <span className="type">
                            <TextField
                                type="text"
                                id="outlined-basic"
@@ -181,8 +186,8 @@ export default function GeographicalObjectPageAdd() {
                                }}
                            />
                         </span>
-                            <br/>
-                            <span className="size">
+                        <br/>
+                        <span className="size">
                            <TextField
                                type="text"
                                id="outlined-basic"
@@ -197,8 +202,8 @@ export default function GeographicalObjectPageAdd() {
                                }}
                            />
                         </span>
-                            <br/>
-                            <span className="describe">
+                        <br/>
+                        <span className="describe">
                            <TextField
                                type="text"
                                id="outlined-basic"
@@ -213,47 +218,9 @@ export default function GeographicalObjectPageAdd() {
                                }}
                            />
                         </span>
-                        </div>
                     </div>
                 </div>
-            }
-            {selectedGeographicalObject &&
-                <div className="page-details-wrapper">
-                    <Link className="return-link" to={`/geographical_object/`} style={{top: '60px'}}>
-                        Сохранить и назад к географическим объектам
-                    </Link>
-                    <div className="left">
-                        {photoUrl !== '' ? (
-                            <img src={photoUrl} alt=""/>
-                        ) : (
-                            <div>Загрузка изображения...</div>
-                        )}
-                    </div>
-                    <div className="right">
-                        <div className="info-container">
-                            <h2 className="name">Название: {selectedGeographicalObject?.feature}</h2>
-                            <br/>
-                            <span className="type">Тип местности: {selectedGeographicalObject?.type}</span>
-                            <br/>
-                            <span className="size">Площадь: {selectedGeographicalObject?.size}</span>
-                            <br/>
-                            <span className="describe"> Описание: {selectedGeographicalObject?.describe}</span>
-                        </div>
-                    </div>
-                    <div className="button-create">
-                        <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleImageUpload}
-                            ref={fileInputRef as React.RefObject<HTMLInputElement>}
-                            style={{display: 'none'}}
-                        />
-                        <button onClick={() => fileInputRef.current && fileInputRef.current.click()}>Выбрать
-                            изображение
-                        </button>
-                    </div>
-                </div>
-            }
+            </div>
         </>
     )
 }

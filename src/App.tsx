@@ -2,7 +2,7 @@ import "./Styles/Main.sass"
 import "./Styles/Reset.sass"
 import Header from "./Components/Header/Header";
 import {useState} from 'react'
-import {BrowserRouter, Route, Routes, Navigate, Outlet} from "react-router-dom";
+import {BrowserRouter, Route, Routes, Navigate, Outlet, useLocation} from "react-router-dom";
 import {GeographicalObject, MarsStation} from "./Types";
 import GeographicalObjectPage from "./Pages/GeographicalObject/GeographicalObject";
 import GeographicalObjectListPage from "./Pages/GeographicalObjectList/GeographicalObjectList";
@@ -19,11 +19,28 @@ import GeographicalObjectPageForMarsStation from "./Pages/MarsStation/Geographic
 import GeographicalObjectPageEdit from "./Pages/GeographicalObject/GeographicalObjectEdit.tsx";
 import GeographicalObjectPageAdd from "./Pages/GeographicalObject/GeographicalObjectAdd.tsx";
 import TableGeographicalObjectForModerator from "./Pages/GeographicalObject/TableGeographicalObjectForModerator.tsx";
+import {useAuth} from "./hooks/useAuth.ts";
+import Breadcrumbs from "./Components/Breadcrumbs/Breadcrumbs.tsx";
 
 const LoginFormLayout = () => {
     return (
         <div className="login-wrapper">
             <Outlet/>
+        </div>
+    )
+}
+
+const TopPanelWrapper = () => {
+
+    const {is_authenticated, is_moderator} = useAuth()
+
+    const location = useLocation()
+
+    return (
+        <div className="top-panel-wrapper">
+            <Breadcrumbs/>
+            {/*{is_authenticated && location.pathname.endsWith("drivers") && <InsuranceConstructor /> }*/}
+            {is_authenticated && location.pathname.endsWith("geographical_object")}
         </div>
     )
 }
@@ -36,11 +53,12 @@ function App() {
     return (
         <QueryClientProvider client={queryClient}>
             <Provider store={store}>
-                <BrowserRouter basename="/mars">
+                <BrowserRouter basename="/MarsStationFrontend">
                     <div className="App">
                         <div className="wrapper">
                             <Header/>
                             <div className={"content-wrapper"}>
+                                <TopPanelWrapper/>
                                 <Routes>
                                     <Route path="/" element={<Navigate to="/home/" replace/>}/>
                                     {/*Начальное меню*/}
@@ -54,11 +72,10 @@ function App() {
 
                                     {/*Личный кабинет*/}
                                     <Route path="/profile/" element={<ProfilePage/>}/>
-                                    {/*Список географических объектов*/}
-                                    {/*<Route path="/geographical_object/" element={<GeographicalObjectListPage/>}/>*/}
 
                                     {/* Список географических объектов для модератора */}
-                                    <Route path="/geographical_object/moderator/" element={<TableGeographicalObjectForModerator/>}/>
+                                    <Route path="/geographical_object/moderator/"
+                                           element={<TableGeographicalObjectForModerator/>}/>
 
                                     {/* Список географических объектов для пользователя */}
                                     <Route path="/geographical_object/" element={<GeographicalObjectListPage/>}/>
@@ -71,7 +88,7 @@ function App() {
                                     {/*Добавить географический объект*/}
                                     <Route path="/geographical_object/add/" element={<GeographicalObjectPageAdd/>}/>
                                     {/*Редактирования географического объекта*/}
-                                    <Route path="/geographical_object/:id_geographical_object/edit/"
+                                    <Route path="/geographical_object/:id_geographical_object/edition/"
                                            element={<GeographicalObjectPageEdit
                                                selectedGeographicalObject={selectedGeographicalObject}
                                                setSelectedGeographicalObject={setSelectedGeographicalObject}/>}/>
@@ -85,10 +102,11 @@ function App() {
                                                // @ts-ignore
                                                setSelectedMarsStation={setSelectedMarsStation}/>}/>
 
-                                    <Route path="/mars_station/:id_mars_station/geographical_object/:id_geographical_object/"
-                                           element={<GeographicalObjectPageForMarsStation
-                                               selectedGeographicalObject={selectedGeographicalObject}
-                                               setSelectedGeographicalObject={setSelectedGeographicalObject}/>}/>
+                                    <Route
+                                        path="/mars_station/:id_mars_station/geographical_object/:id_geographical_object/"
+                                        element={<GeographicalObjectPageForMarsStation
+                                            selectedGeographicalObject={selectedGeographicalObject}
+                                            setSelectedGeographicalObject={setSelectedGeographicalObject}/>}/>
 
                                 </Routes>
                             </div>

@@ -1,27 +1,53 @@
-# React + TypeScript + Vite
+## Разработка Интернет Приложений
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### Предметная область "Станции на поверхности Марса"
 
-Currently, two official plugins are available:
+<details style="font-size: 14px;">
+<summary>
+<span style="font-size: 16px; font-weight: bold;">Описание домашней работы</span>
+</summary>
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Цель работы**: Закрепление полученный знаний
+- **Порядок показа**: создать заявку в интерфейсе `пользователя`. Авторизоваться под `модератором`, одобрить `заявку` и отредактировать список `услуг`.
+- **Отчет**: отчет необходимо отправить на почту [aikanev@bmstu.ru](). Оценивается раскрытие предметной области в описании и приложении, корректность оформления отчета.
+- **Контрольные вопросы**: любые вопросы по реализации интерфейса `модератора`
+- **Диаграммы**: диаграмма состояний для статусов `заявок` и диаграмма прецедентов. Актуализировать все диаграммы из лабораторных, все диаграммы должны соответствовать реализованной вами системе. Все диаграммы должны быть читаемые, шрифт на них должен не отличаться по размеру от шрифта текста отчета.
+- **Задание**: Реализовать интерфейс `модератора` и подготовить итоговый отчет
 
-## Expanding the ESLint configuration
+Необходимо добавить в приложение React интерфейс `модератора`, доступный после его авторизации и имеющий следующие отличия:
+- Новое окно редактирования `услуг`, список услуг отображается таблицей. Доступно добавление новых услуг (обязательные и необязательные поля), редактирование, удаление.
+- В окне списка `заявок` доступны кнопки для смены статуса заявок. Также есть поля фильтрации по диапазону `даты формирования` и статусу заявок (через бэкенд) и пользователю (на фронтенде).
+- Окно списка `заявок` переделать на `short polling` чтобы отображать актуальные статусы
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+**Отчет-РПЗ** по всем лабораторным и ДЗ:
+1. **Введение** (актуальность, цель, назначение, нефункциональные требования, задачи)
+2. **Бизнес-процесс**. Описание предметной области. Диаграмма прецедентов, диаграмма состояний и деятельности/BPMN (>300 слов)
+3. **Архитектура**. Диаграммы развертывания, ER с назначением таблиц и диаграмма классов с детализацией бэкенда и фронтенда (>300 слов)
+4. **Алгоритмы**. Диаграмма последовательности HTTP запросов (>300 слов)
+5. **Описание интерфейса**. Перечень окон, их назначение и выполняемые пользователями действия (>300 слов)
+6. **Заключение**. Перечень выполненных задач и достигнутые результаты. Ссылка на GitHub
+7. **Список использованных источников**
+8. **Приложение. Техническое задание**
 
-- Configure the top-level `parserOptions` property like this:
+</details>
 
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
-```
+<details style="font-size: 14px;">
+<summary>
+<span style="font-size: 16px; font-weight: bold;">Демонстрация</span>
+</summary>
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+- Авторизация модератора
+![img.png](img/img.png)
+- Страницы таблицы заявки модератора
+![img_1.png](img/img_1.png)
+- Страница принятия\отказания заявки
+![img_2.png](img/img_2.png)
+![img_3.png](img/img_3.png)
+- Страница таблицы географических объектов
+![img_4.png](img/img_4.png)
+- Страница добавления новой услуги
+![img_5.png](img/img_5.png)
+- Страница редактирования услуги
+![img_6.png](img/img_6.png)
+
+</details>

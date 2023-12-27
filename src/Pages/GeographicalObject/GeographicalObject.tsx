@@ -7,11 +7,14 @@ import mockImage from "/src/assets/mock.png"
 import LoadingAnimation from "../../Components/Loading.tsx";
 import {GeographicalObjectApi} from "../../../swagger/generated-code/apis/GeographicalObjectApi.ts";
 import {GeographicalObjectSerializer} from "../../../swagger/generated-code";
+import {useDispatch} from "react-redux";
+import {updateGeographicalObjectInfo} from "../../store/GeographicalObject.ts";
 
 export default function GeographicalObjectPage({selectedGeographicalObject, setSelectedGeographicalObject}: {
     selectedGeographicalObject: GeographicalObject | undefined,
     setSelectedGeographicalObject: Dispatch<GeographicalObject | undefined>
 }) {
+    const dispatch = useDispatch()
     const {id_geographical_object} = useParams<{ id_geographical_object?: string }>();
     const [photoUrl, setPhotoUrl] = useState<string>('');
     // Загрузочный экран
@@ -64,6 +67,7 @@ export default function GeographicalObjectPage({selectedGeographicalObject, setS
                 const geographicalObject: GeographicalObjectSerializer = response as GeographicalObjectSerializer;
                 // @ts-ignore
                 setSelectedGeographicalObject(geographicalObject);
+                dispatch(updateGeographicalObjectInfo(geographicalObject))
             })
             .catch((error) => {
                 console.error('Ошибка запроса:', error);

@@ -4,11 +4,11 @@ export function useToken() {
     const cookies = new Cookies()
     const access_token = cookies.get("access_token");
     const setAccessToken = (value: string) => {
-        cookies.set("access_token", value, {path: '/mars/', expires: new Date(Date.now() + 25920000)})
+        cookies.set("access_token", value, {path: '/MarsStationFrontend/', expires: new Date(Date.now() + 25920000)})
     }
 
     const resetAccessToken = () => {
-        cookies.set("access_token", undefined, {path: '/mars/', expires: new Date(Date.now() + 25920000)})
+        cookies.set("access_token", undefined, {path: '/MarsStationFrontend/', expires: new Date(Date.now() + 25920000)})
     }
 
     const resetTokens = () => {

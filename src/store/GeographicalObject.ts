@@ -11,6 +11,15 @@ interface GeographicalObjectState {
         photo: string;
         status: boolean;
     }[];
+    info: {
+        id: number;
+        feature: string;
+        type: string;
+        size: number;
+        describe: string;
+        photo: string;
+        status: boolean;
+    };
     pagination: {
         currentPage: number;
         totalPages: number;
@@ -18,6 +27,7 @@ interface GeographicalObjectState {
         countItem: number;
     };
     id_draft: number;
+    count_geographical_object_by_draft: number;
 }
 
 const initialState: GeographicalObjectState = {
@@ -30,6 +40,15 @@ const initialState: GeographicalObjectState = {
         photo: defaultImage,
         status: true,
     },],
+    info: {
+        id: -1,
+        feature: "",
+        type: "",
+        size: -1,
+        describe: "",
+        photo: defaultImage,
+        status: true,
+    },
     pagination: {
         currentPage: 1,
         totalPages: 1,
@@ -37,6 +56,7 @@ const initialState: GeographicalObjectState = {
         countItem: 5,
     },
     id_draft: -1,
+    count_geographical_object_by_draft: 0,
 };
 
 const GeographicalObject = createSlice({
@@ -48,6 +68,9 @@ const GeographicalObject = createSlice({
             // Упорядочиваем объекты по полю "feature"
             state.data.sort((a, b) => a.feature.localeCompare(b.feature));
         },
+        updateGeographicalObjectInfo: (state, action) => {
+            state.info = action.payload;
+        },
         updatePagination: (state, action) => {
             state.pagination = action.payload;
         },
@@ -56,6 +79,9 @@ const GeographicalObject = createSlice({
         },
         updateID_draft: (state, action) => {
             state.id_draft = action.payload === null ? -1 : action.payload;
+        },
+        getCountGeographicalObjectByDraft: (state, action) => {
+            state.count_geographical_object_by_draft = action.payload;
         },
         clearID_draft: (state) => {
             state.id_draft = initialState.id_draft;
@@ -73,9 +99,11 @@ const GeographicalObject = createSlice({
 
 export const {
     updateGeographicalObject,
+    updateGeographicalObjectInfo,
     updatePagination,
     updateID_draft,
     clearID_draft,
+    getCountGeographicalObjectByDraft,
     updatePhotoUrl,
     updatePaginationCurrentPage
 } = GeographicalObject.actions;

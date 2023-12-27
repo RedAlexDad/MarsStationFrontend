@@ -5,30 +5,34 @@ import mockImage from "../../../assets/mock.png";
 import {useAuth} from "../../../hooks/useAuth.ts";
 import {useToken} from "../../../hooks/useToken.ts";
 import {useDispatch} from "react-redux";
-import {updateID_draft} from "../../../store/GeographicalObject.ts";
-import {updateMarsStationDraftData} from "../../../store/MarsStationDraft.ts";
+import {
+    updateGeographicalObject,
+    updateID_draft,
+    getCountGeographicalObjectByDraft
+} from "../../../store/GeographicalObject.ts";
 import {Dispatch, SetStateAction, useEffect, useState} from "react";
 import {Button} from "@mui/material";
 import {
+    ApiGeographicalObjectGetRequest,
     ApiGeographicalObjectIdCreateServiceInTaskPostRequest,
-    ApiGeographicalObjectIdDeleteDeleteRequest,
+    // ApiGeographicalObjectIdDeleteDeleteRequest,
     GeographicalObjectApi
 } from "../../../../swagger/generated-code";
+import {GeographicalObjectsMock} from "../../../Consts.ts";
 
 export default function GeographicalObjectCard({geographical_object, setUpdateTriggerParent}: {
     geographical_object: GeographicalObject;
     setUpdateTriggerParent: Dispatch<SetStateAction<boolean>>;
 }) {
     const dispatch = useDispatch();
-    const {is_moderator, is_authenticated} = useAuth();
+    const {is_authenticated} = useAuth();
     const {access_token} = useToken();
     const [photoUrl, setPhotoUrl] = useState('');
 
     const get_photo = async () => {
         // Получаем ID географического объекта
         const geographicalObjectId = geographical_object?.id;
-        if (geographicalObjectId === undefined || geographicalObjectId === null) {
-            console.error('ID географического объекта не определено.');
+        if (geographicalObjectId === undefined || geographicalObjectId === null || geographicalObjectId === -1) {
             return;
         }
         const api = new GeographicalObjectApi();
@@ -44,46 +48,60 @@ export default function GeographicalObjectCard({geographical_object, setUpdateTr
                 setPhotoUrl(mockImage);
             }
         } catch (error) {
-            console.error('Error fetching image:', error);
+            // console.error('Error fetching image:', error);
             setPhotoUrl(mockImage);
         }
     };
 
     const addGeographicalObjectInMarsStation = async () => {
-        try {
-            const api = new GeographicalObjectApi();
-            const requestParameters: ApiGeographicalObjectIdCreateServiceInTaskPostRequest = {
-                id: geographical_object.id,
-                authorization: access_token,
-            };
-            const response = await api.apiGeographicalObjectIdCreateServiceInTaskPost(requestParameters);
-
-            console.log("Успешно! Отправлена услуга на заявку!", response);
-
-            dispatch(updateID_draft(response.idDraft));
-            dispatch(updateMarsStationDraftData({
-                geographical_object: response.geographicalObject,
-                location: response.location,
-            }));
-        } catch (error) {
-            console.error("Ошибка отправления!\n", error);
-        }
+        const api = new GeographicalObjectApi();
+        const requestParameters: ApiGeographicalObjectIdCreateServiceInTaskPostRequest = {
+            id: geographical_object.id,
+            authorization: access_token,
+        };
+        await api.apiGeographicalObjectIdCreateServiceInTaskPost(requestParameters)
+            .then(() => {
+                // console.log("Успешно! Отправлена услуга на заявку!", response);
+                searchGeographicalObject();
+            })
+            .catch(error => {
+                console.error("Ошибка отправления!\n", error);
+            })
     };
 
-    const deleteGeographicalObject = async () => {
-        try {
-            const api = new GeographicalObjectApi();
-            const requestParameters: ApiGeographicalObjectIdDeleteDeleteRequest = {
-                id: geographical_object.id,
-                authorization: access_token,
-            };
-            await api.apiGeographicalObjectIdDeleteDelete(requestParameters);
-            // console.log("Успешно! Услуга удалена!");
-            setUpdateTriggerParent(true);
-        } catch (error) {
-            console.error("Ошибка удаления!\n", error);
-        }
+    const searchGeographicalObject = async () => {
+        const api = new GeographicalObjectApi();
+        const requestParameters: ApiGeographicalObjectGetRequest = {
+            authorization: access_token,
+        };
+        api.apiGeographicalObjectGet(requestParameters)
+            .then(response => {
+                // console.log("Успешно!", response);
+                dispatch(updateGeographicalObject([...response.results]));
+                dispatch(updateID_draft(response.idDraftService));
+                dispatch(getCountGeographicalObjectByDraft(response.countGeographicalObjectByDraft));
+            })
+            .catch(error => {
+                console.error("Ошибка!\n", error);
+                dispatch(updateGeographicalObject(GeographicalObjectsMock));
+                return;
+            })
     };
+
+    // const deleteGeographicalObject = async () => {
+    //     try {
+    //         const api = new GeographicalObjectApi();
+    //         const requestParameters: ApiGeographicalObjectIdDeleteDeleteRequest = {
+    //             id: geographical_object.id,
+    //             authorization: access_token,
+    //         };
+    //         await api.apiGeographicalObjectIdDeleteDelete(requestParameters);
+    //         // console.log("Успешно! Услуга удалена!");
+    //         setUpdateTriggerParent(true);
+    //     } catch (error) {
+    //         console.error("Ошибка удаления!\n", error);
+    //     }
+    // };
 
     useEffect(() => {
         get_photo();
@@ -100,18 +118,13 @@ export default function GeographicalObjectCard({geographical_object, setUpdateTr
                     />
                 </div>
                 <div className="card-content">
-                    {is_moderator && (
-                        <div className="content-top">
-                            <h3>ID: {geographical_object.id}</h3>
-                        </div>
-                    )}
                     <div className="content-top">
                         <h3 className="title">{geographical_object.feature}</h3>
                     </div>
                 </div>
             </Link>
             <div className="card-content">
-                {!is_moderator && is_authenticated && (
+                {is_authenticated && (
                     <div style={{textAlign: 'center', marginTop: '0px', zIndex: '1'}}>
                         <Button variant="contained"
                                 color="secondary"
@@ -121,30 +134,7 @@ export default function GeographicalObjectCard({geographical_object, setUpdateTr
                         </Button>
                     </div>
                 )}
-                {is_moderator && (
-                    <>
-                        <div style={{textAlign: 'center', marginTop: '0px', zIndex: '1'}}>
-                            <Button variant="contained"
-                                    color="secondary"
-                                    onClick={deleteGeographicalObject}
-                            >
-                                Удалить
-                            </Button>
-                        </div>
-                        <Link to={`/geographical_object/${geographical_object.id}/edit/`}
-                              style={{textDecoration: 'none', color: 'inherit'}}>
-                            <div style={{textAlign: 'center', marginTop: '0px', zIndex: '1'}}>
-                                <Button variant="contained"
-                                        color="info"
-                                >
-                                    Редактировать
-                                </Button>
-                            </div>
-                        </Link>
-                    </>
-                )}
             </div>
         </div>
-    )
-        ;
+    );
 };

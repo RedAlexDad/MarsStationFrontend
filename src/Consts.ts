@@ -1,9 +1,8 @@
 import {GeographicalObject, Option, Transport} from "./Types";
 import defaultImage from "./assets/mock.png";
 
-export const requestTime = 1000
-export const DOMEN = "http://127.0.0.1:8000/"
-
+export const requestTime: number = 1000
+export const DOMEN: string = "http://127.0.0.1:8000/"
 export const GeographicalObjectsMock: GeographicalObject[] = [
     {
         id: 1,

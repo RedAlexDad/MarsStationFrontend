@@ -176,6 +176,7 @@
                   {
                     "count": 42,
                     "id_draft_service": null,
+                    "count_geographical_object_by_draft": null,
                     "results": [
                       {
                         "id": 1,
@@ -1731,6 +1732,9 @@
             "type": "integer"
           },
           "id_draft_service": {
+            "type": "integer"
+          },
+          "count_geographical_object_by_draft": {
             "type": "integer"
           },
           "results": {
