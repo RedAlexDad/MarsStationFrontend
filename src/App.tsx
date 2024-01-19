@@ -1,24 +1,34 @@
-import Base from "./components/Base.tsx";
-import {BrowserRouter, Route, Routes} from "react-router-dom";
-import GeographicalObjectService from "./components/Main.tsx";
-import ReactDOM from "react-dom/client";
-import GeographicalObject from "./components/GeographicalObject.tsx";
+import "./Styles/Main.sass"
+import "./Styles/Reset.sass"
+import {BrowserRouter, Route, Routes, Navigate} from "react-router-dom";
+import GeographicalObjectPage from "./Pages/GeographicalObject/GeographicalObject";
+import GeographicalObjectListPage from "./Pages/GeographicalObjectList/GeographicalObjectList";
+import HomePage from "./Pages/Home/Home.tsx";
 
-const root = ReactDOM.createRoot(
-    document.getElementById('root') as HTMLElement
-);
+function App() {
+    return (
+        <BrowserRouter basename="/MarsStationFrontend">
+            <div className="App">
+                <div className="wrapper">
+                    {/*<Header/>*/}
+                    <div className={"content-wrapper"}>
+                        <Routes>
+                            <Route path="/" element={<Navigate to="/home/" replace/>}/>
+                            {/*Начальное меню*/}
+                            <Route path="/home/" element={<HomePage/>}/>
 
-root.render(
-    <BrowserRouter>
-        {/*<div className="App">*/}
-            <Routes>
-                {/*Начальное меню*/}
-                <Route path="/" element={<Base/>}/>
-                {/*Список географических объектов*/}
-                <Route path="/geographical_object/" element={<GeographicalObjectService/>}/>
-                {/*Информация о географическом объекте*/}
-                <Route path="/geographical_object/:id" element={<GeographicalObject/>} />
-            </Routes>
-        {/*</div>*/}
-    </BrowserRouter>
-);
+                            {/* Список географических объектов */}
+                            <Route path="/geographical_object/" element={<GeographicalObjectListPage/>}/>
+
+                            {/*Информация о географическом объекте*/}
+                            <Route path="/geographical_object/:id_geographical_object/"
+                                   element={<GeographicalObjectPage/>}/>
+                        </Routes>
+                    </div>
+                </div>
+            </div>
+        </BrowserRouter>
+    )
+}
+
+export default App
