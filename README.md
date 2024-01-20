@@ -1,27 +1,55 @@
-# React + TypeScript + Vite
+## Разработка Интернет Приложений
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### Предметная область "Станции на поверхности Марса"
 
-Currently, two official plugins are available:
+<details style="font-size: 14px;">
+<summary>
+<span style="font-size: 16px; font-weight: bold;">Описание лабораторной работы</span>
+</summary>
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Цель работы**: Завершение интерфейса `пользователя` в `React`
+- **Порядок показа**: показать авторизацию, добавление и формирование `заявки`. Пояснить в коде использование `redux` и `axios`. Показать авторизацию в браузере, использовать содержимое `localStorage`/`cookie` чтобы показать заявки пользователя в `insomnia`/`postman`.
+- **Контрольные вопросы**: схема redux, reducer, store, контекст, axios
+- **Диаграмма классов** с детализацией бэкенда и фронтенда: добавить методы авторизации, фронтенд разделить на страницы, добавить у страниц зависимость от API.
+- **Activity диаграмма/BPMN** для итогового бизнес-процесса для ДЗ: описание бизнес-процесса, разделение на дорожки по ролям двух пользователей и выделенного сервиса, действия соответствуют операциям пользователей в вашей системе.
+- **Задание**: Добавить авторизацию и возможность оформления `заявок` во фронтенд через `Redux Toolkit`
 
-## Expanding the ESLint configuration
+Добавить страницы для регистрации и авторизации. Добавить окно для просмотра списка `заявок` пользователя в виде таблицы. Добавить в меню пункты для новых страниц. Для обращений к методам веб-сервиса использовать `axios`. При выполнении запросов отображать на странице анимацию.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+Добавление менеджера состояний `Redux Toolkit` для хранения фильтров заявок и услуг, а также состояния интерфейса после авторизации. В приложении должно быть реализовано переключение между интерфейсом гостя и интерфейсом пользователя по кнопке `Вход`/`Выход`. После авторизации в меню должно отображаться Имя/Логин пользователя. При выходе должно сбрасываться содержимое конструктора новой заявки.
 
-- Configure the top-level `parserOptions` property like this:
+Добавление на странице услуг кнопки `Добавить` для внесения данной услуги в новую заявку. Добавление страницы `конструктора` заявки-черновика, где можно удалить уже добавленные в заявку услуги, поменять их количество или `подтвердить` заявку. Эта же страница используется для просмотра заявок в других статусах, но без возможности редактирования. Переход на страницу `конструктора` через специальную кнопку, которая меняет состояние, если заявка-черновик есть или ее нет.
 
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
-```
+* [Методические указания Redux Toolkit + fetch](/tutorials/redux/redux_toolkit.md)
+* [Методические указания Redux Toolkit + кодогенерация и Axios](/tutorials/lab6/lab6_tutorial.md)
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+##### Дополнительное задание
+
+Кодогенерация из `swagger` (+2 балла). Показать применение сгенерированного кода фронтенда из `swagger`.
+
+</details>
+
+
+<details style="font-size: 14px;">
+<summary>
+<span style="font-size: 16px; font-weight: bold;">Демонстрация</span>
+</summary>
+
+- Страница регистрации
+![img_1.png](img/img_1.png)
+- Страница авторизации
+![img.png](img/img.png)
+![img_8.png](img/img_8.png)
+- Страница список услуги
+![img_2.png](img/img_2.png)
+- Страница заявки
+![img_3.png](img/img_3.png)
+- Страница выбора услуги и отображение кол-во выбранных услуг на корзине (значок ракета)
+![img_4.png](img/img_4.png)
+- Страница редактирования черновой заявки
+![img_5.png](img/img_5.png)
+![img_6.png](img/img_6.png)
+- Страница после отправки
+![img_7.png](img/img_7.png)
+
+</details>

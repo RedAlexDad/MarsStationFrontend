@@ -16,21 +16,22 @@ import {STATUS_TASKS} from "../../Consts.ts";
 import {useNavigate} from "react-router-dom";
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 
-export default function TableGeographicalObject({
-                                                    sortedLocations,
-                                                    photoUrlsMap,
-                                                    geographicalObjectMap,
-                                                    selectedMarsStation,
-                                                    deleteLocationAndMarsStation,
-                                                    putLocationAndMarsStation
-                                                }: {
-    sortedLocations: any[];
-    photoUrlsMap: Record<string, string>;
-    geographicalObjectMap: Record<string, any>;
-    selectedMarsStation: any;
-    deleteLocationAndMarsStation: (locationId: number, marsStationId: number) => void;
-    putLocationAndMarsStation: (locationId: number, marsStationId: number, direction: 'up' | 'down') => void;
-}) {
+export default function TableGeographicalObject(
+    {
+        sortedLocations,
+        photoUrlsMap,
+        geographicalObjectMap,
+        selectedMarsStation,
+        deleteLocationAndMarsStation,
+        putLocationAndMarsStation
+    }: {
+        sortedLocations: any[];
+        photoUrlsMap: Record<string, string>;
+        geographicalObjectMap: Record<string, any>;
+        selectedMarsStation: any;
+        deleteLocationAndMarsStation: (locationId: number, marsStationId: number) => void;
+        putLocationAndMarsStation: (locationId: number, marsStationId: number, direction: 'up' | 'down') => void;
+    }) {
     const navigate = useNavigate();
     const handleRowClick = (id_geographical_object: number) => {
         navigate(`geographical_object/${id_geographical_object}/`);

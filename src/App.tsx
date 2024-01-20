@@ -16,9 +16,6 @@ import {QueryClient, QueryClientProvider} from "react-query";
 import MarsStationList from "./Pages/MarsStationList/MarsStationList.tsx";
 import MarsStationPage from "./Pages/MarsStation/MarsStation.tsx";
 import GeographicalObjectPageForMarsStation from "./Pages/MarsStation/GeographicalObject/GeographicalObject.tsx";
-import GeographicalObjectPageEdit from "./Pages/GeographicalObject/GeographicalObjectEdit.tsx";
-import GeographicalObjectPageAdd from "./Pages/GeographicalObject/GeographicalObjectAdd.tsx";
-import TableGeographicalObjectForModerator from "./Pages/GeographicalObject/TableGeographicalObjectForModerator.tsx";
 
 const LoginFormLayout = () => {
     return (
@@ -57,22 +54,12 @@ function App() {
                                     {/*Список географических объектов*/}
                                     {/*<Route path="/geographical_object/" element={<GeographicalObjectListPage/>}/>*/}
 
-                                    {/* Список географических объектов для модератора */}
-                                    <Route path="/geographical_object/moderator/" element={<TableGeographicalObjectForModerator/>}/>
-
                                     {/* Список географических объектов для пользователя */}
                                     <Route path="/geographical_object/" element={<GeographicalObjectListPage/>}/>
 
                                     {/*Информация о географическом объекте*/}
                                     <Route path="/geographical_object/:id_geographical_object/"
                                            element={<GeographicalObjectPage
-                                               selectedGeographicalObject={selectedGeographicalObject}
-                                               setSelectedGeographicalObject={setSelectedGeographicalObject}/>}/>
-                                    {/*Добавить географический объект*/}
-                                    <Route path="/geographical_object/add/" element={<GeographicalObjectPageAdd/>}/>
-                                    {/*Редактирования географического объекта*/}
-                                    <Route path="/geographical_object/:id_geographical_object/edit/"
-                                           element={<GeographicalObjectPageEdit
                                                selectedGeographicalObject={selectedGeographicalObject}
                                                setSelectedGeographicalObject={setSelectedGeographicalObject}/>}/>
 

@@ -20,7 +20,7 @@ import {
     GeographicalObjectApi,
     GETMarsStationRequest, LocationApi,
     MarsStationApi,
-    MarsStationSerializerDetailToJSON, PUTMarsStationBYADMINOperationRequest,
+    MarsStationSerializerDetailToJSON,
     PUTMarsStationBYUSERRequest,
     PUTMarsStationRequest,
     TransportApi,
@@ -39,7 +39,7 @@ export default function MarsStationPage({selectedMarsStation, setSelectedMarsSta
     }
 
     const dispatch = useDispatch();
-    const {is_authenticated, is_moderator} = useAuth()
+    const {is_authenticated} = useAuth()
     const {access_token} = useToken()
     const [updateTrigger, setUpdateTrigger] = useState(false);
 
@@ -201,24 +201,6 @@ export default function MarsStationPage({selectedMarsStation, setSelectedMarsSta
             });
     };
 
-    const check_mars_station = (value: number) => {
-        const api = new MarsStationApi();
-        const requestParameters: PUTMarsStationBYADMINOperationRequest = {
-            id: parseInt(id_mars_station),
-            authorization: access_token,
-            pUTMarsStationBYADMINRequest: {statusTask: value},
-        };
-        api.pUTMarsStationBYADMIN(requestParameters)
-            .then(() => {
-                // console.log("Успешно! Заявка отправлена!", response.data);
-                setUpdateTrigger(true);
-                dispatch(clearID_draft());
-            })
-            .catch(error => {
-                console.error("Ошибка отправки!\n", error);
-            });
-    };
-
     const delete_location_and_mars_station = async (id_location: number, id_mars_station: number) => {
         const api = new LocationApi();
         const requestParameters: ApiLocationIdLocationMarsStationPkMarsStationDeleteDeleteRequest = {
@@ -300,7 +282,6 @@ export default function MarsStationPage({selectedMarsStation, setSelectedMarsSta
             });
     };
 
-
     return (
         <>
             {loading && <LoadingAnimation isLoading={loading}/>}
@@ -321,17 +302,6 @@ export default function MarsStationPage({selectedMarsStation, setSelectedMarsSta
                         <button onClick={() => delete_mars_station()}>Удалить</button>
                     </div>
                 )}
-                {is_moderator && STATUS_TASKS.find(status => status.id === selectedMarsStation?.status_task)?.name === "В работе" && (
-                    <div className="button-accept">
-                        <button onClick={() => check_mars_station(3)}>Принять и завершить</button>
-                    </div>
-                )}
-                {is_moderator && STATUS_TASKS.find(status => status.id === selectedMarsStation?.status_task)?.name === "В работе" && (
-                    <div className="button-reject">
-                        <button onClick={() => check_mars_station(4)}>Отменить</button>
-                    </div>
-                )}
-
                 <div className="right">
                     <div className="info-container">
                         <h2 className="name"> Номер заявки: {selectedMarsStation?.id}</h2>

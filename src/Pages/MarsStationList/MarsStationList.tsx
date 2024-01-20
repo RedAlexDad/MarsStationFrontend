@@ -114,16 +114,6 @@ export default function MarsStationListPage() {
         }
     }, [full_name, date_before, date_after, parentUpdateTrigger]);
 
-    // SHORT POOLING
-    useEffect(() => {
-        const fetchData = async () => {
-            await searchMarsStation();
-        };
-        const interval = setInterval(fetchData, 1000);
-        // Очищаем интервал при размонтировании компонента
-        return () => clearInterval(interval);
-    }, [full_name, status_task, date]);
-
     // Функция для передачи в дочерний компонент
     const handleUpdateTrigger = () => {
         setParentUpdateTrigger(true);

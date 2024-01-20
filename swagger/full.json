@@ -499,46 +499,11 @@
                   "properties": {
                     "message": {
                       "type": "string"
-                    },
-                    "id_draft": {
-                      "type": "integer"
-                    },
-                    "geographical_object": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/GeographicalObjectSerializer"
-                      }
-                    },
-                    "location": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/LocationSerializer"
-                      }
                     }
                   }
                 },
                 "example": {
-                  "message": "Успешно создана заявка",
-                  "id_draft": 1,
-                  "geographical_object": [
-                    {
-                      "id": 1,
-                      "feature": "Название",
-                      "type": "Тип",
-                      "size": 100,
-                      "describe": "Описание",
-                      "photo": "Фото",
-                      "status": true
-                    }
-                  ],
-                  "location": [
-                    {
-                      "id": 1,
-                      "id_geographical_object": 1,
-                      "id_mars_station": 1,
-                      "sequence_number": 1
-                    }
-                  ]
+                  "message": "Успешно создана заявка"
                 }
               }
             }
