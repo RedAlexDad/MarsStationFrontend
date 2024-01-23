@@ -1,5 +1,5 @@
 import "./GeographicalObject.sass"
-import {useEffect, useState} from "react";
+import {Dispatch, useEffect, useState} from "react";
 import {Link, useParams} from "react-router-dom";
 import {DOMEN, GeographicalObjectsMock, requestTime} from "../../Consts";
 import {GeographicalObject} from "../../Types";
@@ -7,12 +7,19 @@ import mockImage from "/src/assets/mock.png"
 import axios from "axios";
 import LoadingAnimation from "../../Components/Loading.tsx";
 
-export default function GeographicalObjectPage() {
+// export default function GeographicalObjectPage() {
+export default function GeographicalObjectPage(
+    {
+        selectedGeographicalObject,
+        setSelectedGeographicalObject
+    }: {
+        selectedGeographicalObject: GeographicalObject | undefined;
+        setSelectedGeographicalObject: Dispatch<GeographicalObject | undefined>;
+    }) {
     const {id_geographical_object} = useParams<{ id_geographical_object?: string }>();
     const [photoUrl, setPhotoUrl] = useState<string>('');
     // Загрузочный экран
     const [loading, setLoading] = useState<boolean>(true);
-    const [selectedGeographicalObject, setSelectedGeographicalObject] = useState<GeographicalObject | undefined>();
 
     if (id_geographical_object === undefined) {
         return;
@@ -61,6 +68,7 @@ export default function GeographicalObjectPage() {
         })
             .then(response => {
                 const geographicalObject: GeographicalObject = response.data;
+                console.log(geographicalObject)
                 setSelectedGeographicalObject(geographicalObject);
             })
             .catch(error => {
