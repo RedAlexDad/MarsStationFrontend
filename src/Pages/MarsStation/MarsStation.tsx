@@ -25,6 +25,7 @@ import {
     PUTMarsStationRequest,
     TransportApi,
 } from "../../../swagger/generated-code";
+import {updateMarsStationInfo} from "../../store/MarsStation.ts";
 
 export default function MarsStationPage({selectedMarsStation, setSelectedMarsStation}: {
     selectedMarsStation: MarsStation | undefined,
@@ -156,6 +157,7 @@ export default function MarsStationPage({selectedMarsStation, setSelectedMarsSta
                 // Преобразование данных
                 const transformedResponse = MarsStationSerializerDetailToJSON(response);
                 setSelectedMarsStation(transformedResponse);
+                dispatch(updateMarsStationInfo(transformedResponse));
             })
             .catch((error) => {
                 console.error("Ошибка!\n", error);

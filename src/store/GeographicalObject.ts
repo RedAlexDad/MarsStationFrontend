@@ -11,6 +11,15 @@ interface GeographicalObjectState {
         photo: string;
         status: boolean;
     }[];
+    info: {
+        id: number;
+        feature: string;
+        type: string;
+        size: number;
+        describe: string;
+        photo: string;
+        status: boolean;
+    };
     pagination: {
         currentPage: number;
         totalPages: number;
@@ -31,6 +40,15 @@ const initialState: GeographicalObjectState = {
         photo: defaultImage,
         status: true,
     },],
+    info: {
+        id: -1,
+        feature: "",
+        type: "",
+        size: -1,
+        describe: "",
+        photo: defaultImage,
+        status: true,
+    },
     pagination: {
         currentPage: 1,
         totalPages: 1,
@@ -49,6 +67,9 @@ const GeographicalObject = createSlice({
             state.data = action.payload;
             // Упорядочиваем объекты по полю "feature"
             state.data.sort((a, b) => a.feature.localeCompare(b.feature));
+        },
+        updateGeographicalObjectInfo: (state, action) => {
+            state.info = action.payload;
         },
         updatePagination: (state, action) => {
             state.pagination = action.payload;
@@ -78,6 +99,7 @@ const GeographicalObject = createSlice({
 
 export const {
     updateGeographicalObject,
+    updateGeographicalObjectInfo,
     updatePagination,
     updateID_draft,
     clearID_draft,

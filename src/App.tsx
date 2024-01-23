@@ -2,7 +2,7 @@ import "./Styles/Main.sass"
 import "./Styles/Reset.sass"
 import Header from "./Components/Header/Header";
 import {useState} from 'react'
-import {BrowserRouter, Route, Routes, Navigate, Outlet} from "react-router-dom";
+import {BrowserRouter, Route, Routes, Navigate, Outlet, useLocation} from "react-router-dom";
 import {GeographicalObject, MarsStation} from "./Types";
 import GeographicalObjectPage from "./Pages/GeographicalObject/GeographicalObject";
 import GeographicalObjectListPage from "./Pages/GeographicalObjectList/GeographicalObjectList";
@@ -16,11 +16,27 @@ import {QueryClient, QueryClientProvider} from "react-query";
 import MarsStationList from "./Pages/MarsStationList/MarsStationList.tsx";
 import MarsStationPage from "./Pages/MarsStation/MarsStation.tsx";
 import GeographicalObjectPageForMarsStation from "./Pages/MarsStation/GeographicalObject/GeographicalObject.tsx";
+import {useAuth} from "./hooks/useAuth.ts";
+import Breadcrumbs from "./Components/Breadcrumbs/Breadcrumbs.tsx";
 
 const LoginFormLayout = () => {
     return (
         <div className="login-wrapper">
             <Outlet/>
+        </div>
+    )
+}
+
+const TopPanelWrapper = () => {
+
+    const {is_authenticated} = useAuth()
+
+    const location = useLocation()
+
+    return (
+        <div className="top-panel-wrapper">
+            <Breadcrumbs/>
+            {is_authenticated && location.pathname.endsWith("geographical_object")}
         </div>
     )
 }
@@ -38,6 +54,7 @@ function App() {
                         <div className="wrapper">
                             <Header/>
                             <div className={"content-wrapper"}>
+                                <TopPanelWrapper/>
                                 <Routes>
                                     <Route path="/" element={<Navigate to="/home/" replace/>}/>
                                     {/*Начальное меню*/}
@@ -52,7 +69,6 @@ function App() {
                                     {/*Личный кабинет*/}
                                     <Route path="/profile/" element={<ProfilePage/>}/>
                                     {/*Список географических объектов*/}
-                                    {/*<Route path="/geographical_object/" element={<GeographicalObjectListPage/>}/>*/}
 
                                     {/* Список географических объектов для пользователя */}
                                     <Route path="/geographical_object/" element={<GeographicalObjectListPage/>}/>
